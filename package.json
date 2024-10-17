@@ -88,8 +88,8 @@
     "yup": "^0.32.11"
   },
   "scripts": {
-    "start": "craco start",
-    "build": "craco build",
+    "start": "env-cmd -f .env craco --openssl-legacy-provider start",
+    "build": "craco --openssl-legacy-provider build",
     "test": "craco test",
     "eject": "react-scripts eject",
     "format": "prettier --write \"src/**/*.js\"",
@@ -101,6 +101,7 @@
   },
   "devDependencies": {
     "@types/sortablejs": "^1.10.6",
+    "env-cmd": "^10.1.0",
     "eslint": "^8.15.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-react": "^7.29.4",
