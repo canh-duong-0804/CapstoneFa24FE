@@ -69,6 +69,7 @@ const Login = () => {
     source = require(`@src/assets/images/pages/${illustration}`).default
 
   const onSubmit = data => {
+    console.log('data', data)
     if (Object.values(data).every(field => field.length > 0)) {
       useJwt
         .login({ email: data.loginEmail, password: data.password })
@@ -155,9 +156,9 @@ const Login = () => {
         <Col className='d-flex align-items-center auth-bg px-2 p-lg-5' lg='4' sm='12'>
           <Col className='px-xl-2 mx-auto' sm='8' md='6' lg='12'>
             <CardTitle tag='h2' className='fw-bold mb-1'>
-              Welcome to Vuexy! 👋
+              Chào mừng tới Health Tracking! 👋
             </CardTitle>
-            <CardText className='mb-2'>Please sign-in to your account and start the adventure</CardText>
+            <CardText className='mb-2'>Vui lòng đăng nhập vào tài khoản của bạn và bắt đầu</CardText>
             <Alert color='primary'>
               <div className='alert-body font-small-2'>
                 <p>
@@ -207,7 +208,7 @@ const Login = () => {
                     Password
                   </Label>
                   <Link to='/forgot-password'>
-                    <small>Forgot Password?</small>
+                    <small>Quên mật khẩu?</small>
                   </Link>
                 </div>
                 <Controller
@@ -222,17 +223,17 @@ const Login = () => {
               <div className='form-check mb-1'>
                 <Input type='checkbox' id='remember-me' />
                 <Label className='form-check-label' for='remember-me'>
-                  Remember Me
+                  Nhớ tôi
                 </Label>
               </div>
               <Button type='submit' color='primary' block>
-                Sign in
+                Đăng nhập
               </Button>
             </Form>
             <p className='text-center mt-2'>
-              <span className='me-25'>New on our platform?</span>
+              <span className='me-25'>Người mới trên nền tảng của chúng tôi?</span>
               <Link to='/register'>
-                <span>Create an account</span>
+                <span>Tạo tài khoản</span>
               </Link>
             </p>
             <div className='divider my-2'>
