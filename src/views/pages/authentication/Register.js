@@ -1,44 +1,28 @@
-// ** React Imports
-import { useContext } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-
-// ** Custom Hooks
+import { Link } from 'react-router-dom'
 import { useSkin } from '@hooks/useSkin'
-import useJwt from '@src/auth/jwt/useJwt'
-
-// ** Store & Actions
-import { useDispatch } from 'react-redux'
-import { handleLogin } from '@store/authentication'
-
-// ** Third Party Components
 import { useForm, Controller } from 'react-hook-form'
 import { Facebook, Twitter, Mail, GitHub } from 'react-feather'
-
-// ** Context
-import { AbilityContext } from '@src/utility/context/Can'
-
-// ** Custom Components
 import InputPasswordToggle from '@components/input-password-toggle'
+import Flatpickr from 'react-flatpickr'
+import { useState } from 'react'
 
 // ** Reactstrap Imports
-import { Row, Col, CardTitle, CardText, Label, Button, Form, Input, FormFeedback } from 'reactstrap'
+import { Row, Col, CardTitle, Label, Button, Form, Input, FormFeedback } from 'reactstrap'
+import api from '../../../api'
 
 // ** Styles
 import '@styles/react/pages/page-authentication.scss'
 
 const defaultValues = {
   email: '',
-  terms: false,
   username: '',
   password: ''
+
 }
 
 const Register = () => {
   // ** Hooks
-  const ability = useContext(AbilityContext)
   const { skin } = useSkin()
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
   const {
     control,
     setError,
@@ -46,49 +30,19 @@ const Register = () => {
     formState: { errors }
   } = useForm({ defaultValues })
 
+  const [startPicker, setStartPicker] = useState(new Date())
+
   const illustration = skin === 'dark' ? 'register-v2-dark.svg' : 'register-v2.svg',
     source = require(`@src/assets/images/pages/${illustration}`).default
 
   const onSubmit = data => {
-    const tempData = { ...data }
-    delete tempData.terms
-    if (Object.values(tempData).every(field => field.length > 0) && data.terms === true) {
-      const { username, email, password } = data
-      useJwt
-        .register({ username, email, password })
-        .then(res => {
-          if (res.data.error) {
-            for (const property in res.data.error) {
-              if (res.data.error[property] !== null) {
-                setError(property, {
-                  type: 'manual',
-                  message: res.data.error[property]
-                })
-              }
-            }
-          } else {
-            const data = { ...res.data.user, accessToken: res.data.accessToken }
-            ability.update(res.data.user.ability)
-            dispatch(handleLogin(data))
-            navigate('/')
-          }
-        })
-        .catch(err => console.log(err))
-    } else {
-      for (const key in data) {
-        if (data[key].length === 0) {
-          setError(key, {
-            type: 'manual',
-            message: `Please enter a valid ${key}`
-          })
-        }
-        if (key === 'terms' && data.terms === false) {
-          setError('terms', {
-            type: 'manual'
-          })
-        }
-      }
-    }
+    console.log('data', data)
+    api.authApi.registerApi(data).then((rs) => {
+      console.log(rs)
+    }).catch((e) => {
+      notificationError(t('Register account fail'))
+      setError('Register account fail', e)
+    })
   }
 
   return (
@@ -153,9 +107,8 @@ const Register = () => {
         <Col className='d-flex align-items-center auth-bg px-2 p-lg-5' lg='4' sm='12'>
           <Col className='px-xl-2 mx-auto' sm='8' md='6' lg='12'>
             <CardTitle tag='h2' className='fw-bold mb-1'>
-              Adventure starts here 🚀
+              Tạo tài khoản 🚀
             </CardTitle>
-            <CardText className='mb-2'>Make your app management easy and fun!</CardText>
 
             <Form action='/' className='auth-register-form mt-2' onSubmit={handleSubmit(onSubmit)}>
               <div className='mb-1'>
@@ -167,7 +120,7 @@ const Register = () => {
                   name='username'
                   control={control}
                   render={({ field }) => (
-                    <Input autoFocus placeholder='johndoe' invalid={errors.username && true} {...field} />
+                    <Input autoFocus placeholder='Nhập tên tài khoản' invalid={errors.username && true} {...field} />
                   )}
                 />
                 {errors.username ? <FormFeedback>{errors.username.message}</FormFeedback> : null}
@@ -181,7 +134,7 @@ const Register = () => {
                   name='email'
                   control={control}
                   render={({ field }) => (
-                    <Input type='email' placeholder='john@example.com' invalid={errors.email && true} {...field} />
+                    <Input type='email' placeholder='Nhập email' invalid={errors.email && true} {...field} />
                   )}
                 />
                 {errors.email ? <FormFeedback>{errors.email.message}</FormFeedback> : null}
@@ -199,29 +152,81 @@ const Register = () => {
                   )}
                 />
               </div>
-              <div className='form-check mb-1'>
+              <div className='mb-1'>
+                <Label className='form-label' for='register-date'>
+                  Ngày sinh
+                </Label>
                 <Controller
-                  name='terms'
                   control={control}
+                  name="date"
                   render={({ field }) => (
-                    <Input {...field} id='terms' type='checkbox' checked={field.value} invalid={errors.terms && true} />
+                    <Flatpickr
+                      required
+                      id='date'
+                      className='form-control'
+                      onChange={date => {
+                        setStartPicker(date[0])
+                        field.onChange(date[0]) // Cập nhật giá trị cho field
+                      }}
+                      value={startPicker}
+                      options={{
+                        dateFormat: 'Y-m-d' // Chỉnh sửa định dạng ngày nếu cần
+                      }}
+                    />
                   )}
                 />
-                <Label className='form-check-label' for='terms'>
-                  I agree to
-                  <a className='ms-25' href='/' onClick={e => e.preventDefault()}>
-                    privacy policy & terms
-                  </a>
+                {errors.date && <FormFeedback>{errors.date.message}</FormFeedback>}
+              </div>
+              <div className='mb-1'>
+                <Label className='form-label' for='register-phone'>
+                  Số điện thoại
                 </Label>
+                <Controller
+                  id='phone'
+                  name='phone'
+                  control={control}
+                  render={({ field }) => (
+                    <Input type='phone' placeholder='Nhập số điện thoại' invalid={errors.phone && true} {...field} />
+                  )}
+                />
+                {errors.email ? <FormFeedback>{errors.email.message}</FormFeedback> : null}
+              </div>
+              <div className='mb-1'>
+                <Label className='form-label' for='register-height'>
+                  Chiều cao
+                </Label>
+                <Controller
+                  id='height'
+                  name='height'
+                  control={control}
+                  render={({ field }) => (
+                    <Input autoFocus placeholder='Nhập chiều cao (cm)' invalid={errors.height && true} {...field} />
+                  )}
+                />
+                {errors.height ? <FormFeedback>{errors.height.message}</FormFeedback> : null}
+              </div>
+              <div className='mb-1'>
+                <Label className='form-label' for='register-weight'>
+                  Cân nặng
+                </Label>
+                <Controller
+                  id='weight'
+                  name='weight'
+                  control={control}
+                  render={({ field }) => (
+                    <Input autoFocus placeholder='Nhập cân nặng (kg)' invalid={errors.weight && true} {...field} />
+                  )}
+                />
+                {errors.weight ? <FormFeedback>{errors.weight.message}</FormFeedback> : null}
               </div>
               <Button type='submit' block color='primary'>
-                Sign up
+                Đăng ký
               </Button>
             </Form>
             <p className='text-center mt-2'>
-              <span className='me-25'>Already have an account?</span>
+              <span className='me-25'>Bạn đã có tài khoản?</span>
               <Link to='/login'>
-                <span>Sign in instead</span>
+                <span>Đăng nhập ngay</span>
               </Link>
             </p>
             <div className='divider my-2'>
