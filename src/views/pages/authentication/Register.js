@@ -3,8 +3,9 @@ import { useSkin } from '@hooks/useSkin'
 import { useForm, Controller } from 'react-hook-form'
 import { Facebook, Twitter, Mail, GitHub } from 'react-feather'
 import InputPasswordToggle from '@components/input-password-toggle'
-import Flatpickr from 'react-flatpickr'
-import { useState } from 'react'
+import Select from 'react-select'
+import { selectThemeColors } from '@utils'
+import { notificationError, notificationSuccess } from '../../../utility/notification'
 
 // ** Reactstrap Imports
 import { Row, Col, CardTitle, Label, Button, Form, Input, FormFeedback } from 'reactstrap'
@@ -15,9 +16,9 @@ import '@styles/react/pages/page-authentication.scss'
 
 const defaultValues = {
   email: '',
-  username: '',
-  password: ''
-
+  userName: '',
+  password: '',
+  dob: '2024-10-25T08:29:37.162Z'
 }
 
 const Register = () => {
@@ -27,20 +28,28 @@ const Register = () => {
     control,
     setError,
     handleSubmit,
+    reset,
     formState: { errors }
   } = useForm({ defaultValues })
 
-  const [startPicker, setStartPicker] = useState(new Date())
+  // const [startPicker, setStartPicker] = useState(new Date())
+
+  const optionGender = [
+    { value: true, label: 'Nam' },
+    { value: false, label: 'Nữ' },
+    { value: '2', label: 'Khác' }
+
+  ]
 
   const illustration = skin === 'dark' ? 'register-v2-dark.svg' : 'register-v2.svg',
     source = require(`@src/assets/images/pages/${illustration}`).default
 
   const onSubmit = data => {
-    console.log('data', data)
-    api.authApi.registerApi(data).then((rs) => {
-      console.log(rs)
+    api.authApi.registerApi(data).then(() => {
+      notificationSuccess('Đăng ký tài khoản thành công')
+      reset() 
     }).catch((e) => {
-      notificationError(t('Register account fail'))
+      notificationError('Đăng ký tài khoản thất bại')
       setError('Register account fail', e)
     })
   }
@@ -116,8 +125,8 @@ const Register = () => {
                   Username
                 </Label>
                 <Controller
-                  id='username'
-                  name='username'
+                  id='userName'
+                  name='userName'
                   control={control}
                   render={({ field }) => (
                     <Input autoFocus placeholder='Nhập tên tài khoản' invalid={errors.username && true} {...field} />
@@ -141,7 +150,7 @@ const Register = () => {
               </div>
               <div className='mb-1'>
                 <Label className='form-label' for='register-password'>
-                  Password
+                  Mật khẩu
                 </Label>
                 <Controller
                   id='password'
@@ -152,7 +161,7 @@ const Register = () => {
                   )}
                 />
               </div>
-              <div className='mb-1'>
+              {/* <div className='mb-1'>
                 <Label className='form-label' for='register-date'>
                   Ngày sinh
                 </Label>
@@ -163,7 +172,7 @@ const Register = () => {
                     <Flatpickr
                       required
                       id='date'
-                      className='form-control'
+                      className='form-control' s
                       onChange={date => {
                         setStartPicker(date[0])
                         field.onChange(date[0]) // Cập nhật giá trị cho field
@@ -176,48 +185,45 @@ const Register = () => {
                   )}
                 />
                 {errors.date && <FormFeedback>{errors.date.message}</FormFeedback>}
+              </div> */}
+              <div className='mb-1'>
+                <Label className='form-label' for='register-gender'>
+                  Giới tính
+                </Label>
+                <Controller
+                  id='gender'
+                  name='gender'
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      theme={selectThemeColors}
+                      className='react-select'
+                      classNamePrefix='select'
+                      options={optionGender}
+                      isClearable={false}
+                      onChange={(option) => {
+                        field.onChange(option ? option.value : '') 
+                      }}
+                      value={optionGender.find(option => option.value === field.value)}
+                    />
+                  )}
+                />
+                {errors.gender ? <FormFeedback>{errors.gender.message}</FormFeedback> : null}
               </div>
               <div className='mb-1'>
                 <Label className='form-label' for='register-phone'>
                   Số điện thoại
                 </Label>
                 <Controller
-                  id='phone'
-                  name='phone'
+                  id='phoneNumber'
+                  name='phoneNumber'
                   control={control}
                   render={({ field }) => (
-                    <Input type='phone' placeholder='Nhập số điện thoại' invalid={errors.phone && true} {...field} />
+                    <Input type='phone' placeholder='Nhập số điện thoại' invalid={errors.phoneNumber && true} {...field} />
                   )}
                 />
-                {errors.email ? <FormFeedback>{errors.email.message}</FormFeedback> : null}
-              </div>
-              <div className='mb-1'>
-                <Label className='form-label' for='register-height'>
-                  Chiều cao
-                </Label>
-                <Controller
-                  id='height'
-                  name='height'
-                  control={control}
-                  render={({ field }) => (
-                    <Input autoFocus placeholder='Nhập chiều cao (cm)' invalid={errors.height && true} {...field} />
-                  )}
-                />
-                {errors.height ? <FormFeedback>{errors.height.message}</FormFeedback> : null}
-              </div>
-              <div className='mb-1'>
-                <Label className='form-label' for='register-weight'>
-                  Cân nặng
-                </Label>
-                <Controller
-                  id='weight'
-                  name='weight'
-                  control={control}
-                  render={({ field }) => (
-                    <Input autoFocus placeholder='Nhập cân nặng (kg)' invalid={errors.weight && true} {...field} />
-                  )}
-                />
-                {errors.weight ? <FormFeedback>{errors.weight.message}</FormFeedback> : null}
+                {errors.phoneNumber ? <FormFeedback>{errors.phoneNumber.message}</FormFeedback> : null}
               </div>
               <Button type='submit' block color='primary'>
                 Đăng ký

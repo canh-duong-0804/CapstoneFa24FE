@@ -4,6 +4,7 @@ import { lazy } from 'react'
 const Login = lazy(() => import('../../views/pages/authentication/Login'))
 const LoginBasic = lazy(() => import('../../views/pages/authentication/LoginBasic'))
 const LoginCover = lazy(() => import('../../views/pages/authentication/LoginCover'))
+const LoginAdmin = lazy(() => import('../../views/pages/authentication/LoginAdmin'))
 
 const Register = lazy(() => import('../../views/pages/authentication/Register'))
 const RegisterBasic = lazy(() => import('../../views/pages/authentication/RegisterBasic'))
@@ -27,6 +28,15 @@ const AuthenticationRoutes = [
   {
     path: '/login',
     element: <Login />,
+    meta: {
+      layout: 'blank',
+      publicRoute: true,
+      restricted: true
+    }
+  },
+  {
+    path: '/login/admin',
+    element: <LoginAdmin />,
     meta: {
       layout: 'blank',
       publicRoute: true,

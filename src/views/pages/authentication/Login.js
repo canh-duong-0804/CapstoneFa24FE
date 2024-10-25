@@ -1,19 +1,32 @@
-// import { useContext } from 'react'
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+// ** React Imports
+import { useContext } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+
+// ** Custom Hooks
 import { useSkin } from '@hooks/useSkin'
-// import useJwt from '@src/auth/jwt/useJwt'
+import useJwt from '@src/auth/jwt/useJwt'
+
+// ** Third Party Components
 import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
 import { useForm, Controller } from 'react-hook-form'
 import { Facebook, Twitter, Mail, GitHub, HelpCircle, Coffee, X } from 'react-feather'
+
+// ** Actions
 import { handleLogin } from '@store/authentication'
+
+// ** Context
 import { AbilityContext } from '@src/utility/context/Can'
+
+// ** Custom Components
 import Avatar from '@components/avatar'
 import InputPasswordToggle from '@components/input-password-toggle'
+
+// ** Utils
 import { getHomeRouteForLoggedInUser } from '@utils'
+
+// ** Reactstrap Imports
 import { Row, Col, Form, Input, Label, Alert, Button, CardText, CardTitle, UncontrolledTooltip } from 'reactstrap'
-import api from '../../../api/index'
 
 // ** Styles
 import '@styles/react/pages/page-authentication.scss'
@@ -43,10 +56,8 @@ const defaultValues = {
 const Login = () => {
   // ** Hooks
   const { skin } = useSkin()
-
   const dispatch = useDispatch()
-  // const navigate = useNavigate()
-  const [userData, setUserData] = useState({})
+  const navigate = useNavigate()
   const ability = useContext(AbilityContext)
   const {
     control,
@@ -58,21 +69,20 @@ const Login = () => {
     source = require(`@src/assets/images/pages/${illustration}`).default
 
   const onSubmit = data => {
-    // console.log('data', data)
-    // return
+    console.log('data', data)
     if (Object.values(data).every(field => field.length > 0)) {
-      api.authApi.loginApi(data)
-        .then((rs) => {
-          console.log('rs', rs)
-          const data = { ...rs.objectResponse, accessToken: rs.data.accessToken, refreshToken: rs.data.refreshToken }
+      
+      useJwt
+        .login({ email: data.email, password: data.password })
+        .then(res => {
+          const data = { ...res.data.userData, accessToken: res.data.accessToken, refreshToken: res.data.refreshToken }
           dispatch(handleLogin(data))
-          setUserData(rs.objectResponse)
-          console.log('data', data)
           ability.update(res.data.userData.ability)
-          navigate(getHomeRouteForLoggedInUser(data))
+          navigate(getHomeRouteForLoggedInUser(data.role))
+          toast(t => (
+            <ToastContent t={t} role={data.role || 'admin'} name={data.fullName || data.username || 'John Doe'} />
+          ))
         })
-        console.log(userData)
-     
         .catch(err => console.log(err))
     } else {
       for (const key in data) {
@@ -84,17 +94,6 @@ const Login = () => {
       }
     }
   }
-  //  useJwt
-  //       .login({ email: data.email, password: data.password })
-  //       .then(res => {
-  //         console.log('res', res)
-         
-  //         toast(t => (
-  //           <ToastContent t={t} role={data.role || 'admin'} name={data.fullName || data.username || 'John Doe'} />
-  //         ))
-  //       })
-
-  //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzI5Njc3NzE5LCJleHAiOjE3Mjk2NzgzMTl9.Fh2F2EwQI8VJ_N8KVzcSz9AoHRORPwRWjL0mALIdAW4
 
   return (
     <div className='auth-wrapper auth-cover'>
@@ -148,6 +147,7 @@ const Login = () => {
               </g>
             </g>
           </svg>
+          <h2 className='brand-text text-primary ms-1'>Vuexy</h2>
         </Link>
         <Col className='d-none d-lg-flex align-items-center p-5' lg='8' sm='12'>
           <div className='w-100 d-lg-flex align-items-center justify-content-center px-5'>
@@ -161,7 +161,7 @@ const Login = () => {
             </CardTitle>
             <CardText className='mb-2'>Vui lòng đăng nhập vào tài khoản của bạn và bắt đầu</CardText>
             <Alert color='primary'>
-              {/* <div className='alert-body font-small-2'>
+              <div className='alert-body font-small-2'>
                 <p>
                   <small className='me-50'>
                     <span className='fw-bold'>Admin:</span> admin@demo.com | admin
@@ -172,7 +172,7 @@ const Login = () => {
                     <span className='fw-bold'>Client:</span> client@demo.com | client
                   </small>
                 </p>
-              </div> */}
+              </div>
               <HelpCircle
                 id='login-tip'
                 className='position-absolute'
@@ -224,7 +224,7 @@ const Login = () => {
               <div className='form-check mb-1'>
                 <Input type='checkbox' id='remember-me' />
                 <Label className='form-check-label' for='remember-me'>
-                  Nhớ mật khẩu
+                  Nhớ tôi
                 </Label>
               </div>
               <Button type='submit' color='primary' block>

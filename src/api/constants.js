@@ -5,6 +5,7 @@ export const BASE_URL = PUBLIC_URL_SERVER_API
 export const AUTH = {
     AUTH_API: {
       LOGIN_API: `${BASE_URL}/api/Users/login`,
-      REGISTER_API: `${BASE_URL}/api/Users/register`
+      LOGIN_STAFF_API: `${BASE_URL}/api/Staff/login`, 
+      REGISTER_API: `${BASE_URL}/api/Users/register-mobile`
     }
   }

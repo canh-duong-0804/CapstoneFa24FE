@@ -58,7 +58,6 @@ export const getHomeRouteForLoggedInUser = userRole => {
   return '/login'
 }
 
-console.log('cc', isUserLoggedIn)
 // ** React Select Theme Colors
 export const selectThemeColors = theme => ({
   ...theme,
