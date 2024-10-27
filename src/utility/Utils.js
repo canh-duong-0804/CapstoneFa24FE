@@ -53,9 +53,14 @@ export const getUserData = () => JSON.parse(localStorage.getItem('userData'))
  */
 export const getHomeRouteForLoggedInUser = userRole => {
   console.log('userRole', userRole)
-  if (userRole === 'admin') return DefaultRoute
-  if (userRole === 'client') return '/access-control'
-  return '/login'
+  if (userRole === '0') return DefaultRoute
+  if (userRole === '1') return '/access-control'
+  if (userRole === '2') return '/access-control'
+  return '/login/admin'
+}
+
+export const getHomeRouteForMember =  () => {
+  return DefaultRoute
 }
 
 // ** React Select Theme Colors

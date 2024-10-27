@@ -1,12 +1,10 @@
 // ** React Imports
-import { useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
 import { useForm, Controller } from 'react-hook-form'
-import {HelpCircle, Coffee, X } from 'react-feather'
+import {Coffee, X } from 'react-feather'
 import { handleLogin } from '@store/authentication'
-import { AbilityContext } from '@src/utility/context/Can'
 import Avatar from '@components/avatar'
 import InputPasswordToggle from '@components/input-password-toggle'
 import { getHomeRouteForLoggedInUser } from '@utils'
@@ -42,7 +40,6 @@ const Login = () => {
   // ** Hooks
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const ability = useContext(AbilityContext)
   const {
     control,
     setError,
@@ -51,20 +48,13 @@ const Login = () => {
   } = useForm({ defaultValues })
   
   const onSubmit = data => {
-    // console.log('data', data)
-    // return
     if (Object.values(data).every(field => field.length > 0)) {
     api.authApi.loginStaffApi(data)
       .then((rs) => {
-        console.log('rs', rs)
         const data = { ...rs.objectResponse, accessToken: rs.data.accessToken, refreshToken: rs.data.refreshToken }
         dispatch(handleLogin(data))
-        setUserData(rs.objectResponse)
-        console.log('data', data)
-        ability.update(res.data.userData.ability)
-        navigate(getHomeRouteForLoggedInUser(data.role))
+        navigate(getHomeRouteForLoggedInUser(rs.objectResponse.role))
       })
-      console.log(userData)
    
       .catch(err => console.log(err))
   } else {
@@ -87,17 +77,6 @@ const Login = () => {
               Đăng nhập cho quản lý
             </CardTitle>
             <CardText className='mb-2'>Vui lòng đăng nhập vào tài khoản của bạn và bắt đầu</CardText>
-            <Alert color='primary'>
-              <HelpCircle
-                id='login-tip'
-                className='position-absolute'
-                size={18}
-                style={{ top: '10px', right: '10px' }}
-              />
-              <UncontrolledTooltip target='login-tip' placement='left'>
-                This is just for ACL demo purpose.
-              </UncontrolledTooltip>
-            </Alert>
             <Form className='auth-login-form mt-2' onSubmit={handleSubmit(onSubmit)}>
               <div className='mb-1'>
                 <Label className='form-label' for='login-email'>
@@ -135,12 +114,6 @@ const Login = () => {
                     <InputPasswordToggle className='input-group-merge' invalid={errors.password && true} {...field} />
                   )}
                 />
-              </div>
-              <div className='form-check mb-1'>
-                <Input type='checkbox' id='remember-me' />
-                <Label className='form-check-label' for='remember-me'>
-                  Nhớ tôi
-                </Label>
               </div>
               <Button type='submit' color='primary' block>
                 Đăng nhập

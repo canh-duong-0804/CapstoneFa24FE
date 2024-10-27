@@ -18,7 +18,9 @@ const defaultValues = {
   email: '',
   userName: '',
   password: '',
-  dob: '2024-10-25T08:29:37.162Z'
+  dob: '2024-10-25T08:29:37.162Z',
+  phone: '',
+  gender: null
 }
 
 const Register = () => {
