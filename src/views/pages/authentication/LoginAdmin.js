@@ -1,35 +1,16 @@
 // ** React Imports
 import { Link, useNavigate } from 'react-router-dom'
-import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
 import { useForm, Controller } from 'react-hook-form'
-import {Coffee, X } from 'react-feather'
 import { handleLogin } from '@store/authentication'
-import Avatar from '@components/avatar'
 import InputPasswordToggle from '@components/input-password-toggle'
-import { getHomeRouteForLoggedInUser } from '@utils'
-import { Row, Col, Form, Input, Label, Alert, Button, CardText, CardTitle, UncontrolledTooltip } from 'reactstrap'
+import { Row, Col, Form, Input, Label, Button, CardText, CardTitle } from 'reactstrap'
 import api from '../../../api/index'
-
+// ** Context
+import { AbilityContext } from '@src/utility/context/Can'
 // ** Styles
 import '@styles/react/pages/page-authentication.scss'
-
-const ToastContent = ({ t, name, role }) => {
-  return (
-    <div className='d-flex'>
-      <div className='me-1'>
-        <Avatar size='sm' color='success' icon={<Coffee size={12} />} />
-      </div>
-      <div className='d-flex flex-column'>
-        <div className='d-flex justify-content-between'>
-          <h6>{name}</h6>
-          <X size={12} className='cursor-pointer' onClick={() => toast.dismiss(t.id)} />
-        </div>
-        <span>You have successfully logged in as an {role} user to Vuexy. Now you can start to explore. Enjoy!</span>
-      </div>
-    </div>
-  )
-}
+import { useContext } from 'react'
 
 const defaultValues = {
   password: '',
@@ -40,33 +21,39 @@ const Login = () => {
   // ** Hooks
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const ability = useContext(AbilityContext)
   const {
     control,
     setError,
     handleSubmit,
     formState: { errors }
   } = useForm({ defaultValues })
-  
+
   const onSubmit = data => {
     if (Object.values(data).every(field => field.length > 0)) {
-    api.authApi.loginStaffApi(data)
-      .then((rs) => {
-        const data = { ...rs.objectResponse, accessToken: rs.data.accessToken, refreshToken: rs.data.refreshToken }
-        dispatch(handleLogin(data))
-        navigate(getHomeRouteForLoggedInUser(rs.objectResponse.role))
-      })
-   
-      .catch(err => console.log(err))
-  } else {
-    for (const key in data) {
-      if (data[key].length === 0) {
-        setError(key, {
-          type: 'manual'
+      api.authApi.loginStaffApi(data)
+        .then((rs) => {
+          if (rs.success === true) {
+            const data = { ...rs.objectResponse, accessToken: rs.data.accessToken, refreshToken: rs.data.refreshToken, ability: [{ action: 'read', subject: 'Admin' }] }
+            dispatch(handleLogin(data))
+            ability.update([{ action: 'read', subject: 'Admin' }])
+            navigate('/admin/dashboard')
+          } else {
+            notificationError('Đăng nhập tài khoản thất bại')
+          }
+
         })
+        .catch(err => console.log(err))
+    } else {
+      for (const key in data) {
+        if (data[key].length === 0) {
+          setError(key, {
+            type: 'manual'
+          })
+        }
       }
     }
   }
-}
 
   return (
     <div className='auth-wrapper auth-cover' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>

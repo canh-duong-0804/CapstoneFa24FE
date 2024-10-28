@@ -10,7 +10,7 @@ export default [
     title: 'Access Control',
     icon: <Shield size={12} />,
     action: 'read',
-    resource: 'ACL',
+    resource: 'Admin',
     navLink: '/access-control'
   },
   {

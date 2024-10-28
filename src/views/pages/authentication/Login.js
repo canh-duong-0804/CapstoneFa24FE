@@ -1,38 +1,17 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useSkin } from '@hooks/useSkin'
-import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
 import { useForm, Controller } from 'react-hook-form'
-import { Facebook, Twitter, Mail, GitHub, HelpCircle, Coffee, X } from 'react-feather'
+import { Facebook, Twitter, Mail, GitHub } from 'react-feather'
 import { handleLogin } from '@store/authentication'
-import Avatar from '@components/avatar'
 import InputPasswordToggle from '@components/input-password-toggle'
 import api from '../../../api/index'
-// ** Utils
-import { getHomeRouteForMember } from '@utils'
-
-// ** Reactstrap Imports
 import { Row, Col, Form, Input, Label, Alert, Button, CardText, CardTitle, UncontrolledTooltip } from 'reactstrap'
 
 // ** Styles
 import '@styles/react/pages/page-authentication.scss'
-
-const ToastContent = ({ t, name, role }) => {
-  return (
-    <div className='d-flex'>
-      <div className='me-1'>
-        <Avatar size='sm' color='success' icon={<Coffee size={12} />} />
-      </div>
-      <div className='d-flex flex-column'>
-        <div className='d-flex justify-content-between'>
-          <h6>{name}</h6>
-          <X size={12} className='cursor-pointer' onClick={() => toast.dismiss(t.id)} />
-        </div>
-        <span>You have successfully logged in as an {role} user to Vuexy. Now you can start to explore. Enjoy!</span>
-      </div>
-    </div>
-  )
-}
+import { useContext } from 'react'
+import { AbilityContext } from '../../../utility/context/Can'
 
 const defaultValues = {
   password: '',
@@ -44,6 +23,7 @@ const Login = () => {
   const { skin } = useSkin()
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const ability = useContext(AbilityContext)
   const {
     control,
     setError,
@@ -56,11 +36,11 @@ const Login = () => {
     if (Object.values(data).every(field => field.length > 0)) {
       api.authApi.loginApi(data)
         .then((rs) => {
-          const data = { ...rs.objectResponse, accessToken: rs.data.accessToken, refreshToken: rs.data.refreshToken }
+          const data = { ...rs.objectResponse, accessToken: rs.data.accessToken, refreshToken: rs.data.refreshToken, ability: [{ action: 'read', subject: 'User' }] }
           dispatch(handleLogin(data))
-          navigate(getHomeRouteForMember())
+          ability.update([{ action: 'read', subject: 'User' }])
+          navigate('/dashboard')
         })
-
         .catch(err => console.log(err))
     } else {
       for (const key in data) {

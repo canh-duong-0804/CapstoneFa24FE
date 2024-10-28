@@ -24,14 +24,15 @@ const UserView = lazy(() => import('../../views/apps/user/view'))
 
 const Roles = lazy(() => import('../../views/apps/roles-permissions/roles'))
 const Permissions = lazy(() => import('../../views/apps/roles-permissions/permissions'))
+const Statistic = lazy(() => import('../../views/pages/admin/dashboard/index'))
 
 const AppRoutes = [
   {
-    element: <Email />,
-    path: '/apps/email',
+    path: '/dashboard',
+    element: <Statistic />,
     meta: {
-      appLayout: true,
-      className: 'email-application'
+      action: 'read',
+      resource: 'User'
     }
   },
   {

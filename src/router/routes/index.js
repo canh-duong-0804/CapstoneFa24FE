@@ -12,6 +12,7 @@ import UiElementRoutes from './UiElements'
 import ExtensionsRoutes from './Extensions'
 import PageLayoutsRoutes from './PageLayouts'
 import AuthenticationRoutes from './Authentication'
+import AdminRoutes from './Admin'
 
 // ** Layouts
 import BlankLayout from '@layouts/BlankLayout'
@@ -37,6 +38,7 @@ const TemplateTitle = '%s - Vuexy React Admin Template'
 
 // ** Default Route
 const DefaultRoute = '/dashboard/ecommerce'
+const DefaultAdminRoute = '/dashboard/ecomerce'
 
 // ** Merge Routes
 const Routes = [
@@ -49,7 +51,8 @@ const Routes = [
   ...PageLayoutsRoutes,
   ...FormRoutes,
   ...TablesRoutes,
-  ...ChartsRoutes
+  ...ChartsRoutes,
+  ...AdminRoutes
 ]
 
 const getRouteMeta = route => {
@@ -123,4 +126,4 @@ const getRoutes = layout => {
   return AllRoutes
 }
 
-export { DefaultRoute, TemplateTitle, Routes, getRoutes }
+export { DefaultRoute, DefaultAdminRoute, TemplateTitle, Routes, getRoutes }

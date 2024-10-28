@@ -1,4 +1,4 @@
-import { DefaultRoute } from '../router/routes'
+import { DefaultRoute, DefaultAdminRoute} from '../router/routes'
 
 // ** Checks if an object is empty (returns boolean)
 export const isObjEmpty = obj => Object.keys(obj).length === 0
@@ -52,14 +52,13 @@ export const getUserData = () => JSON.parse(localStorage.getItem('userData'))
  * @param {String} userRole Role of user
  */
 export const getHomeRouteForLoggedInUser = userRole => {
-  console.log('userRole', userRole)
-  if (userRole === '0') return DefaultRoute
-  if (userRole === '1') return '/access-control'
-  if (userRole === '2') return '/access-control'
+  if (userRole === 0) return '/admin/dashboard'
+  if (userRole === 1) return '/access-control'
+  if (userRole === 2) return '/access-control'
   return '/login/admin'
 }
 
-export const getHomeRouteForMember =  () => {
+export const getHomeRouteForMember = () => {
   return DefaultRoute
 }
 
