@@ -7,7 +7,10 @@ const Recharts = lazy(() => import('../../views/charts/recharts'))
 const ChartMapsRoutes = [
   {
     path: '/charts/apex',
-    element: <ApexCharts />
+    element: <ApexCharts />,
+    action: 'read',
+    resource: 'Admin'
+
   },
   {
     path: '/charts/chartjs',

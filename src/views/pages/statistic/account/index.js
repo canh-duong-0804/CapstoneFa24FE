@@ -44,7 +44,7 @@ const HeadOfDepartmantPage = () => {
   return (
     <Fragment>
       <Helmet>
-        <title>{t('Quản lý tài khoản')} </title>
+        <title>{t('Quản lý bài tập')} </title>
       </Helmet>
       <UserContext.Provider value={{
         openModal,

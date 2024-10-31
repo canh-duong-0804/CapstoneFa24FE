@@ -8,8 +8,9 @@
 // import dashboards from './dashboards'
 // import uiElements from './ui-elements'
 import admin from './admin'
+import trainer from './trainer'
 
 // ** Merge & Export
 // export default [...dashboards, ...apps, ...pages, ...uiElements, ...forms, ...tables, ...charts, ...others]
-export default [...admin]
+export default [...admin, ...trainer]
 

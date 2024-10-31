@@ -6,6 +6,7 @@ import { handleLogin } from '@store/authentication'
 import InputPasswordToggle from '@components/input-password-toggle'
 import { Row, Col, Form, Input, Label, Button, CardText, CardTitle } from 'reactstrap'
 import api from '../../../api/index'
+import { getHomeRouteForLoggedInUser } from '@utils'
 // ** Context
 import { AbilityContext } from '@src/utility/context/Can'
 // ** Styles
@@ -34,10 +35,10 @@ const Login = () => {
       api.authApi.loginStaffApi(data)
         .then((rs) => {
           if (rs.success === true) {
-            const data = { ...rs.objectResponse, accessToken: rs.data.accessToken, refreshToken: rs.data.refreshToken, ability: [{ action: 'read', subject: 'Admin' }] }
+            const data = { ...rs.objectResponse, accessToken: rs.data.accessToken, refreshToken: rs.data.refreshToken, ability: [{ action: 'read', subject: 'All' }] }
             dispatch(handleLogin(data))
-            ability.update([{ action: 'read', subject: 'Admin' }])
-            navigate('/admin/dashboard')
+            ability.update([{ action: 'read', subject: 'All' }])
+            navigate(getHomeRouteForLoggedInUser(data.role))
           } else {
             notificationError('Đăng nhập tài khoản thất bại')
           }

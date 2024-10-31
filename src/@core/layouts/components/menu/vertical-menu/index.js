@@ -12,6 +12,7 @@ import VerticalNavMenuItems from './VerticalNavMenuItems'
 const Sidebar = props => {
   // ** Props
   const { menuCollapsed, menu, skin, menuData } = props
+  console.log('menuData', menuData)
 
   // ** States
   const [groupOpen, setGroupOpen] = useState([])

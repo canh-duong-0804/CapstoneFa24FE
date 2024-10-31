@@ -123,6 +123,7 @@ const VerticalLayout = props => {
   if (!isMounted) {
     return null
   }
+  console.log('menu', menuData)
   return (
     <div
       className={classnames(

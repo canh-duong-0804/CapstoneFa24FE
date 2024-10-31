@@ -13,6 +13,7 @@ import ExtensionsRoutes from './Extensions'
 import PageLayoutsRoutes from './PageLayouts'
 import AuthenticationRoutes from './Authentication'
 import AdminRoutes from './Admin'
+import TrainerRoutes from './Trainer'
 
 // ** Layouts
 import BlankLayout from '@layouts/BlankLayout'
@@ -43,16 +44,17 @@ const DefaultAdminRoute = '/dashboard/ecomerce'
 // ** Merge Routes
 const Routes = [
   ...AuthenticationRoutes,
-  ...DashboardRoutes,
-  ...AppRoutes,
-  ...PagesRoutes,
-  ...UiElementRoutes,
-  ...ExtensionsRoutes,
-  ...PageLayoutsRoutes,
-  ...FormRoutes,
-  ...TablesRoutes,
+  // ...DashboardRoutes,
+  // ...AppRoutes,
+  // ...PagesRoutes,
+  // ...UiElementRoutes,
+  // ...ExtensionsRoutes,
+  // ...PageLayoutsRoutes,
+  // ...FormRoutes,
+  // ...TablesRoutes,
   ...ChartsRoutes,
-  ...AdminRoutes
+  ...AdminRoutes,
+  ...TrainerRoutes
 ]
 
 const getRouteMeta = route => {
@@ -68,7 +70,6 @@ const getRouteMeta = route => {
 // ** Return Filtered Array of Routes & Paths
 const MergeLayoutRoutes = (layout, defaultLayout) => {
   const LayoutRoutes = []
-
   if (Routes) {
     Routes.filter(route => {
       let isBlank = false

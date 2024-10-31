@@ -17,8 +17,8 @@ import {
 import { UserContext } from './useContext'
 import withReactContent from 'sweetalert2-react-content'
 import Swal from 'sweetalert2'
-import api from '../../../../api/index'
-import { notificationError, notificationSuccess } from '../../../../utility/notification'
+import api from '../../../../../api/index'
+import { notificationError, notificationSuccess } from '../../../../../utility/notification'
 
 const MySwal = withReactContent(Swal)
 
@@ -357,7 +357,7 @@ const Position = () => {
   return (
     <Fragment >
       <Card className='overflow-hidden'>
-        <h2 style={{ fontWeight: '700' }} className='px-2 mt-2'>{t('Quản lý tài khoản')}</h2>
+        <h2 style={{ fontWeight: '700' }} className='px-2 mt-2'>{t('Quản lý bài tập')}</h2>
         <Row>
           <Col xl={12} lg={12} md={12}>
             <CustomHeader

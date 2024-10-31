@@ -25,6 +25,7 @@ const UserView = lazy(() => import('../../views/apps/user/view'))
 const Roles = lazy(() => import('../../views/apps/roles-permissions/roles'))
 const Permissions = lazy(() => import('../../views/apps/roles-permissions/permissions'))
 const Statistic = lazy(() => import('../../views/pages/admin/dashboard/index'))
+const TrainerDashboard = lazy(() => import('../../views/pages/trainer/dashboard/index'))
 
 const AppRoutes = [
   {
@@ -33,6 +34,14 @@ const AppRoutes = [
     meta: {
       action: 'read',
       resource: 'User'
+    }
+  },
+  {
+    path: '/trainer/dashboard',
+    element: <TrainerDashboard />,
+    meta: {
+      action: 'read',
+      resource: 'All'
     }
   },
   {

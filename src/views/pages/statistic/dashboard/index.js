@@ -3,10 +3,9 @@ import { Fragment, useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet'
 import { UserContext } from './useContext'
 import Table from './table'
-import ModalComponent from './modal'
-import ModalImportComponent from './modal-import'
-import ModalDetailComponent from './modal-detail'
+
 const HeadOfDepartmantPage = () => {
+
   const getWindowSize = () => {
     const { innerWidth, innerHeight } = window
     return { innerWidth, innerHeight }
@@ -44,7 +43,7 @@ const HeadOfDepartmantPage = () => {
   return (
     <Fragment>
       <Helmet>
-        <title>{t('Quản lý tài khoản')} </title>
+        <title>{t('Thống kê')} </title>
       </Helmet>
       <UserContext.Provider value={{
         openModal,
@@ -60,11 +59,11 @@ const HeadOfDepartmantPage = () => {
         handleModalDetail,
         openModalDetail
       }} >
+        <h1>Admin Statistic</h1>
 
-        <ModalDetailComponent />
-        <ModalImportComponent />
-        <ModalComponent />
-        <Table />
+        {/*<ModalDetailComponent />
+        <ModalComponent />*/}
+        {/* <Table /> */}
       </UserContext.Provider>
     </Fragment>
   )

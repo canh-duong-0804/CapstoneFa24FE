@@ -43,7 +43,7 @@ const HeadOfDepartmantPage = () => {
   return (
     <Fragment>
       <Helmet>
-        <title>{t('Statistic Management')} </title>
+        <title>{t('Quản lý Admin')} </title>
       </Helmet>
       <UserContext.Provider value={{
         openModal,
@@ -59,10 +59,11 @@ const HeadOfDepartmantPage = () => {
         handleModalDetail,
         openModalDetail
       }} >
+        <h1>Admin Dashboard</h1>
 
         {/*<ModalDetailComponent />
         <ModalComponent />*/}
-        <Table />
+        {/* <Table /> */}
       </UserContext.Provider>
     </Fragment>
   )

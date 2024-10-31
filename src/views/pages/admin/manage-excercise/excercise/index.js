@@ -4,9 +4,8 @@ import { Helmet } from 'react-helmet'
 import { UserContext } from './useContext'
 import Table from './table'
 import ModalComponent from './modal'
-import ModalImportComponent from './modal-import'
 import ModalDetailComponent from './modal-detail'
-const HeadOfDepartmantPage = () => {
+const ExcercisePage = () => {
   const getWindowSize = () => {
     const { innerWidth, innerHeight } = window
     return { innerWidth, innerHeight }
@@ -44,7 +43,7 @@ const HeadOfDepartmantPage = () => {
   return (
     <Fragment>
       <Helmet>
-        <title>{t('Quản lý tài khoản')} </title>
+        <title>{t('Quản lý bài tập')} </title>
       </Helmet>
       <UserContext.Provider value={{
         openModal,
@@ -62,7 +61,6 @@ const HeadOfDepartmantPage = () => {
       }} >
 
         <ModalDetailComponent />
-        <ModalImportComponent />
         <ModalComponent />
         <Table />
       </UserContext.Provider>
@@ -70,4 +68,4 @@ const HeadOfDepartmantPage = () => {
   )
 }
 
-export default HeadOfDepartmantPage
+export default ExcercisePage

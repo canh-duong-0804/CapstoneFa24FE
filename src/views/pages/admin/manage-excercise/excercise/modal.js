@@ -1,4 +1,4 @@
-import { Fragment, useContext} from 'react'
+import { Fragment, useContext, useState} from 'react'
 import {
   Row,
   Col,
@@ -14,18 +14,18 @@ import { useForm, Controller } from 'react-hook-form'
 import '@styles/react/libs/react-select/_react-select.scss'
 import { UserContext } from './useContext'
 import { useTranslation } from 'react-i18next'
-import api from '../../../../api/index'
-import ModalHeader from '../../../../@core/components/modal-header'
+import api from '../../../../../api/index'
+import ModalHeader from '../../../../../@core/components/modal-header'
 import InputPasswordToggle from '@components/input-password-toggle'
 import { selectThemeColors } from '@utils'
 import Select from 'react-select'
-// import { UploadOutlined } from '@ant-design/icons'
-// import { message, Upload, Button as ButtonAntd } from 'antd'
+import { UploadOutlined } from '@ant-design/icons'
+import { message, Upload, Button as ButtonAntd } from 'antd'
 // import Flatpickr from 'react-flatpickr'
-import { notificationError, notificationSuccess } from '../../../../utility/notification'
+import { notificationError, notificationSuccess } from '../../../../../utility/notification'
 const defaultValues = {
-  dob: '2024-10-29T14:10:57.583Z',
-  staffImage: 'image.png'
+  name: ''
+
 }
 
 const ModalComponent = () => {
@@ -50,8 +50,8 @@ const ModalComponent = () => {
     formState: { errors }
   } = useForm({ defaultValues })
 
-  // const [fileList, setFileList] = useState([])
-  // const [uploading, setUploading] = useState(false)
+  const [fileList, setFileList] = useState([])
+  const [uploading, setUploading] = useState(false)
 
   // const [startPicker, setStartPicker] = useState(new Date())
 
@@ -68,29 +68,29 @@ const ModalComponent = () => {
   ]
 
 
-  // const handleUpload = () => {
-  //   const formData = new FormData()
-  //   fileList.forEach((file) => {
-  //     formData.append('files[]', file)
-  //   })
-  //   setUploading(true)
-  //   // You can use any AJAX library you like
-  //   fetch('https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload', {
-  //     method: 'POST',
-  //     body: formData
-  //   })
-  //     .then((res) => res.json())
-  //     .then(() => {
-  //       setFileList([])
-  //       message.success('upload successfully.')
-  //     })
-  //     .catch(() => {
-  //       message.error('upload failed.')
-  //     })
-  //     .finally(() => {
-  //       setUploading(false)
-  //     })
-  // }
+  const handleUpload = () => {
+    const formData = new FormData()
+    fileList.forEach((file) => {
+      formData.append('files[]', file)
+    })
+    setUploading(true)
+    // You can use any AJAX library you like
+    fetch('https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload', {
+      method: 'POST',
+      body: formData
+    })
+      .then((res) => res.json())
+      .then(() => {
+        setFileList([])
+        message.success('upload successfully.')
+      })
+      .catch(() => {
+        message.error('upload failed.')
+      })
+      .finally(() => {
+        setUploading(false)
+      })
+  }
 
 
   const handleFormOpened = () => {
@@ -117,6 +117,8 @@ const ModalComponent = () => {
 
   const onSubmit = data => {
     if (typeModal === "Edit") {
+      // console.log('data', data)
+      // return
       api.staffApi.updateRoleApi(data).then(() => {
         handleLoadTable()
         handleModal()
@@ -126,8 +128,6 @@ const ModalComponent = () => {
         notificationError(t('Đổi vai trò thất bại'))
       })
     } else {
-      // console.log('data', data)
-      // return
       api.staffApi.createAccountApi(data).then(() => {
           handleLoadTable()
           handleModal()
@@ -140,19 +140,19 @@ const ModalComponent = () => {
 
   }
 
-  // const props = {
-  //   onRemove: (file) => {
-  //     const index = fileList.indexOf(file)
-  //     const newFileList = fileList.slice()
-  //     newFileList.splice(index, 1)
-  //     setFileList(newFileList)
-  //   },
-  //   beforeUpload: (file) => {
-  //     setFileList([...fileList, file])
-  //     return false
-  //   },
-  //   fileList
-  // }
+  const props = {
+    onRemove: (file) => {
+      const index = fileList.indexOf(file)
+      const newFileList = fileList.slice()
+      newFileList.splice(index, 1)
+      setFileList(newFileList)
+    },
+    beforeUpload: (file) => {
+      setFileList([...fileList, file])
+      return false
+    },
+    fileList
+  }
 
   const handleCancel = () => {
     handleModalClosed()
@@ -299,22 +299,6 @@ const ModalComponent = () => {
             </div>
             {typeModal !== 'Edit' && (
               <div className='mb-1'>
-                <Label className='form-label' for='add-description'>
-                  Mô tả
-                </Label>
-                <Controller
-                  id='description'
-                  name='description'
-                  control={control}
-                  render={({ field }) => (
-                    <Input type='description' placeholder='Nhập mô tả' invalid={errors.description && true} {...field} />
-                  )}
-                />
-                {errors.description ? <FormFeedback>{errors.description.message}</FormFeedback> : null}
-              </div>
-            )}
-            {/* {typeModal !== 'Edit' && (
-              <div className='mb-1'>
               <Upload {...props}>
                 <ButtonAntd icon={<UploadOutlined />}>Chọn Ảnh</ButtonAntd>
               </Upload>
@@ -330,7 +314,7 @@ const ModalComponent = () => {
                 {uploading ? 'Uploading' : 'Start Upload'}
               </ButtonAntd>
             </div>
-            )} */}
+            )}
             
 
           </ModalBody>

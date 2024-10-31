@@ -1,10 +1,11 @@
-import { Fragment, useState, useContext, useEffect } from 'react'
+import { Fragment, useState, useContext } from 'react'
 import ReactPaginate from 'react-paginate'
 import '@styles/react/libs/react-select/_react-select.scss'
 import '@styles/react/libs/tables/react-dataTable-component.scss'
 import { useTranslation } from 'react-i18next'
-import { Table, Tag, Modal, Space, Tooltip, Checkbox } from 'antd'
-import { EditOutlined, EyeOutlined, SearchOutlined, DeleteOutlined } from "@ant-design/icons"
+import { Table, Tag, Modal, Space, Tooltip } from 'antd'
+import { EditOutlined, CloseCircleOutlined, CheckCircleOutlined, EyeOutlined, SearchOutlined } from "@ant-design/icons"
+import Select from 'react-select'
 import {
   Card,
   Input,
@@ -17,18 +18,20 @@ import {
 import { UserContext } from './useContext'
 import withReactContent from 'sweetalert2-react-content'
 import Swal from 'sweetalert2'
-import api from '../../../../api/index'
-import { notificationError, notificationSuccess } from '../../../../utility/notification'
-
 const MySwal = withReactContent(Swal)
 
+const { role } = "ROLE_EMPLOYEE"
+
+const roleFlag = role === "ROLE_EMPLOYEE" || role === "ROLE_MANAGER" || role === "ROLE_HR" || role === "ROLE_ADMINISTRATIVE"
+
+
 // ** Table Header
-const CustomHeader = ({ handleAdd, handleFilter }) => {
+const CustomHeader = ({ handleAdd, handleFilter, currentStatus, setcurrentStatus }) => {
   const { t } = useTranslation()
-  //const isDefaultOptions = [
-  //  { value: true, label: t('Active') },
-  //  { value: false, label: t('Inactive') }
-  //]
+  const isDefaultOptions = [
+    { value: true, label: t('Active') },
+    { value: false, label: t('Inactive') }
+  ]
   const [searchText, setSearchTerm] = useState('')
 
   return (
@@ -55,7 +58,7 @@ const CustomHeader = ({ handleAdd, handleFilter }) => {
             <SearchOutlined></SearchOutlined>
           </span>
         </InputGroup>
-        {/*<div className='d-flex align-items-center mx-50' style={{ minWidth: "220px", maxWidth: "220px" }}>
+        <div className='d-flex align-items-center mx-50' style={{ minWidth: "220px", maxWidth: "220px" }}>
           <Select
             //theme={selectThemeColors}
             isClearable={true}
@@ -69,11 +72,11 @@ const CustomHeader = ({ handleAdd, handleFilter }) => {
               setcurrentStatus(data)
             }}
           />
-        </div>*/}
+        </div>
       </div>
       <div className='d-flex justify-content-end mx-2'>
-        <Button className='add-new-semester mx-50 my-25' color='primary' onClick={handleAdd}>
-          {t('Thêm')}
+        <Button hidden={roleFlag} className='add-new-user  mx-50  my-25' color='primary' onClick={handleAdd}>
+          {t('Add')}
         </Button>
       </div>
     </div >
@@ -89,24 +92,24 @@ const Position = () => {
     setTypeModal,
     windowSize,
     handleModalDetail,
-    handleLoadTable,
-    loadTable
+    handleLoadTable
   } = useContext(UserContext)
-  const [showCheckbox, setShowCheckbox] = useState(false)
-  const [selectedItems, setSelectedItems] = useState([])
+  const semester = window.localStorage.getItem('semester')
+  const campus = window.localStorage.getItem('campus')
   const [searchTerm, setSearchTerm] = useState('')
   const [data, setData] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
-  //const [rowsPerPage, setRowsPerPage] = useState(10)
-  const [totalItems, setTotalItems] = useState(0)
+  const [rowsPerPage, setRowsPerPage] = useState(10)
+  // const [totalItems, setTotalItems] = useState(0)
   const [currentStatus, setcurrentStatus] = useState()
-  const [loading, setLoading] = useState(false)
   const [tableParams, setTableParams] = useState({
     pagination: {
-      current: 1
+      current: 1,
+      pageSize: role === "ROLE_MANAGER" || role === "ROLE_EMPLOYEE" ? 1000 : 10
+
     }
   })
-  //const userData = getUserData()
+
   const handleTableChange = (pagination, filters, sorter) => {
     setCurrentPage(pagination.current)
     setRowsPerPage(pagination.pageSize)
@@ -120,44 +123,6 @@ const Position = () => {
       setData([])
     }
   }
-  // const getRoleName = (role) => {
-  //   switch (role) {
-  //     case 0:
-  //       return "Admin"
-  //     case 1:
-  //       return "Huấn luyện viên"
-  //     case 2:
-  //       return "Quản lý"
-  //     default:
-  //       return "Unknown"
-  //   }
-  // }
-  const fetchData = () => {
-    setLoading(true)
-    api.staffApi.getAllAccountApi()
-      .then((rs) => {
-        console.log('rs', rs)
-        const updatedData = rs.map(item => ({
-          ...item
-          // role: getRoleName(item.role)
-        }))
-        setData(updatedData)
-        setTotalItems(rs.totalPages)
-        setLoading(false)
-        setTableParams({
-          ...tableParams,
-          pagination: {
-            ...tableParams.pagination,
-            total: rs.data.counta
-          }
-        })
-      }).catch(() => {
-        setLoading(false)
-      })
-  }
-  useEffect(() => {
-    fetchData()
-  }, [JSON.stringify(tableParams), loadTable, searchTerm, currentStatus, currentPage])
 
   const handleAdd = () => {
     setDataItem({})
@@ -165,21 +130,14 @@ const Position = () => {
     handleModal()
   }
 
+
   const handlePagination = page => {
     setCurrentPage(page.selected + 1)
   }
-  const handleToggleCheckbox = (record) => {
-    // Toggle chọn/bỏ chọn một item
-    const newSelectedItems = [...selectedItems]
-    const index = newSelectedItems.findIndex(item => item.key === record.key)
-    if (index !== -1) {
-      newSelectedItems.splice(index, 1) // Bỏ chọn
-    } else {
-      newSelectedItems.push(record) // Chọn
-    }
-    setSelectedItems(newSelectedItems)
-  }
 
+  const handlePerPage = (e) => {
+    setRowsPerPage(e.currentTarget.value)
+  }
 
   let tmi
   const handleFilter = val => {
@@ -191,11 +149,26 @@ const Position = () => {
   }
 
   const CustomPagination = () => {
-
-    const countPage = Number(Math.ceil(totalItems))
+    const countPage = Number(Math.ceil(totalItems / rowsPerPage))
     return (
       <div className='d-flex align-items-center w-100 justify-content-between'>
         <div className='ps-2'>
+          <div className='d-flex align-items-center w-100'>
+            <label htmlFor='rows-per-page'>{t('Show')}</label>
+            <Input
+              className='mx-50'
+              type='select'
+              id='rows-per-page'
+              value={rowsPerPage}
+              onChange={handlePerPage}
+              style={{ width: '5rem' }}
+            >
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+            </Input>
+            <label htmlFor='rows-per-page'>{t('Entries')}</label>
+          </div>
         </div>
         <ReactPaginate
           previousLabel={''}
@@ -218,12 +191,12 @@ const Position = () => {
 
   const handleDelete = (item) => {
     MySwal.fire({
-      title: t("Xác nhận"),
-      text: t("Bạn có muốn xóa tài khoản này không?"),
+      title: t("Confirm"),
+      text: t("Do you want to change status?"),
       allowOutsideClick: false,
       showCancelButton: true,
-      confirmButtonText: t("Xác nhận"),
-      cancelButtonText: t("Hủy"),
+      confirmButtonText: t("Comfirm"),
+      cancelButtonText: t("Cancel"),
       customClass: {
         confirmButton: "btn btn-primary",
         cancelButton: "btn btn-danger ms-1"
@@ -231,16 +204,15 @@ const Position = () => {
       buttonsStyling: false
     }).then(async (result) => {
       if (result.value) {
-        api.staffApi.deleteAccountByIdApi(item.staffId)
-          .then(() => {
-            handleLoadTable()
-            notificationSuccess(t('Xóa tài khoản thành công'))
-            setSelectedItems([])
-            setShowCheckbox(false)
-
-          })
-          .catch(() => {
-            notificationError(t('Xóa tài khoản thất bại'))
+        api.departmentApi.ChangeStatusApi({ id: item.department_id }, campus, semester)
+          .then((rs) => {
+            console.log(rs)
+            if (rs.status.code === "SUCCESS") {
+              handleLoadTable()
+              notificationSuccess(t('Update success'))
+            } else {
+              notificationError(t('Update fail'))
+            }
           })
         // handleDelete(contextMenuClick.rowInfo.rowData.id)
       } else if (result.dismiss === MySwal.DismissReason.cancel) {
@@ -259,105 +231,74 @@ const Position = () => {
     handleModalDetail()
     setTypeModal('Detail')
   }
+
+  const statusObjColor = {
+    true: 'light-success',
+    false: 'light-danger'
+  }
+
   const headerColumns = [
     {
-      title: <div style={{ textAlign: 'left' }}>{'Họ tên'}</div>,
-      dataIndex: 'fullName',
-      key: 'fullName',
-      width: 120,
-      minWidth: 100,
-      maxWidth: 130,
-      align: 'left'
+      title: t('Department code'),
+      dataIndex: 'code',
+      key: 'code',
+      width: 100
     },
     {
-      title: <div style={{ textAlign: 'left' }}>{'Email'}</div>,
-      dataIndex: 'email',
-      key: 'email',
-      width: 120,
-      minWidth: 100,
-      maxWidth: 130
-      // render: (_, record) => (
-      //   <div>
-      //     {record.colectureEmail.map((email, index) => (
-      //       <Fragment key={index}>
-      //         <Tag style={{ marginBottom: '4px', fontSize: '14px' }} key={index}>{email}</Tag>
-      //         <br /> {/* Để mỗi tag nằm trên một dòng */}
-      //       </Fragment>
-      //     ))}
-      //   </div>
-      // )
+      title: t('Department name'),
+      dataIndex: 'name',
+      key: 'name',
+      width: 150
+    },
+
+    {
+      title: t('Description'),
+      dataIndex: 'description',
+      key: 'description',
+
+      width: 150
     },
     {
-      title: <div style={{ textAlign: 'center' }}>{'Số điện thoại'}</div>,
-      dataIndex: 'phoneNumber',
-      key: 'phoneNumber',
+      title: t('Status'),
+      key: 'status',
+      dataIndex: 'status',
       width: 150,
-      minWidth: 50,
-      maxWidth: 200,
-      align: 'center'
+      render: (status) => (
+        <>
+          <Badge className='text-capitalize' color={statusObjColor[status]}>
+            {t(`${status === true ? "Active" : "Inactive"}`)}
+          </Badge>
+        </>
+      )
     },
     {
-      title: <div style={{ textAlign: 'center' }}>{t('Vai trò')}</div>,
-      dataIndex: 'role',
-      key: 'role',
-      width: 100,
-      minWidth: 50,
-      maxWidth: 150,
-      align: 'center',
-      render: (role) => {
-        switch (role) {
-          case 0:
-            return 'Admin'
-          case 1:
-            return 'Huấn luyện viên'
-          case 2:
-            return 'Quản lý'
-          default:
-            return 'Unknown'
-        }
-      }
-    },
-    {
-      title: (
-        <div>
-          <Space size="middle">
-            Action
-          </Space>
-        </div>),
+      title: t('Action'),
       dataIndex: '',
       align: 'center',
       key: 'action',
-      width: 100,
-      minWidth: 50,
-      maxWidth: 200,
+      width: 70,
       render: (_, record) => (
         < Space size="middle" >
+
+          <Tooltip title={t(`Change status`)}>
+            {record.status === true ? <CloseCircleOutlined hidden={roleFlag} onClick={() => { handleDelete(record) }}></CloseCircleOutlined> : <CheckCircleOutlined hidden={roleFlag} onClick={() => { handleDelete(record) }}></CheckCircleOutlined>}
+          </Tooltip>
+          <Tooltip title={t(`Edit`)}>
+            <EditOutlined hidden={roleFlag} onClick={() => { handleEdit(record) }}></EditOutlined>
+          </Tooltip>
           <Tooltip title={t(`View`)}>
             <EyeOutlined onClick={() => { handleDetail(record) }} />
           </Tooltip>
-          <Tooltip title={t(`Edit`)}>
-            <EditOutlined onClick={() => { handleEdit(record) }}></EditOutlined>
-          </Tooltip>
-          <Tooltip title={t(`Delete`)}>
-            <DeleteOutlined onClick={() => { handleDelete(record) }}></DeleteOutlined>
-          </Tooltip>
-          {showCheckbox && (
-            <Checkbox
-              checked={selectedItems.some(item => item.key === record.key)}
-              onChange={() => handleToggleCheckbox(record)}
-            />
-          )}
         </Space >
       )
     }
+
   ]
-  const getRowClassName = (record, index) => {
-    return index % 2 === 0 ? 'even-row' : 'odd-row'
-  }
+  // 'overflow-hidden'
   return (
     <Fragment >
       <Card className='overflow-hidden'>
-        <h2 style={{ fontWeight: '700' }} className='px-2 mt-2'>{t('Quản lý tài khoản')}</h2>
+        <h2 style={{ fontWeight: '700' }} className='px-2 mt-2'>{t('Department')}</h2>
         <Row>
           <Col xl={12} lg={12} md={12}>
             <CustomHeader
@@ -366,24 +307,23 @@ const Position = () => {
               searchTerm={searchTerm}
               handleFilter={handleFilter}
               handleAdd={handleAdd}
+            // handleExport={handleExport}
             />
           </Col>
         </Row>
         <div className='react-dataTable mx-2'>
           <Table
+            // style={{ height: windowSize.innerHeight - 280 }}
             dataSource={data}
             bordered
             columns={headerColumns}
-            pagination={false}
+            pagination={tableParams.pagination}
             onChange={handleTableChange}
-            loading={loading}
             scroll={{
-              x: 'max-content',
+              x: 0,
               y: windowSize.innerHeight - 280
             }}
-            rowClassName={getRowClassName}
           ></Table>
-          <CustomPagination />
         </div>
       </Card>
     </Fragment >
