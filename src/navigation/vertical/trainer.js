@@ -2,7 +2,7 @@
 import { User, Circle } from 'react-feather'
 export default [
     {
-        id: '10',
+        id: '12',
         title: 'Quản lý món ăn',
         icon: <User size={12} />,
         action: 'read',
@@ -10,7 +10,7 @@ export default [
         navLink: '/trainer/manage-food',
         children: [
             {
-                id: '11',
+                id: '13',
                 title: 'Món ăn',
                 icon: <Circle size={12} />,
                 navLink: '/trainer/manage-receipt',
@@ -18,14 +18,14 @@ export default [
                 resource: 'All'
             },
             {
-                id: '12',
+                id: '14',
                 title: 'Công thức nấu ăn',
                 icon: <Circle size={12} />,
                 navLink: '/trainer/manage-receipt',
                 action: 'read',
                 resource: 'All'
             }, {
-                id: '13',
+                id: '15',
                 title: 'Gợi ý kế hoạch',
                 icon: <Circle size={12} />,
                 navLink: '/trainer/manage-meal-plan',
@@ -35,7 +35,7 @@ export default [
         ]
     },
     {
-        id: '14',
+        id: '16',
         title: 'Quản lý bài tập',
         icon: <User size={12} />,
         action: 'read',
@@ -43,25 +43,33 @@ export default [
         navLink: '/trainer/manage-excercise',
         children: [
             {
-              id: '15',
+              id: '17',
               title: 'Bài tập thể dục',
               icon: <Circle size={12} />,
-              navLink: '/admin/manage-excercise',
+              navLink: '/trainer/manage-excercise',
               action: 'read',
               resource: 'All'
             },
             {
-              id: '16',
+                id: '18',
+                title: 'Thể loại bài tập',
+                icon: <Circle size={12} />,
+                navLink: '/trainer/exercise-category',
+                action: 'read',
+                resource: 'All'
+              },
+            {
+              id: '19',
               title: 'Gợi ý bài tập',
               icon: <Circle size={12} />,
-              navLink: '/admin/suggest-excercise',
+              navLink: '/trainer/suggest-excercise',
               action: 'read',
               resource: 'All'
             }, {
-              id: '17',
+              id: '20',
               title: 'Thông tin bài tập',
               icon: <Circle size={12} />,
-              navLink: '/admin/excercise-information',
+              navLink: '/trainer/excercise-information',
               action: 'read',
               resource: 'All'
             }

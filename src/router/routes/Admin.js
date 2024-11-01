@@ -4,7 +4,8 @@ const DashboardAdmin = lazy(() => import('../../views/pages/admin/dashboard/inde
 const Statistic = lazy(() => import('../../views/pages/statistic/dashboard/index'))
 const Account = lazy(() => import('../../views/pages/admin/account/index'))
 const Excercise = lazy(() => import('../../views/pages/admin/manage-excercise/excercise/index'))
-
+const Category = lazy(() => import('../../views/pages/admin/manage-excercise/category/index'))
+const Food = lazy(() => import('../../views/pages/admin/manage-food/food/index'))
 const AdminRoutes = [
   {
     path: '/admin/dashboard',
@@ -33,6 +34,22 @@ const AdminRoutes = [
   {
     path: '/admin/manage-excercise',
     element: <Excercise />,
+    meta: {
+      action: 'read',
+      resource: 'All'
+    }
+  },
+  {
+    path: '/admin/exercise-category',
+    element: <Category />,
+    meta: {
+      action: 'read',
+      resource: 'All'
+    }
+  },
+  {
+    path: '/admin/manage-food',
+    element: <Food />,
     meta: {
       action: 'read',
       resource: 'All'

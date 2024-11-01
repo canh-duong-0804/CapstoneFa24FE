@@ -249,7 +249,7 @@ const Position = () => {
   }
   const headerColumns = [
     {
-      title: <div style={{ textAlign: 'left' }}>{'Tên bài tập'}</div>,
+      title: <div style={{ textAlign: 'left' }}>{'Mã thể loại'}</div>,
       dataIndex: 'exercise_name',
       key: 'exercise_name',
       width: 120,
@@ -258,7 +258,7 @@ const Position = () => {
       align: 'left'
     },
     {
-      title: <div style={{ textAlign: 'left' }}>{'Thể loại bài tập'}</div>,
+      title: <div style={{ textAlign: 'left' }}>{'Tên thể loại'}</div>,
       dataIndex: 'exercise_category_id',
       key: 'exercise_category_id',
       width: 120,
@@ -266,21 +266,12 @@ const Position = () => {
       maxWidth: 130
     },
     {
-      title: <div style={{ textAlign: 'center' }}>{'Cường độ vận động'}</div>,
+      title: <div style={{ textAlign: 'center' }}>{'Trạng thái'}</div>,
       dataIndex: 'exercise_level',
       key: 'exercise_level',
       width: 150,
       minWidth: 50,
       maxWidth: 200,
-      align: 'center'
-    },
-    {
-      title: <div style={{ textAlign: 'center' }}>{t('Ảnh mô tả')}</div>,
-      dataIndex: 'exercise_image',
-      key: 'exercise_image',
-      width: 100,
-      minWidth: 50,
-      maxWidth: 150,
       align: 'center'
     },
     {
@@ -323,7 +314,7 @@ const Position = () => {
   return (
     <Fragment >
       <Card className='overflow-hidden'>
-        <h2 style={{ fontWeight: '700' }} className='px-2 mt-2'>{t('Quản lý bài tập')}</h2>
+        <h2 style={{ fontWeight: '700' }} className='px-2 mt-2'>{t('Thể loại bài tập')}</h2>
         <Row>
           <Col xl={12} lg={12} md={12}>
             <CustomHeader

@@ -67,14 +67,22 @@ export default [
         resource: 'All'
       },
       {
-        id: '7',
+        id: '8',
+        title: 'Thể loại bài tập',
+        icon: <Circle size={12} />,
+        navLink: '/admin/exercise-category',
+        action: 'read',
+        resource: 'All'
+      },
+      {
+        id: '9',
         title: 'Gợi ý bài tập',
         icon: <Circle size={12} />,
         navLink: '/admin/suggest-excercise',
         action: 'read',
         resource: 'All'
       }, {
-        id: '8',
+        id: '10',
         title: 'Thông tin bài tập',
         icon: <Circle size={12} />,
         navLink: '/admin/excercise-information',
@@ -84,7 +92,7 @@ export default [
     ]
   },
   {
-    id: '9',
+    id: '11',
     title: 'Quản lý blog',
     icon: <User size={12} />,
     action: 'read',
