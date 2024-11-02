@@ -1,4 +1,4 @@
-import { Fragment, useContext} from 'react'
+import { Fragment, useContext, useState } from 'react'
 import {
   Row,
   Col,
@@ -23,17 +23,30 @@ import Select from 'react-select'
 // import Flatpickr from 'react-flatpickr'
 import { notificationError, notificationSuccess } from '../../../../../utility/notification'
 const defaultValues = {
-  name: ''
+  foodName: '',
+  portion: '',
+  calories: 0,
+  protein: 0,
+  carbs: 0,
+  fat: 0,
+  vitaminA: 0,
+  vitaminC: 0,
+  vitaminD: 0,
+  vitaminE: 0,
+  vitaminB1: 0,
+  vitaminB2: 0,
+  vitaminB3: 0,
+  createBy: 7,
+  foodImage: 'anh.png',
+  dietname: '',
+  status: true,
+  createDate: new Date()
 
 }
 
 const formSchema = yup.object().shape({
-  exercise_name: yup.string()
-    .required('Tên bài tập là bắt buộc')
-  // name: yup.string()
-  //   .required(`${t("Name VTHH")} ${t("is required")}`)
-  //   .max(150, `${t("Name VTHH")} ${t("less than 150 characters")}`)
-  //   .min(2, `${t("Name VTHH")} ${t("greater than 1 characters")}`)
+  foodName: yup.string()
+    .required('Tên món ăn là bắt buộc')
 })
 
 const ModalComponent = () => {
@@ -56,29 +69,65 @@ const ModalComponent = () => {
     //getValues,
     reset,
     formState: { errors }
-  } = useForm({ defaultValues,  resolver: yupResolver(formSchema) })
+  } = useForm({ defaultValues, resolver: yupResolver(formSchema) })
 
 
-  // const [startPicker, setStartPicker] = useState(new Date())
+  const [optionDiet, setOptionDiet] = useState([])
+  const [caloriesValue, setCaloriesValue] = useState('')
+  const [proteinValue, setProteinValue] = useState('')
+  const [carbsValue, setCarbsValue] = useState('')
+  const [fatValue, setFatValue] = useState('')
+  const [vitaminAValue, setVitaminAValue] = useState('')
+  const [vitaminCValue, setVitaminCValue] = useState('')
+  const [vitaminDValue, setVitaminDValue] = useState('')
+  const [vitaminEValue, setVitaminEValue] = useState('')
+  const [vitaminB1Value, setVitaminB1Value] = useState('')
+  const [vitaminB2Value, setVitaminB2Value] = useState('')
+  const [vitaminB3Value, setVitaminB3Value] = useState('')
 
-  const optionLevel = [
-    { value: 0, label: 'Cường độ nhẹ' },
-    { value: 1, label: 'Cường độ vừa' },
-    { value: 2, label: 'Cường độ cao' }
+
+  const handleChangeCalories = (e) => {
+    const value = e.target.value
+    setCaloriesValue(value)
+  }
+
+  const optionStatus = [
+    { value: true, label: 'Hoạt động' },
+    { value: false, label: 'Không hoạt động' }
 
   ]
 
+
+  const renderData = () => {
+    api.foodApi.getListboxDietApi().then((rs) => {
+      const formattedOptions = rs.map(item => ({
+        value: item.dietId,
+        label: item.dietName
+      }))
+      setOptionDiet(formattedOptions)
+    }).catch(() => {
+
+    })
+
+  }
+
   const handleFormOpened = () => {
+    renderData()
     if (typeModal === "Edit") {
+      console.log('dataItem', dataItem)
       if (dataItem) {
         Object.entries(dataItem).forEach(
           ([name, value]) => {
             setValue(name, value)
+            if (name === 'calories') {
+              setCaloriesValue(value)
+            }
           }
         )
       }
     }
   }
+
 
   const handleModalClosed = () => {
     clearErrors()
@@ -91,21 +140,23 @@ const ModalComponent = () => {
     if (typeModal === "Edit") {
       // console.log('data', data)
       // return
-      api.exerciseApi.updateExerciseApi(data).then(() => {
+      api.foodApi.updateFoodApi(data).then(() => {
         handleLoadTable()
         handleModal()
-        notificationSuccess(t('Sửa bài tập thành công'))
+        notificationSuccess(t('Sửa món ăn thành công'))
 
       }).catch(() => {
-        notificationError(t('Sửa bài tập thất bại'))
+        notificationError(t('Sửa món ăn thất bại'))
       })
     } else {
-      api.exerciseApi.createExerciseApi(data).then(() => {
-          handleLoadTable()
-          handleModal()
-          notificationSuccess(t('Thêm bài tập thành công'))
+      data.createDate = new Date()
+      api.foodApi.createFoodApi(data).then(() => {
+        handleLoadTable()
+        handleModal()
+        handleModalClosed()
+        notificationSuccess(t('Thêm món ăn thành công'))
       }).catch(() => {
-        notificationError(t('Thêm bài tập thất bại'))
+        notificationError(t('Thêm món ăn thất bại'))
       }
       )
     }
@@ -133,134 +184,391 @@ const ModalComponent = () => {
         onClosed={handleModalClosed}
         onOpened={handleFormOpened}
         backdrop='static'
-        className='modal-dialog-centered modal-lg'>
+        className='modal-dialog-centered modal-xl'>
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <ModalHeader typeModal={typeModal} handleModal={handleCancel} title={typeModal === 'Add' ? 'Thêm bài tập' : 'Sửa bài tập'} />
+          <ModalHeader typeModal={typeModal} handleModal={handleCancel} title={typeModal === 'Add' ? 'Thêm món ăn' : 'Sửa món ăn'} />
           <ModalBody>
-              <div className='mb-1'>
-                <Label className='form-label' for='add-exercise_name'>
-                  Tên bài tập
-                </Label>
-                <Controller
-                  id='exercise_name'
-                  name='exercise_name'
-                  control={control}
-                  render={({ field }) => (
-                    <Input autoFocus placeholder='Nhập tên bài tập' invalid={errors.exercise_name && true} {...field} />
-                  )}
-                />
-                {errors.exercise_name ? <FormFeedback>{errors.exercise_name.message}</FormFeedback> : null}
-              </div>
-              <div className='mb-1'>
-                <Label className='form-label' for='add-gender'>
-                  Thể loại bài tập
-                </Label>
-                <Controller
-                  id='gender'
-                  name='gender'
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      theme={selectThemeColors}
-                      className='react-select'
-                      classNamePrefix='select'
-                      options={[]}
-                      isClearable={true}
-                      onChange={(option) => {
-                        field.onChange(option ? option.value : '')
-                      }}
-                      //value={optionGender.find(option => option.value === field.value)}
-                    />
-                  )}
-                />
-                {errors.gender ? <FormFeedback>{errors.gender.message}</FormFeedback> : null}
-              </div>
-              <div className='mb-1'>
-                <Label className='form-label' for='add-exercise_level'>
-                  Cường độ vận động
-                </Label>
-                <Controller
-                  id='exercise_level'
-                  name='exercise_level'
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      theme={selectThemeColors}
-                      className='react-select'
-                      classNamePrefix='select'
-                      options={optionLevel}
-                      isClearable={true}
-                      onChange={(option) => {
-                        field.onChange(option ? option.value : '')
-                      }}
-                      value={optionLevel.find(option => option.value === field.value)}
-                    />
-                  )}
-                />
-                {errors.exercise_level ? <FormFeedback>{errors.exercise_level.message}</FormFeedback> : null}
-              </div>
-             
-              <div className='mb-1'>
-                <Label className='form-label' for='add-phone'>
-                  Reps
-                </Label>
-                <Controller
-                  id='reps'
-                  name='reps'
-                  control={control}
-                  render={({ field }) => (
-                    <Input type='number' placeholder='Nhập reps' invalid={errors.reps && true} {...field} />
-                  )}
-                />
-                {errors.reps ? <FormFeedback>{errors.reps.message}</FormFeedback> : null}
-              </div>
+            <Row>
+              <Col lg={3} md={4} xs={12}>
+                <div className='mb-1'>
+                  <Label className='form-label' for='add-foodName'>
+                    Tên món ăn
+                  </Label>
+                  <Controller
+                    id='foodName'
+                    name='foodName'
+                    control={control}
+                    render={({ field }) => (
+                      <Input autoFocus placeholder='Nhập tên món ăn' invalid={errors.foodName && true} {...field} />
+                    )}
+                  />
+                  {errors.foodName ? <FormFeedback>{errors.foodName.message}</FormFeedback> : null}
+                </div>
+              </Col>
 
-              <div className='mb-1'>
-                <Label className='form-label' for='add-phone'>
-                  Sets
-                </Label>
-                <Controller
-                  id='sets'
-                  name='sets'
-                  control={control}
-                  render={({ field }) => (
-                    <Input type='number' placeholder='Nhập sets' invalid={errors.reps && true} {...field} />
-                  )}
-                />
-                {errors.reps ? <FormFeedback>{errors.reps.message}</FormFeedback> : null}
-              </div>
+              <Col lg={3} md={3} xs={12}>
+                <div className='mb-1'>
+                  <Label className='form-label' for='add-portion'>
+                    Khẩu phần
+                  </Label>
+                  <Controller
+                    id='portion'
+                    name='portion'
+                    control={control}
+                    render={({ field }) => (
+                      <Input autoFocus placeholder='Nhập khẩu phần ăn' invalid={errors.portion && true} {...field} />
+                    )}
+                  />
+                  {errors.portion ? <FormFeedback>{errors.portion.message}</FormFeedback> : null}
+                </div>
+              </Col>
 
-              <div className='mb-1'>
-                <Label className='form-label' for='add-phone'>
-                  Phút
-                </Label>
-                <Controller
-                  id='minutes'
-                  name='minutes'
-                  control={control}
-                  render={({ field }) => (
-                    <Input type='number' placeholder='Nhập phút' invalid={errors.minutes && true} {...field} />
-                  )}
-                />
-                {errors.minutes ? <FormFeedback>{errors.minutes.message}</FormFeedback> : null}
-              </div>
+              <Col lg={3} md={3} xs={12}>
 
-              <div className='mb-1'>
-                <Label className='form-label' for='add-description'>
-                  Nhập mô tả
-                </Label>
-                <Controller
-                  id='description'
-                  name='description'
-                  control={control}
-                  render={({ field }) => (
-                    <Input autoFocus placeholder='Nhập mô tả' invalid={errors.description && true} {...field} />
-                  )}
-                />
-                {errors.description ? <FormFeedback>{errors.description.message}</FormFeedback> : null}
-              </div>
+                <div className='mb-1'>
+                  <Label className='form-label' for='add-dietId'>
+                    Chế độ ăn
+                  </Label>
+                  <Controller
+                    id='dietId'
+                    name='dietId'
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        theme={selectThemeColors}
+                        className='react-select'
+                        classNamePrefix='select'
+                        options={optionDiet}
+                        isClearable={false}
+                        onChange={(option) => {
+                          field.onChange(option ? option.value : '')
+                        }}
+                        value={optionDiet.find(option => option.value === field.value)}
+                      />
+                    )}
+                  />
+                  {errors.dietId ? <FormFeedback>{errors.dietId.message}</FormFeedback> : null}
+                </div>
+              </Col>
+
+              <Col lg={3} md={3} xs={12}>
+                <div className='mb-1'>
+                  <Label className='form-label' for='add-calories'>
+                    Calories
+                  </Label>
+                  <Controller
+                    id='calories'
+                    name='calories'
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        autoFocus
+                        type='number'
+                        placeholder='Nhập Calo'
+                        invalid={errors.calories && true}
+                        value={caloriesValue}
+                        onChange={(e) => {
+                          handleChangeCalories(e)
+                          field.onChange(e)
+                        }}
+                      />
+                    )}
+                  />
+                  {errors.calories ? <FormFeedback>{errors.calories.message}</FormFeedback> : null}
+                </div>
+              </Col>
+            </Row>
+
+            <Row>
+              <Col lg={1} md={1} xs={12}>
+                <div className='mb-1'>
+                  <Label className='form-label' for='add-protein'>
+                    Protein
+                  </Label>
+                  <Controller
+                    id='protein'
+                    name='protein'
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        autoFocus
+                        type='number'
+                        invalid={errors.protein && true}
+                        value={proteinValue}
+                        onChange={(e) => {
+                          setProteinValue(e.target.value)
+                          field.onChange(e) // Gọi onChange từ Controller
+                        }}
+                      />
+                    )}
+                  />
+                  {errors.protein ? <FormFeedback>{errors.protein.message}</FormFeedback> : null}
+                </div>
+              </Col>
+              <Col lg={1} md={1} xs={12}>
+                <div className='mb-1'>
+                  <Label className='form-label' for='add-carbs'>
+                    Carbs
+                  </Label>
+                  <Controller
+                    id='carbs'
+                    name='carbs'
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        autoFocus
+                        invalid={errors.carbs && true}
+                        value={carbsValue}
+                        onChange={(e) => {
+                          setCarbsValue(e.target.value)
+                          field.onChange(e)
+                        }}
+                      />
+                    )}
+                  />
+                  {errors.carbs ? <FormFeedback>{errors.carbs.message}</FormFeedback> : null}
+                </div>
+              </Col>
+
+              <Col lg={1} md={1} xs={12}>
+                <div className='mb-1'>
+                  <Label className='form-label' for='add-fat'>
+                    Fat
+                  </Label>
+                  <Controller
+                    id='fat'
+                    name='fat'
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        autoFocus
+                        type='number'
+                        invalid={errors.fat && true}
+                        value={fatValue}
+                        onChange={(e) => {
+                          setFatValue(e.target.value)
+                          field.onChange(e)
+                        }}
+                      />
+                    )}
+                  />
+                  {errors.fat ? <FormFeedback>{errors.fat.message}</FormFeedback> : null}
+                </div>
+              </Col>
+
+              <Col lg={1} md={1} xs={12}>
+                <div className='mb-1'>
+                  <Label className='form-label' for='add-vitaminA'>
+                    Vitamin A
+                  </Label>
+                  <Controller
+                    id='vitaminA'
+                    name='vitaminA'
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        autoFocus
+                        type='number'
+                        invalid={errors.vitaminA && true}
+                        value={vitaminAValue}
+                        onChange={(e) => {
+                          setVitaminAValue(e.target.value)
+                          field.onChange(e)
+                        }}
+                      />
+                    )}
+                  />
+                  {errors.vitaminA ? <FormFeedback>{errors.vitaminA.message}</FormFeedback> : null}
+                </div>
+              </Col>
+
+              <Col lg={1} md={1} xs={12}>
+                <div className='mb-1'>
+                  <Label className='form-label' for='add-vitaminC'>
+                    Vitamin C
+                  </Label>
+                  <Controller
+                    id='vitaminC'
+                    name='vitaminC'
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        autoFocus
+                        type='number'
+                        invalid={errors.vitaminC && true}
+                        value={vitaminCValue}
+                        onChange={(e) => {
+                          setVitaminCValue(e.target.value)
+                          field.onChange(e)
+                        }}
+                      />
+                    )}
+                  />
+                  {errors.vitaminC ? <FormFeedback>{errors.vitaminC.message}</FormFeedback> : null}
+                </div>
+              </Col>
+
+              <Col lg={1} md={1} xs={12}>
+                <div className='mb-1'>
+                  <Label className='form-label' for='add-vitaminD'>
+                    Vitamin D
+                  </Label>
+                  <Controller
+                    id='vitaminD'
+                    name='vitaminD'
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        autoFocus
+                        type='number'
+                        invalid={errors.vitaminD && true}
+                        value={vitaminDValue}
+                        onChange={(e) => {
+                          setVitaminDValue(e.target.value)
+                          field.onChange(e)
+                        }}
+                      />
+                    )}
+                  />
+                  {errors.vitaminD ? <FormFeedback>{errors.vitaminD.message}</FormFeedback> : null}
+                </div>
+              </Col>
+
+              <Col lg={1} md={1} xs={12}>
+                <div className='mb-1'>
+                  <Label className='form-label' for='add-vitaminE'>
+                    Vitamin E
+                  </Label>
+                  <Controller
+                    id='vitaminE'
+                    name='vitaminE'
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        autoFocus
+                        type='number'
+                        invalid={errors.vitaminE && true}
+                        value={vitaminEValue}
+                        onChange={(e) => {
+                          setVitaminEValue(e.target.value)
+                          field.onChange(e) // Gọi onChange từ Controller
+                        }}
+                      />
+                    )}
+                  />
+                  {errors.vitaminE ? <FormFeedback>{errors.vitaminE.message}</FormFeedback> : null}
+                </div>
+              </Col>
+
+              <Col lg={1} md={1} xs={12}>
+                <div className='mb-1'>
+                  <Label className='form-label' for='add-vitaminB1'>
+                    Vitamin B1
+                  </Label>
+                  <Controller
+                    id='vitaminB1'
+                    name='vitaminB1'
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        autoFocus
+                        type='number'
+                        invalid={errors.vitaminB1 && true}
+                        value={vitaminB1Value}
+                        onChange={(e) => {
+                          setVitaminB1Value(e.target.value)
+                          field.onChange(e)
+                        }}
+                      />
+                    )}
+                  />
+                  {errors.vitaminB1 ? <FormFeedback>{errors.vitaminB1.message}</FormFeedback> : null}
+                </div>
+              </Col>
+
+              <Col lg={1} md={1} xs={12}>
+                <div className='mb-1'>
+                  <Label className='form-label' for='add-vitaminB2'>
+                    Vitamin B2
+                  </Label>
+                  <Controller
+                    id='vitaminB2'
+                    name='vitaminB2'
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        autoFocus
+                        type='number'
+                        invalid={errors.vitaminB2 && true}
+                        value={vitaminB2Value}
+                        onChange={(e) => {
+                          setVitaminB2Value(e.target.value)
+                          field.onChange(e)
+                        }}
+                      />
+                    )}
+                  />
+                  {errors.vitaminB2 ? <FormFeedback>{errors.vitaminB2.message}</FormFeedback> : null}
+                </div>
+              </Col>
+
+              <Col lg={1} md={1} xs={12}>
+                <div className='mb-1'>
+                  <Label className='form-label' for='add-vitaminB3'>
+                    Vitamin B3
+                  </Label>
+                  <Controller
+                    id='vitaminB3'
+                    name='vitaminB3'
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        autoFocus
+                        type='number'
+                        invalid={errors.vitaminB3 && true}
+                        value={vitaminB3Value}
+                        onChange={(e) => {
+                          setVitaminB3Value(e.target.value)
+                          field.onChange(e) // Gọi onChange từ Controller
+                        }}
+                      />
+                    )}
+                  />
+                  {errors.vitaminB3 ? <FormFeedback>{errors.vitaminB3.message}</FormFeedback> : null}
+                </div>
+              </Col>
+
+              <Col lg={2} md={2} xs={12}>
+
+                <div className='mb-1'>
+                  <Label className='form-label' for='add-status'>
+                    Trạng thái
+                  </Label>
+                  <Controller
+                    id='status'
+                    name='status'
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        theme={selectThemeColors}
+                        className='react-select'
+                        classNamePrefix='select'
+                        options={optionStatus}
+                        isClearable={false}
+                        onChange={(option) => {
+                          field.onChange(option ? option.value : '')
+                        }}
+                        value={optionStatus.find(option => option.value === field.value)}
+                      />
+                    )}
+                  />
+                  {errors.status ? <FormFeedback>{errors.status.message}</FormFeedback> : null}
+                </div>
+              </Col>
+            </Row>
+
           </ModalBody>
           <div
             className='d-flex justify-content-end p-1'

@@ -134,14 +134,9 @@ const Position = () => {
   // }
   const fetchData = () => {
     setLoading(true)
-    api.staffApi.getAllAccountApi()
+    api.staffApi.getAllAccountApi(currentPage)
       .then((rs) => {
-        console.log('rs', rs)
-        const updatedData = rs.map(item => ({
-          ...item
-          // role: getRoleName(item.role)
-        }))
-        setData(updatedData)
+        setData(rs.staffs)
         setTotalItems(rs.totalPages)
         setLoading(false)
         setTableParams({

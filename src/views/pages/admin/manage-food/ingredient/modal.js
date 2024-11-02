@@ -16,25 +16,18 @@ import { UserContext } from './useContext'
 import { useTranslation } from 'react-i18next'
 import api from '../../../../../api/index'
 import ModalHeader from '../../../../../@core/components/modal-header'
-import { selectThemeColors } from '@utils'
 import * as yup from "yup"
 import { yupResolver } from '@hookform/resolvers/yup'
-import Select from 'react-select'
 // import Flatpickr from 'react-flatpickr'
 import { notificationError, notificationSuccess } from '../../../../../utility/notification'
 const defaultValues = {
-  name: '',
-  status: 0
+  name: ''
 
 }
 
 const formSchema = yup.object().shape({
-  exerciseCategoryName: yup.string()
-    .required('Tên bài tập là bắt buộc')
-  // name: yup.string()
-  //   .required(`${t("Name VTHH")} ${t("is required")}`)
-  //   .max(150, `${t("Name VTHH")} ${t("less than 150 characters")}`)
-  //   .min(2, `${t("Name VTHH")} ${t("greater than 1 characters")}`)
+  name: yup.string()
+    .required('Tên nguyên liệu là bắt buộc')
 })
 
 const ModalComponent = () => {
@@ -60,15 +53,6 @@ const ModalComponent = () => {
   } = useForm({ defaultValues,  resolver: yupResolver(formSchema) })
 
 
-  // const [startPicker, setStartPicker] = useState(new Date())
-
-  const optionStatus = [
-    { value: 0, label: 'Sử dụng' },
-    { value: 1, label: 'Không sử dụng'}
-    
-
-  ]
-
   const handleFormOpened = () => {
     if (typeModal === "Edit") {
       if (dataItem) {
@@ -90,23 +74,21 @@ const ModalComponent = () => {
 
   const onSubmit = data => {
     if (typeModal === "Edit") {
-      // console.log('data', data)
-      // return
-      api.categoryExerciseApi.updateCategoryExerciseApi(data).then(() => {
+      api.ingredientApi.updateIngredientApi(data).then(() => {
         handleLoadTable()
         handleModal()
-        notificationSuccess(t('Sửa thể loại bài tập thành công'))
+        notificationSuccess(t('Sửa nguyên liệu thành công'))
 
       }).catch(() => {
-        notificationError(t('Sửa thể loại bài tập thất bại'))
+        notificationError(t('Sửa nguyên liệu thất bại'))
       })
     } else {
-      api.categoryExerciseApi.createCategoryExerciseApi(data).then(() => {
+      api.ingredientApi.createIngredientApi(data).then(() => {
           handleLoadTable()
           handleModal()
-          notificationSuccess(t('Thêm thể loại bài tập thành công'))
+          notificationSuccess(t('Thêm nguyên liệu thành công'))
       }).catch(() => {
-        notificationError(t('Thêm thể loại bài tập thất bại'))
+        notificationError(t('Thêm nguyên liệu thất bại'))
       }
       )
     }
@@ -136,49 +118,22 @@ const ModalComponent = () => {
         backdrop='static'
         className='modal-dialog-centered modal-lg'>
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <ModalHeader typeModal={typeModal} handleModal={handleCancel} title={typeModal === 'Add' ? 'Thêm thể loại' : 'Sửa thể loại'} />
+          <ModalHeader typeModal={typeModal} handleModal={handleCancel} title={typeModal === 'Add' ? 'Thêm nguyên liệu' : 'Sửa nguyên liệu'} />
           <ModalBody>
-
               <div className='mb-1'>
-                <Label className='form-label' for='add-exerciseCategoryName'>
-                  Tên thể loại
+                <Label className='form-label' for='add-name'>
+                  Tên nguyên liệu
                 </Label>
                 <Controller
-                  id='exerciseCategoryName'
-                  name='exerciseCategoryName'
+                  id='name'
+                  name='name'
                   control={control}
                   render={({ field }) => (
-                    <Input autoFocus placeholder='Nhập tên bài tập' invalid={errors.exerciseCategoryName && true} {...field} />
+                    <Input autoFocus placeholder='Nhập tên nguyên liệu' invalid={errors.name && true} {...field} />
                   )}
                 />
-                {errors.exerciseCategoryName ? <FormFeedback>{errors.exerciseCategoryName.message}</FormFeedback> : null}
+                {errors.name ? <FormFeedback>{errors.name.message}</FormFeedback> : null}
               </div>
-              <div className='mb-1'>
-                <Label className='form-label' for='add-status'>
-                  Trạng thái
-                </Label>
-                <Controller
-                  id='status'
-                  name='status'
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      theme={selectThemeColors}
-                      className='react-select'
-                      classNamePrefix='select'
-                      options={optionStatus}
-                      isClearable={false}
-                      onChange={(option) => {
-                        field.onChange(option ? option.value : '')
-                      }}
-                      value={optionStatus.find(option => option.value === field.value)}
-                    />
-                  )}
-                />
-                {errors.status ? <FormFeedback>{errors.status.message}</FormFeedback> : null}
-              </div>
-             
           </ModalBody>
           <div
             className='d-flex justify-content-end p-1'

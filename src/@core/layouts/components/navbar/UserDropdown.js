@@ -21,6 +21,7 @@ const UserDropdown = () => {
       setUserData(JSON.parse(localStorage.getItem('userData')))
     }
   }, [])
+  console.log('userData', userData)
 
   //** Vars
   const userAvatar = (userData && userData.avatar) || defaultAvatar
@@ -29,7 +30,7 @@ const UserDropdown = () => {
     <UncontrolledDropdown tag='li' className='dropdown-user nav-item'>
       <DropdownToggle href='/' tag='a' className='nav-link dropdown-user-link' onClick={e => e.preventDefault()}>
         <div className='user-nav d-sm-flex d-none'>
-          <span className='user-name fw-bold'>{(userData && userData['username']) || 'Admin'}</span>
+          <span className='user-name fw-bold'>{(userData && userData['username']) || ''}</span>
           <span className='user-status'>{userData && userData.role === 0 ? 'Admin' : userData && userData.role === 1 ? 'Huấn luyện viên' : userData && userData.role === 2 ? 'Quản lý' : 'Thành viên'}
           </span>
         </div>

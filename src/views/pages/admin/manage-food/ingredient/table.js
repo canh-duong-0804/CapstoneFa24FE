@@ -123,7 +123,7 @@ const Position = () => {
  
   const fetchData = () => {
     setLoading(true)
-    api.categoryExerciseApi.getAllCategoryExerciseApi()
+    api.ingredientApi.getAllIngredientApi()
       .then((rs) => {
         setData(rs)
         setTotalItems(rs.totalPages)
@@ -203,7 +203,7 @@ const Position = () => {
   const handleDelete = (item) => {
     MySwal.fire({
       title: t("Xác nhận"),
-      text: t("Bạn có muốn xóa thể loại bài tập này không?"),
+      text: t("Bạn có muốn xóa nguyên liệu này không?"),
       allowOutsideClick: false,
       showCancelButton: true,
       confirmButtonText: t("Xác nhận"),
@@ -215,16 +215,16 @@ const Position = () => {
       buttonsStyling: false
     }).then(async (result) => {
       if (result.value) {
-        api.categoryExerciseApi.deleteCategoryExerciseByIdApi(item.exerciseCategoryId)
+        api.foodApi.deleteFoodByIdApi(item.staffId)
           .then(() => {
             handleLoadTable()
-            notificationSuccess(t('Xóa thể loại bài tập thành công'))
+            notificationSuccess(t('Xóa nguyên liệu thành công'))
             setSelectedItems([])
             setShowCheckbox(false)
 
           })
           .catch(() => {
-            notificationError(t('Xóa thể loại bài tập thất bại'))
+            notificationError(t('Xóa nguyên liệu thất bại'))
           })
         // handleDelete(contextMenuClick.rowInfo.rowData.id)
       } else if (result.dismiss === MySwal.DismissReason.cancel) {
@@ -243,31 +243,25 @@ const Position = () => {
     handleModalDetail()
     setTypeModal('Detail')
   }
+
   const headerColumns = [
     {
-      title: <div style={{ textAlign: 'left' }}>{'Tên thể loại'}</div>,
-      dataIndex: 'exerciseCategoryName',
-      key: 'exerciseCategoryName',
+      title: <div style={{ textAlign: 'left' }}>{'Id'}</div>,
+      dataIndex: 'ingredientId',
+      key: 'ingredientId',
       width: 120,
       minWidth: 100,
-      maxWidth: 130
+      maxWidth: 130,
+      align: 'left'
     },
     {
-      title: <div style={{ textAlign: 'center' }}>{'Trạng thái'}</div>,
-      dataIndex: 'status',
-      key: 'status',
-      width: 150,
-      minWidth: 50,
-      maxWidth: 200,
-      align: 'center',
-      render: (status) => {
-        switch (status) {
-          case true:
-            return 'Hoạt động'
-          default:
-            return 'Không hoạt động'
-        }
-      }
+      title: <div style={{ textAlign: 'center' }}>{'Tên nguyên liệu'}</div>,
+      dataIndex: 'name',
+      key: 'name',
+      width: 120,
+      minWidth: 100,
+      maxWidth: 130,
+      align: 'center'
     },
     {
       title: (
@@ -309,7 +303,7 @@ const Position = () => {
   return (
     <Fragment >
       <Card className='overflow-hidden'>
-        <h2 style={{ fontWeight: '700' }} className='px-2 mt-2'>{t('Thể loại bài tập')}</h2>
+        <h2 style={{ fontWeight: '700' }} className='px-2 mt-2'>{t('Quản lý nguyên liệu')}</h2>
         <Row>
           <Col xl={12} lg={12} md={12}>
             <CustomHeader

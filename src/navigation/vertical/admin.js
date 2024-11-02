@@ -37,11 +37,20 @@ export default [
         id: '5',
         title: 'Công thức nấu ăn',
         icon: <Circle size={12} />,
-        navLink: '/admin/manage-receipt',
+        navLink: '/admin/manage-recipe',
         action: 'read',
         resource: 'All'
-      }, {
-        id: '5',
+      },
+      {
+        id: '6',
+        title: 'Nguyên liệu',
+        icon: <Circle size={12} />,
+        navLink: '/admin/manage-ingredient',
+        action: 'read',
+        resource: 'All'
+      },
+      {
+        id: '7',
         title: 'Gợi ý kế hoạch',
         icon: <Circle size={12} />,
         navLink: '/admin/manage-meal-plan',
@@ -51,7 +60,7 @@ export default [
     ]
   },
   {
-    id: '6',
+    id: '8',
     title: 'Quản lý bài tập',
     icon: <User size={12} />,
     action: 'read',
@@ -59,7 +68,7 @@ export default [
     navLink: '/admin/manage-excercise',
     children: [
       {
-        id: '7',
+        id: '9',
         title: 'Bài tập thể dục',
         icon: <Circle size={12} />,
         navLink: '/admin/manage-excercise',
@@ -67,7 +76,7 @@ export default [
         resource: 'All'
       },
       {
-        id: '8',
+        id: '10',
         title: 'Thể loại bài tập',
         icon: <Circle size={12} />,
         navLink: '/admin/exercise-category',
@@ -75,14 +84,14 @@ export default [
         resource: 'All'
       },
       {
-        id: '9',
+        id: '11',
         title: 'Gợi ý bài tập',
         icon: <Circle size={12} />,
         navLink: '/admin/suggest-excercise',
         action: 'read',
         resource: 'All'
       }, {
-        id: '10',
+        id: '12',
         title: 'Thông tin bài tập',
         icon: <Circle size={12} />,
         navLink: '/admin/excercise-information',
@@ -92,7 +101,7 @@ export default [
     ]
   },
   {
-    id: '11',
+    id: '13',
     title: 'Quản lý blog',
     icon: <User size={12} />,
     action: 'read',

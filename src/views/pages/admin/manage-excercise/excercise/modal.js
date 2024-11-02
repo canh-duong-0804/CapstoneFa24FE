@@ -1,4 +1,4 @@
-import { Fragment, useContext} from 'react'
+import { Fragment, useContext, useState } from 'react'
 import {
   Row,
   Col,
@@ -22,13 +22,15 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import Select from 'react-select'
 // import Flatpickr from 'react-flatpickr'
 import { notificationError, notificationSuccess } from '../../../../../utility/notification'
+
 const defaultValues = {
-  name: ''
+  exerciseImage: 'anh.png',
+  caloriesPerHour: 0
 
 }
 
 const formSchema = yup.object().shape({
-  exercise_name: yup.string()
+  exerciseName: yup.string()
     .required('Tên bài tập là bắt buộc')
   // name: yup.string()
   //   .required(`${t("Name VTHH")} ${t("is required")}`)
@@ -56,10 +58,10 @@ const ModalComponent = () => {
     //getValues,
     reset,
     formState: { errors }
-  } = useForm({ defaultValues,  resolver: yupResolver(formSchema) })
+  } = useForm({ defaultValues, resolver: yupResolver(formSchema) })
 
 
-  // const [startPicker, setStartPicker] = useState(new Date())
+  const [optionCategory, setOptionCategory] = useState([])
 
   const optionLevel = [
     { value: 0, label: 'Cường độ nhẹ' },
@@ -68,7 +70,16 @@ const ModalComponent = () => {
 
   ]
 
+  const renderData = () => {
+    api.categoryExerciseApi.getListBoxCategoryExerciseApi().then((rs) => {
+      setOptionCategory(rs)
+    }).catch(() => {
+
+    })
+  }
+
   const handleFormOpened = () => {
+    renderData()
     if (typeModal === "Edit") {
       if (dataItem) {
         Object.entries(dataItem).forEach(
@@ -89,8 +100,7 @@ const ModalComponent = () => {
 
   const onSubmit = data => {
     if (typeModal === "Edit") {
-      // console.log('data', data)
-      // return
+
       api.exerciseApi.updateExerciseApi(data).then(() => {
         handleLoadTable()
         handleModal()
@@ -100,10 +110,12 @@ const ModalComponent = () => {
         notificationError(t('Sửa bài tập thất bại'))
       })
     } else {
+      // console.log('data', data)
+      // return
       api.exerciseApi.createExerciseApi(data).then(() => {
-          handleLoadTable()
-          handleModal()
-          notificationSuccess(t('Thêm bài tập thành công'))
+        handleLoadTable()
+        handleModal()
+        notificationSuccess(t('Thêm bài tập thành công'))
       }).catch(() => {
         notificationError(t('Thêm bài tập thất bại'))
       }
@@ -137,130 +149,130 @@ const ModalComponent = () => {
         <Form onSubmit={handleSubmit(onSubmit)}>
           <ModalHeader typeModal={typeModal} handleModal={handleCancel} title={typeModal === 'Add' ? 'Thêm bài tập' : 'Sửa bài tập'} />
           <ModalBody>
-              <div className='mb-1'>
-                <Label className='form-label' for='add-exercise_name'>
-                  Tên bài tập
-                </Label>
-                <Controller
-                  id='exercise_name'
-                  name='exercise_name'
-                  control={control}
-                  render={({ field }) => (
-                    <Input autoFocus placeholder='Nhập tên bài tập' invalid={errors.exercise_name && true} {...field} />
-                  )}
-                />
-                {errors.exercise_name ? <FormFeedback>{errors.exercise_name.message}</FormFeedback> : null}
-              </div>
-              <div className='mb-1'>
-                <Label className='form-label' for='add-gender'>
-                  Thể loại bài tập
-                </Label>
-                <Controller
-                  id='gender'
-                  name='gender'
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      theme={selectThemeColors}
-                      className='react-select'
-                      classNamePrefix='select'
-                      options={[]}
-                      isClearable={true}
-                      onChange={(option) => {
-                        field.onChange(option ? option.value : '')
-                      }}
-                      //value={optionGender.find(option => option.value === field.value)}
-                    />
-                  )}
-                />
-                {errors.gender ? <FormFeedback>{errors.gender.message}</FormFeedback> : null}
-              </div>
-              <div className='mb-1'>
-                <Label className='form-label' for='add-exercise_level'>
-                  Cường độ vận động
-                </Label>
-                <Controller
-                  id='exercise_level'
-                  name='exercise_level'
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      theme={selectThemeColors}
-                      className='react-select'
-                      classNamePrefix='select'
-                      options={optionLevel}
-                      isClearable={true}
-                      onChange={(option) => {
-                        field.onChange(option ? option.value : '')
-                      }}
-                      value={optionLevel.find(option => option.value === field.value)}
-                    />
-                  )}
-                />
-                {errors.exercise_level ? <FormFeedback>{errors.exercise_level.message}</FormFeedback> : null}
-              </div>
-             
-              <div className='mb-1'>
-                <Label className='form-label' for='add-phone'>
-                  Reps
-                </Label>
-                <Controller
-                  id='reps'
-                  name='reps'
-                  control={control}
-                  render={({ field }) => (
-                    <Input type='number' placeholder='Nhập reps' invalid={errors.reps && true} {...field} />
-                  )}
-                />
-                {errors.reps ? <FormFeedback>{errors.reps.message}</FormFeedback> : null}
-              </div>
+            <div className='mb-1'>
+              <Label className='form-label' for='add-exerciseName'>
+                Tên bài tập
+              </Label>
+              <Controller
+                id='exerciseName'
+                name='exerciseName'
+                control={control}
+                render={({ field }) => (
+                  <Input autoFocus placeholder='Nhập tên bài tập' invalid={errors.exerciseName && true} {...field} />
+                )}
+              />
+              {errors.exerciseName ? <FormFeedback>{errors.exerciseName.message}</FormFeedback> : null}
+            </div>
+            <div className='mb-1'>
+              <Label className='form-label' for='add-category'>
+                Thể loại bài tập
+              </Label>
+              <Controller
+                id='exerciseCategoryId'
+                name='exerciseCategoryId'
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    theme={selectThemeColors}
+                    className='react-select'
+                    classNamePrefix='select'
+                    options={optionCategory}
+                    isClearable={true}
+                    onChange={(option) => {
+                      field.onChange(option ? option.value : '')
+                    }}
+                    value={optionCategory.find(option => option.value === field.value)}
+                  />
+                )}
+              />
+              {errors.exerciseCategoryId ? <FormFeedback>{errors.exerciseCategoryId.message}</FormFeedback> : null}
+            </div>
+            <div className='mb-1'>
+              <Label className='form-label' for='add-exerciseLevel'>
+                Cường độ vận động
+              </Label>
+              <Controller
+                id='exerciseLevel'
+                name='exerciseLevel'
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    theme={selectThemeColors}
+                    className='react-select'
+                    classNamePrefix='select'
+                    options={optionLevel}
+                    isClearable={true}
+                    onChange={(option) => {
+                      field.onChange(option ? option.value : '')
+                    }}
+                    value={optionLevel.find(option => option.value === field.value)}
+                  />
+                )}
+              />
+              {errors.exerciseLevel ? <FormFeedback>{errors.exerciseLevel.message}</FormFeedback> : null}
+            </div>
 
-              <div className='mb-1'>
-                <Label className='form-label' for='add-phone'>
-                  Sets
-                </Label>
-                <Controller
-                  id='sets'
-                  name='sets'
-                  control={control}
-                  render={({ field }) => (
-                    <Input type='number' placeholder='Nhập sets' invalid={errors.reps && true} {...field} />
-                  )}
-                />
-                {errors.reps ? <FormFeedback>{errors.reps.message}</FormFeedback> : null}
-              </div>
+            <div className='mb-1'>
+              <Label className='form-label' for='add-reps'>
+                Reps
+              </Label>
+              <Controller
+                id='reps'
+                name='reps'
+                control={control}
+                render={({ field }) => (
+                  <Input type='number' placeholder='Nhập reps' invalid={errors.reps && true} {...field} />
+                )}
+              />
+              {errors.reps ? <FormFeedback>{errors.reps.message}</FormFeedback> : null}
+            </div>
 
-              <div className='mb-1'>
-                <Label className='form-label' for='add-phone'>
-                  Phút
-                </Label>
-                <Controller
-                  id='minutes'
-                  name='minutes'
-                  control={control}
-                  render={({ field }) => (
-                    <Input type='number' placeholder='Nhập phút' invalid={errors.minutes && true} {...field} />
-                  )}
-                />
-                {errors.minutes ? <FormFeedback>{errors.minutes.message}</FormFeedback> : null}
-              </div>
+            <div className='mb-1'>
+              <Label className='form-label' for='add-phone'>
+                Sets
+              </Label>
+              <Controller
+                id='sets'
+                name='sets'
+                control={control}
+                render={({ field }) => (
+                  <Input type='number' placeholder='Nhập sets' invalid={errors.reps && true} {...field} />
+                )}
+              />
+              {errors.reps ? <FormFeedback>{errors.reps.message}</FormFeedback> : null}
+            </div>
 
-              <div className='mb-1'>
-                <Label className='form-label' for='add-description'>
-                  Nhập mô tả
-                </Label>
-                <Controller
-                  id='description'
-                  name='description'
-                  control={control}
-                  render={({ field }) => (
-                    <Input autoFocus placeholder='Nhập mô tả' invalid={errors.description && true} {...field} />
-                  )}
-                />
-                {errors.description ? <FormFeedback>{errors.description.message}</FormFeedback> : null}
-              </div>
+            <div className='mb-1'>
+              <Label className='form-label' for='add-phone'>
+                Phút
+              </Label>
+              <Controller
+                id='minutes'
+                name='minutes'
+                control={control}
+                render={({ field }) => (
+                  <Input type='number' placeholder='Nhập phút' invalid={errors.minutes && true} {...field} />
+                )}
+              />
+              {errors.minutes ? <FormFeedback>{errors.minutes.message}</FormFeedback> : null}
+            </div>
+
+            <div className='mb-1'>
+              <Label className='form-label' for='add-description'>
+                Nhập mô tả
+              </Label>
+              <Controller
+                id='description'
+                name='description'
+                control={control}
+                render={({ field }) => (
+                  <Input autoFocus placeholder='Nhập mô tả' invalid={errors.description && true} {...field} />
+                )}
+              />
+              {errors.description ? <FormFeedback>{errors.description.message}</FormFeedback> : null}
+            </div>
           </ModalBody>
           <div
             className='d-flex justify-content-end p-1'

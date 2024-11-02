@@ -1,4 +1,4 @@
-import { Fragment, useContext} from 'react'
+import { Fragment, useContext } from 'react'
 import {
   Row,
   Col,
@@ -19,6 +19,8 @@ import ModalHeader from '../../../../@core/components/modal-header'
 import InputPasswordToggle from '@components/input-password-toggle'
 import { selectThemeColors } from '@utils'
 import Select from 'react-select'
+import * as yup from "yup"
+import { yupResolver } from '@hookform/resolvers/yup'
 // import { UploadOutlined } from '@ant-design/icons'
 // import { message, Upload, Button as ButtonAntd } from 'antd'
 // import Flatpickr from 'react-flatpickr'
@@ -27,6 +29,23 @@ const defaultValues = {
   dob: '2024-10-29T14:10:57.583Z',
   staffImage: 'image.png'
 }
+
+const formSchema = yup.object().shape({
+  fullName: yup.string()
+    .required('Họ tên là bắt buộc'),
+  password: yup.string()
+    .required('Mật khẩu là bắt buộc'),
+  email: yup
+    .string()
+    .email('Email không đúng định dạng')
+    .nullable()
+    .max(250, 'Email không vượt quá 250 ký tự'),
+  phoneNumber: yup
+    .string()
+    .matches(/^0\d{10}$|^0\d{9}$|^$/, 'Số điện thoại không đúng định dạng')
+    .nullable()
+    .max(11, 'Số điện thoại không quá 11 ký tự')
+})
 
 const ModalComponent = () => {
   const {
@@ -48,7 +67,7 @@ const ModalComponent = () => {
     //getValues,
     reset,
     formState: { errors }
-  } = useForm({ defaultValues })
+  } = useForm({ defaultValues, resolver: yupResolver(formSchema) })
 
   // const [fileList, setFileList] = useState([])
   // const [uploading, setUploading] = useState(false)
@@ -126,12 +145,10 @@ const ModalComponent = () => {
         notificationError(t('Đổi vai trò thất bại'))
       })
     } else {
-      // console.log('data', data)
-      // return
       api.staffApi.createAccountApi(data).then(() => {
-          handleLoadTable()
-          handleModal()
-          notificationSuccess(t('Thêm tài khoản thành công'))
+        handleLoadTable()
+        handleModal()
+        notificationSuccess(t('Thêm tài khoản thành công'))
       }).catch(() => {
         notificationError(t('Thêm tài khoản thất bại'))
       }
@@ -331,7 +348,7 @@ const ModalComponent = () => {
               </ButtonAntd>
             </div>
             )} */}
-            
+
 
           </ModalBody>
           <div

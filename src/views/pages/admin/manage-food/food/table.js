@@ -123,13 +123,9 @@ const Position = () => {
  
   const fetchData = () => {
     setLoading(true)
-    api.exerciseApi.getAllExerciseApi()
+    api.foodApi.getAllFoodForStaffApi()
       .then((rs) => {
-        const updatedData = rs.map(item => ({
-          ...item
-          // role: getRoleName(item.role)
-        }))
-        setData(updatedData)
+        setData(rs)
         setTotalItems(rs.totalPages)
         setLoading(false)
         setTableParams({
@@ -207,7 +203,7 @@ const Position = () => {
   const handleDelete = (item) => {
     MySwal.fire({
       title: t("Xác nhận"),
-      text: t("Bạn có muốn xóa tài khoản này không?"),
+      text: t("Bạn có muốn xóa món ăn này không?"),
       allowOutsideClick: false,
       showCancelButton: true,
       confirmButtonText: t("Xác nhận"),
@@ -219,16 +215,16 @@ const Position = () => {
       buttonsStyling: false
     }).then(async (result) => {
       if (result.value) {
-        api.exerciseApi.deleteExerciseByIdApi(item.staffId)
+        api.foodApi.deleteFoodByIdApi(item.foodId)
           .then(() => {
             handleLoadTable()
-            notificationSuccess(t('Xóa tài khoản thành công'))
+            notificationSuccess(t('Xóa món ăn thành công'))
             setSelectedItems([])
             setShowCheckbox(false)
 
           })
           .catch(() => {
-            notificationError(t('Xóa tài khoản thất bại'))
+            notificationError(t('Xóa món ăn thất bại'))
           })
         // handleDelete(contextMenuClick.rowInfo.rowData.id)
       } else if (result.dismiss === MySwal.DismissReason.cancel) {
@@ -247,11 +243,20 @@ const Position = () => {
     handleModalDetail()
     setTypeModal('Detail')
   }
+
+  const formatDate = (date) => {
+    const d = new Date(date)
+    const day = String(d.getDate()).padStart(2, '0')
+    const month = String(d.getMonth() + 1).padStart(2, '0') 
+    const year = d.getFullYear()
+    return `${day}-${month}-${year}`
+  }
+
   const headerColumns = [
     {
       title: <div style={{ textAlign: 'left' }}>{'Tên món ăn'}</div>,
-      dataIndex: '',
-      key: '',
+      dataIndex: 'foodName',
+      key: 'foodName',
       width: 120,
       minWidth: 100,
       maxWidth: 130,
@@ -259,8 +264,8 @@ const Position = () => {
     },
     {
       title: <div style={{ textAlign: 'right' }}>{'Calories'}</div>,
-      dataIndex: '',
-      key: '',
+      dataIndex: 'calories',
+      key: 'calories',
       width: 120,
       minWidth: 100,
       maxWidth: 130,
@@ -268,8 +273,8 @@ const Position = () => {
     },
     {
       title: <div style={{ textAlign: 'center' }}>{'Người tạo'}</div>,
-      dataIndex: '',
-      key: '',
+      dataIndex: 'createByName',
+      key: 'createByName',
       width: 150,
       minWidth: 50,
       maxWidth: 200,
@@ -277,12 +282,13 @@ const Position = () => {
     },
     {
       title: <div style={{ textAlign: 'center' }}>{t('Ngày tạo')}</div>,
-      dataIndex: '',
-      key: '',
+      dataIndex: 'createDate',
+      key: 'createDate',
       width: 100,
       minWidth: 50,
       maxWidth: 150,
-      align: 'center'
+      align: 'center',
+      render: (text) => formatDate(text) 
     },
     {
       title: (

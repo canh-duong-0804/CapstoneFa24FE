@@ -120,7 +120,7 @@ const Position = () => {
       setData([])
     }
   }
- 
+
   const fetchData = () => {
     setLoading(true)
     api.exerciseApi.getAllExerciseApi()
@@ -250,8 +250,8 @@ const Position = () => {
   const headerColumns = [
     {
       title: <div style={{ textAlign: 'left' }}>{'Tên bài tập'}</div>,
-      dataIndex: 'exercise_name',
-      key: 'exercise_name',
+      dataIndex: 'exerciseName',
+      key: 'exerciseName',
       width: 120,
       minWidth: 100,
       maxWidth: 130,
@@ -259,25 +259,37 @@ const Position = () => {
     },
     {
       title: <div style={{ textAlign: 'left' }}>{'Thể loại bài tập'}</div>,
-      dataIndex: 'exercise_category_id',
-      key: 'exercise_category_id',
+      dataIndex: 'exerciseCategoryName',
+      key: 'exerciseCategoryName',
       width: 120,
       minWidth: 100,
       maxWidth: 130
     },
     {
       title: <div style={{ textAlign: 'center' }}>{'Cường độ vận động'}</div>,
-      dataIndex: 'exercise_level',
-      key: 'exercise_level',
+      dataIndex: 'exerciseLevel',
+      key: 'exerciseLevel',
       width: 150,
       minWidth: 50,
       maxWidth: 200,
-      align: 'center'
+      align: 'center',
+      render: (exerciseLevel) => {
+        switch (exerciseLevel) {
+          case 0:
+            return 'Cường độ nhẹ'
+          case 1:
+            return 'Cường độ vừa'
+          case 2:
+            return 'Cường độ cao'
+          default:
+            return ''
+        }
+      }
     },
     {
       title: <div style={{ textAlign: 'center' }}>{t('Ảnh mô tả')}</div>,
-      dataIndex: 'exercise_image',
-      key: 'exercise_image',
+      dataIndex: 'exerciseImage',
+      key: 'exerciseImage',
       width: 100,
       minWidth: 50,
       maxWidth: 150,

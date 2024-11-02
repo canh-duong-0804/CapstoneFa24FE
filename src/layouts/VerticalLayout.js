@@ -17,10 +17,10 @@ const VerticalLayout = props => {
   useEffect(() => {
     switch (role) {
       case 0:
-        setMenuData(navigation.filter(item => item.id >= 1 && item.id <= 11))
+        setMenuData(navigation.filter(item => item.id >= 1 && item.id <= 13))
         break
       case 1:
-        setMenuData(navigation.filter(item => item.id >= 12 && item.id <= 20))
+        setMenuData(navigation.filter(item => item.id >= 14 && item.id <= 22))
         break
       case 2:
         setMenuData(navigation.filter(item => item.id >= 15 && item.id <= 16))
