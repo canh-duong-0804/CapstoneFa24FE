@@ -189,7 +189,7 @@ const ModalComponent = () => {
           <ModalHeader typeModal={typeModal} handleModal={handleCancel} title={typeModal === 'Add' ? 'Thêm món ăn' : 'Sửa món ăn'} />
           <ModalBody>
             <Row>
-              <Col lg={3} md={4} xs={12}>
+              <Col lg={3} md={3} xs={12}>
                 <div className='mb-1'>
                   <Label className='form-label' for='add-foodName'>
                     Tên món ăn
@@ -239,6 +239,7 @@ const ModalComponent = () => {
                         theme={selectThemeColors}
                         className='react-select'
                         classNamePrefix='select'
+                        placeholder='Chọn...'
                         options={optionDiet}
                         isClearable={false}
                         onChange={(option) => {

@@ -40,8 +40,9 @@ export const AUTH = {
     GET_FOOD_FOR_MEMBER_BY__ID_API: `${BASE_URL}/api/Food/get-food-for-member-by-id`,
     UPDATE_FOOD_API: `${BASE_URL}/api/Food/update-food`,
     DELETE_FOOD_BY_ID_API: `${BASE_URL}/api/Food/delete-food`,
-    GET_LIST_BOX_FOOD_API: `${BASE_URL}/api/Food/get-list-box-for-staff`,
-    GET_LIST_BOX_DIET_API: `${BASE_URL}/api/Diet/Get-all-diet`
+    GET_LIST_BOX_FOOD_API: `${BASE_URL}/api/Food/get-list-box-food-for-staff`,
+    GET_LIST_BOX_DIET_API: `${BASE_URL}/api/Diet/Get-all-diet`,
+    GET_LIST_BOX_INGREDIENT_API: `${BASE_URL}/api/Ingredient/get-list-box-ingredient-for-staff`
   },
   RECIPE_API: {
     CREATE_RECIPE_API: `${BASE_URL}/api/Recipe/create-recipe`,

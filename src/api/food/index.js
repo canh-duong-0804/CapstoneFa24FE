@@ -15,7 +15,9 @@ const foodApi = {
   getFoodForMemberByIdApi: (id) => requester.get(`${AUTH.FOOD_API.GET_FOOD_FOR_MEMBER_BY__ID_API}/${id}`),
   updateFoodApi: (params) => requester.put(AUTH.FOOD_API.UPDATE_FOOD_API, params),
   deleteFoodByIdApi: (id) => requester.delete(`${AUTH.FOOD_API.DELETE_FOOD_BY_ID_API}/${id}`),
-  getListboxDietApi: () => requester.get(AUTH.FOOD_API.GET_LIST_BOX_DIET_API)
+  getListboxDietApi: () => requester.get(AUTH.FOOD_API.GET_LIST_BOX_DIET_API),
+  getListboxIngredientApi: () => requester.get(AUTH.FOOD_API.GET_LIST_BOX_INGREDIENT_API)
+  
 }
 
 export default { foodApi }

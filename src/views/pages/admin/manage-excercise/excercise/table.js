@@ -287,9 +287,9 @@ const Position = () => {
       }
     },
     {
-      title: <div style={{ textAlign: 'center' }}>{t('Ảnh mô tả')}</div>,
-      dataIndex: 'exerciseImage',
-      key: 'exerciseImage',
+      title: <div style={{ textAlign: 'center' }}>{t('Người tạo')}</div>,
+      dataIndex: 'createBy',
+      key: 'createBy',
       width: 100,
       minWidth: 50,
       maxWidth: 150,

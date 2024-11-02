@@ -25,7 +25,9 @@ import { notificationError, notificationSuccess } from '../../../../../utility/n
 
 const defaultValues = {
   exerciseImage: 'anh.png',
-  caloriesPerHour: 0
+  caloriesPerHour: 0,
+  createBy: 7,
+  createDate: new Date()
 
 }
 
@@ -178,6 +180,7 @@ const ModalComponent = () => {
                     className='react-select'
                     classNamePrefix='select'
                     options={optionCategory}
+                    placeholder='Chọn...'
                     isClearable={true}
                     onChange={(option) => {
                       field.onChange(option ? option.value : '')
@@ -202,6 +205,7 @@ const ModalComponent = () => {
                     theme={selectThemeColors}
                     className='react-select'
                     classNamePrefix='select'
+                    placeholder='Chọn...'
                     options={optionLevel}
                     isClearable={true}
                     onChange={(option) => {
