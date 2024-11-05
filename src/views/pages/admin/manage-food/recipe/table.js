@@ -25,10 +25,6 @@ const MySwal = withReactContent(Swal)
 // ** Table Header
 const CustomHeader = ({ handleAdd, handleFilter }) => {
   const { t } = useTranslation()
-  //const isDefaultOptions = [
-  //  { value: true, label: t('Active') },
-  //  { value: false, label: t('Inactive') }
-  //]
   const [searchText, setSearchTerm] = useState('')
 
   return (
@@ -55,21 +51,6 @@ const CustomHeader = ({ handleAdd, handleFilter }) => {
             <SearchOutlined></SearchOutlined>
           </span>
         </InputGroup>
-        {/*<div className='d-flex align-items-center mx-50' style={{ minWidth: "220px", maxWidth: "220px" }}>
-          <Select
-            //theme={selectThemeColors}
-            isClearable={true}
-            className='my-25 react-select w-100'
-            classNamePrefix='select'
-            menuPosition="fixed"
-            placeholder={t('Select status')}
-            options={isDefaultOptions}
-            value={currentStatus}
-            onChange={data => {
-              setcurrentStatus(data)
-            }}
-          />
-        </div>*/}
       </div>
       <div className='d-flex justify-content-end mx-2'>
         <Button className='add-new-semester mx-50 my-25' color='primary' onClick={handleAdd}>
@@ -85,7 +66,6 @@ const Position = () => {
   const {
     setDataItem,
     handleModal,
-    // handleModalResetPassword,
     setTypeModal,
     windowSize,
     handleModalDetail,
@@ -97,7 +77,6 @@ const Position = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [data, setData] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
-  //const [rowsPerPage, setRowsPerPage] = useState(10)
   const [totalItems, setTotalItems] = useState(0)
   const [currentStatus, setcurrentStatus] = useState()
   const [loading, setLoading] = useState(false)
@@ -106,7 +85,6 @@ const Position = () => {
       current: 1
     }
   })
-  //const userData = getUserData()
   const handleTableChange = (pagination, filters, sorter) => {
     setCurrentPage(pagination.current)
     setRowsPerPage(pagination.pageSize)
@@ -215,7 +193,7 @@ const Position = () => {
       buttonsStyling: false
     }).then(async (result) => {
       if (result.value) {
-        api.recipeApi.deleteRecipeByIdApi(item.staffId)
+        api.recipeApi.deleteRecipeByIdApi(item.recipeId)
           .then(() => {
             handleLoadTable()
             notificationSuccess(t('Xóa công thức thành công'))
@@ -226,7 +204,6 @@ const Position = () => {
           .catch(() => {
             notificationError(t('Xóa công thức thất bại'))
           })
-        // handleDelete(contextMenuClick.rowInfo.rowData.id)
       } else if (result.dismiss === MySwal.DismissReason.cancel) {
       }
     })

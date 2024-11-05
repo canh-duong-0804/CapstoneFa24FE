@@ -16,20 +16,24 @@ import { UserContext } from './useContext'
 import { useTranslation } from 'react-i18next'
 import api from '../../../../../api/index'
 import ModalHeader from '../../../../../@core/components/modal-header'
-import { selectThemeColors } from '@utils'
+import { selectThemeColors, getUserData } from '@utils'
 import * as yup from "yup"
 import { yupResolver } from '@hookform/resolvers/yup'
 import Select from 'react-select'
-// import Flatpickr from 'react-flatpickr'
+import makeAnimated from 'react-select/animated'
 import { notificationError, notificationSuccess } from '../../../../../utility/notification'
+
+const userData = getUserData()
+console.log('userData', userData)
 const defaultValues = {
-  name: ''
+  createBy: 7,
+  createDate: new Date(),
+  recipeImage: 'anh.png'
 
 }
 
 const formSchema = yup.object().shape({
-  exercise_name: yup.string()
-    .required('Tên bài tập là bắt buộc')
+
 })
 
 const ModalComponent = () => {
@@ -41,6 +45,8 @@ const ModalComponent = () => {
     dataItem,
     typeModal } = useContext(UserContext)
   const { t } = useTranslation()
+  
+  const animatedComponents = makeAnimated()
 
   const {
     control,
@@ -94,23 +100,23 @@ const ModalComponent = () => {
 
   const onSubmit = data => {
     if (typeModal === "Edit") {
-      // console.log('data', data)
-      // return
-      api.exerciseApi.updateExerciseApi(data).then(() => {
+      api.recipeApi.updateRecipeApi(data).then(() => {
         handleLoadTable()
         handleModal()
-        notificationSuccess(t('Sửa bài tập thành công'))
+        notificationSuccess(t('Sửa công thức thành công'))
 
       }).catch(() => {
-        notificationError(t('Sửa bài tập thất bại'))
+        notificationError(t('Sửa công thức thất bại'))
       })
     } else {
-      api.exerciseApi.createExerciseApi(data).then(() => {
+      // console.log('data', data)
+      // return
+      api.recipeApi.createRecipeApi(data).then(() => {
         handleLoadTable()
         handleModal()
-        notificationSuccess(t('Thêm bài tập thành công'))
+        notificationSuccess(t('Thêm công thức thành công'))
       }).catch(() => {
-        notificationError(t('Thêm bài tập thất bại'))
+        notificationError(t('Thêm công thức thất bại'))
       }
       )
     }
@@ -143,7 +149,7 @@ const ModalComponent = () => {
           <ModalHeader typeModal={typeModal} handleModal={handleCancel} title={typeModal === 'Add' ? 'Thêm công thức món ăn' : 'Sửa công thức món ăn'} />
           <ModalBody>
             <Row>
-              <Col lg={12} md={12} xs={12}>
+              <Col lg={6} md={6} xs={12}>
                 <div className='mb-1'>
                   <Label className='form-label' for='add-recipeName'>
                     Tên công thức món ăn
@@ -189,33 +195,38 @@ const ModalComponent = () => {
                   {errors.foodId ? <FormFeedback>{errors.foodId.message}</FormFeedback> : null}
                 </div>
               </Col>
-              <Col lg={6} md={6} xs={12}>
+              <Col lg={12} md={12} xs={12}>
 
                 <div className='mb-1'>
-                  <Label className='form-label' for='add-ingredientId'>
+                  <Label className='form-label' for='add-recipeIngredients'>
                     Thành phần
                   </Label>
                   <Controller
-                    id='ingredientId'
-                    name='ingredientId'
+                    id='recipeIngredients'
+                    name='recipeIngredients'
                     control={control}
                     render={({ field }) => (
                       <Select
                         {...field}
                         theme={selectThemeColors}
+                        closeMenuOnSelect={false}
                         className='react-select'
                         classNamePrefix='select'
+                        isMulti
+                        components={animatedComponents}
                         placeholder='Chọn...'
                         options={optionIngredient}
                         isClearable={false}
-                        onChange={(option) => {
-                          field.onChange(option ? option.value : '')
+                        onChange={(selectedOptions) => {
+                          const formattedIngredients = selectedOptions ? selectedOptions.map(option => ({ ingredientId: option.value, quantity: 0, unit: "string"})) : []
+                          field.onChange(formattedIngredients) 
                         }}
-                        value={optionIngredient.find(option => option.value === field.value)}
+                        value={optionIngredient.filter(option => field.value?.some(val => val.ingredientId === option.value)
+                        )}
                       />
                     )}
                   />
-                  {errors.ingredientId ? <FormFeedback>{errors.ingredientId.message}</FormFeedback> : null}
+                  {errors.recipeIngredients ? <FormFeedback>{errors.recipeIngredients.message}</FormFeedback> : null}
                 </div>
               </Col>
               <Col lg={12} md={12} xs={12}>

@@ -102,7 +102,6 @@ const ModalComponent = () => {
 
   const onSubmit = data => {
     if (typeModal === "Edit") {
-
       api.exerciseApi.updateExerciseApi(data).then(() => {
         handleLoadTable()
         handleModal()

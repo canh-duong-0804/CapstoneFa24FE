@@ -1,6 +1,6 @@
 import { lazy } from 'react'
 
-const DashboardAdmin = lazy(() => import('../../views/pages/admin/dashboard/index'))
+const DashboardAdmin = lazy(() => import('../../views/dashboard/admin/index'))
 const Statistic = lazy(() => import('../../views/pages/statistic/dashboard/index'))
 const Account = lazy(() => import('../../views/pages/admin/account/index'))
 const Excercise = lazy(() => import('../../views/pages/admin/manage-excercise/excercise/index'))
@@ -10,7 +10,7 @@ const Ingredient = lazy(() => import('../../views/pages/admin/manage-food/ingred
 const Recipe = lazy(() => import('../../views/pages/admin/manage-food/recipe/index'))
 const AdminRoutes = [
   {
-    path: '/admin/dashboard',
+    path: '/dashboard/admin',
     element: <DashboardAdmin />,
     meta: {
       action: 'read',

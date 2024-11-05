@@ -1,5 +1,5 @@
 // ** Icons Import
-import { BarChart, User, Circle } from 'react-feather'
+import { BarChart, User, Circle, Coffee, Activity, Book} from 'react-feather'
 export default [
   {
     id: '1',
@@ -20,7 +20,7 @@ export default [
   {
     id: '3',
     title: 'Quản lý món ăn',
-    icon: <User size={12} />,
+    icon: <Coffee size={12} />,
     action: 'read',
     resource: 'All',
     navLink: '/admin/manage-food',
@@ -62,7 +62,7 @@ export default [
   {
     id: '8',
     title: 'Quản lý bài tập',
-    icon: <User size={12} />,
+    icon: <Activity size={12} />,
     action: 'read',
     resource: 'All',
     navLink: '/admin/manage-excercise',
@@ -103,7 +103,7 @@ export default [
   {
     id: '13',
     title: 'Quản lý blog',
-    icon: <User size={12} />,
+    icon: <Book size={12} />,
     action: 'read',
     resource: 'All',
     navLink: '/admin/manage-blog'
