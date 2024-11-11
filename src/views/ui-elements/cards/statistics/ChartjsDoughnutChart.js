@@ -8,6 +8,7 @@ import { Card, CardHeader, CardTitle, CardBody } from 'reactstrap'
 
 Chart.register(ArcElement)
 
+
 const ChartjsRadarChart = ({ tooltipShadow, successColorShade, warningLightColor, primary }) => {
   // ** Chart Options
   const options = {
@@ -62,7 +63,7 @@ const ChartjsRadarChart = ({ tooltipShadow, successColorShade, warningLightColor
   return (
     <Card>
       <CardHeader className='d-flex justify-content-between align-items-sm-center align-items-start flex-sm-row flex-column'>
-        <CardTitle tag='h4'>Sessions By Device</CardTitle>
+        <CardTitle tag='h4'>Nguyên liệu được quan tâm</CardTitle>
       </CardHeader>
       <CardBody>
         <div style={{ height: '275px' }}>
@@ -71,7 +72,7 @@ const ChartjsRadarChart = ({ tooltipShadow, successColorShade, warningLightColor
         <div className='d-flex justify-content-between mt-3 mb-1'>
           <div className='d-flex align-items-center'>
             <Monitor size={17} className='text-primary' />
-            <span className='fw-bold ms-75 me-25'>Desktop</span>
+            <span className='fw-bold ms-75 me-25'>Thịt chó</span>
             <span>- 80%</span>
           </div>
           <div>
@@ -81,7 +82,7 @@ const ChartjsRadarChart = ({ tooltipShadow, successColorShade, warningLightColor
         <div className='d-flex justify-content-between mb-1'>
           <div className='d-flex align-items-center'>
             <Tablet size={17} className='text-warning' />
-            <span className='fw-bold ms-75 me-25'>Mobile</span>
+            <span className='fw-bold ms-75 me-25'>Rau mùi</span>
             <span>- 10%</span>
           </div>
           <div>
@@ -91,7 +92,7 @@ const ChartjsRadarChart = ({ tooltipShadow, successColorShade, warningLightColor
         <div className='d-flex justify-content-between'>
           <div className='d-flex align-items-center'>
             <Tablet size={17} className='text-success' />
-            <span className='fw-bold ms-75 me-25'>Tablet</span>
+            <span className='fw-bold ms-75 me-25'>Trứng</span>
             <span>- 10%</span>
           </div>
           <div>

@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 
 // ** Third Party Components
-import axios from 'axios'
+// import axios from 'axios'
 
 // ** Custom Components
 import TinyChartStats from '@components/widgets/stats/TinyChartStats'
@@ -11,9 +11,21 @@ const OrdersBarChart = ({ warning }) => {
   // ** State
   const [data, setData] = useState(null)
 
+  const dataObject = {
+    title: "Bài tập được hoàn thành",
+    statistics: "216",
+    series: [
+      {
+        name: "2020",
+        data: [45, 85, 65, 45, 65]
+      }
+    ]
+  }
+
   useEffect(() => {
-    axios.get('/card/card-statistics/orders-bar-chart').then(res => setData(res.data))
-    return () => setData(null)
+    // axios.get('/card/card-statistics/orders-bar-chart').then(res => setData(res.data))
+    // return () => setData(null)
+    setData(dataObject)
   }, [])
 
   const options = {

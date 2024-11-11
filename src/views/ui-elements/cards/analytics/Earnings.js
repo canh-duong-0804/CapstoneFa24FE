@@ -16,7 +16,7 @@ const Earnings = ({ success }) => {
     },
     legend: { show: false },
     comparedResult: [2, -3, 8],
-    labels: ['App', 'Service', 'Product'],
+    labels: ['Rượu mận', 'Salad rau củ', 'Cơm nắm'],
     stroke: { width: 0 },
     colors: ['#28c76f66', '#28c76f33', success],
     grid: {
@@ -94,12 +94,8 @@ const Earnings = ({ success }) => {
       <CardBody>
         <Row>
           <Col xs='6'>
-            <CardTitle className='mb-1'>Earnings</CardTitle>
-            <div className='font-small-2'>This Month</div>
-            <h5 className='mb-1'>$4055.56</h5>
+            <CardTitle className='mb-1'>Công thức được yêu thích nhất</CardTitle>
             <CardText className='text-muted font-small-2'>
-              <span className='fw-bolder'>68.2%</span>
-              <span> more earnings than last month.</span>
             </CardText>
           </Col>
           <Col xs='6'>

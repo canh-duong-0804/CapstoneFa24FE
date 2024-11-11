@@ -1,6 +1,6 @@
 import { lazy } from 'react'
 
-const DashboardTrainer = lazy(() => import('../../views/pages/trainer/dashboard/index'))
+const DashboardTrainer = lazy(() => import('../../views/dashboard/trainer/index'))
 const Statistic = lazy(() => import('../../views/pages/statistic/dashboard/index'))
 const Account = lazy(() => import('../../views/pages/admin/account/index'))
 const Excercise = lazy(() => import('../../views/pages/trainer/manage-exercise/excercise/index'))

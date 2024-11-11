@@ -4,7 +4,8 @@ import { ThemeColors } from '@src/utility/context/ThemeColors'
 import CompanyTable from './CompanyTable'
 import Earnings from '@src/views/ui-elements/cards/analytics/Earnings'
 import CardMeetup from '@src/views/ui-elements/cards/advance/CardMeetup'
-import StatsCard from '@src/views/ui-elements/cards/statistics/StatsCard'
+import StatsCard from '@src/views/ui-elements/cards/statistics/StatsCardTrainer'
+import StatsExercise from '@src/views/ui-elements/cards/statistics/ChartjsDoughnutChart'
 import GoalOverview from '@src/views/ui-elements/cards/analytics/GoalOverview'
 import RevenueReport from '@src/views/ui-elements/cards/analytics/RevenueReport'
 import OrdersBarChart from '@src/views/ui-elements/cards/statistics/OrdersBarChart'
@@ -18,37 +19,25 @@ import '@styles/base/pages/dashboard-ecommerce.scss'
 const AdminDashboard = () => {
   const { colors } = useContext(ThemeColors)
 
-  // const trackBgColor = '#e9ecef'
 
   return (
     <div id='dashboard-ecommerce'>
       <Row className='match-height'>
-        <Col xl='12' md='12' xs='12'>
+      <Col lg='4' md='4' xs='12'>
+          <Earnings success={colors.success.main} cols={{ xl: '3', sm: '6' }}/>
+        </Col>
+        <Col xl='8' md='8' xs='12'>
           <StatsCard cols={{ xl: '3', sm: '6' }} />
         </Col>
       </Row>
       <Row className='match-height'>
-        <Col lg='4' md='12'>
-          <Row className='match-height'>
-            <Col lg='6' md='3' xs='6'>
-              <OrdersBarChart warning={colors.warning.main} />
-            </Col>
-            <Col lg='6' md='3' xs='6'>
-              <ProfitLineChart info={colors.info.main} />
-            </Col>
-            <Col lg='12' md='6' xs='12'>
-              <Earnings success={colors.success.main} />
-            </Col>
-          </Row>
-        </Col>
-        <Col lg='8' md='12'>
-          <RevenueReport primary={colors.primary.main} warning={colors.warning.main} />
-        </Col>
-      </Row>
-      <Row className='match-height'>
-        <Col lg='12' xs='12'>
+        <Col lg='8' xs='8'>
           <CompanyTable />
         </Col>
+        <Col lg='4' md='4' xs='4'>
+              <StatsExercise warning={colors.warning.main} />
+            </Col>
+
         {/* <Col lg='4' md='6' xs='12'>
           <CardMeetup />
         </Col> */}
@@ -61,6 +50,14 @@ const AdminDashboard = () => {
         <Col lg='4' md='6' xs='12'>
           <CardTransactions />
         </Col> */}
+      </Row>
+      <Row className='match-height'>
+        <Col lg='8' xs='8'>
+          <CompanyTable />
+        </Col>
+        <Col lg='4' md='4' xs='4'>
+          <GoalOverview success={colors.success.main} />
+        </Col>
       </Row>
     </div>
   )

@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 
 // ** Third Party Components
-import axios from 'axios'
+// import axios from 'axios'
 
 // ** Custom Components
 import TinyChartStats from '@components/widgets/stats/TinyChartStats'
@@ -11,11 +11,30 @@ const ProfitLineChart = ({ info }) => {
   // ** State
   const [data, setData] = useState(null)
 
+  const dataObject = {
+      title: "Số bình luận trên blog",
+      statistics: "1.3k",
+      series: [
+          {
+              data: [
+                  0,
+                  20,
+                  5,
+                  30,
+                  15,
+                  45
+              ]
+          }
+      ]
+  }
+
   useEffect(() => {
-    axios.get('/card/card-statistics/profit-line-chart').then(res => setData(res.data))
-    return () => setData(null)
+    // axios.get('/card/card-statistics/profit-line-chart').then(res => setData(res.data))
+    // return () => setData(null)
+    setData(dataObject)
   }, [])
 
+  console.log('data', data)
   const options = {
     chart: {
       toolbar: {

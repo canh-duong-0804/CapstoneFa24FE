@@ -84,7 +84,7 @@ const GoalOverview = props => {
   return data !== null ? (
     <Card>
       <CardHeader>
-        <CardTitle tag='h4'>Goal Overview</CardTitle>
+        <CardTitle tag='h4'>Tổng quan người dùng</CardTitle>
         <HelpCircle size={18} className='text-muted cursor-pointer' />
       </CardHeader>
       <CardBody className='p-0'>
@@ -92,11 +92,11 @@ const GoalOverview = props => {
       </CardBody>
       <Row className='border-top text-center mx-0'>
         <Col xs='6' className='border-end py-1'>
-          <CardText className='text-muted mb-0'>Completed</CardText>
+          <CardText className='text-muted mb-0'>Hoàn thành</CardText>
           <h3 className='fw-bolder mb-0'>{data.completed}</h3>
         </Col>
         <Col xs='6' className='py-1'>
-          <CardText className='text-muted mb-0'>In Progress</CardText>
+          <CardText className='text-muted mb-0'>Trong tiến trình</CardText>
           <h3 className='fw-bolder mb-0'>{data.inProgress}</h3>
         </Col>
       </Row>
