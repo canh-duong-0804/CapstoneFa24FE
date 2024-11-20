@@ -11,12 +11,12 @@ import ApexLineChart from '@src/views/charts/apex/ApexAreaCharts'
 import '@styles/react/libs/charts/apex-charts.scss'
 import '@styles/base/pages/dashboard-ecommerce.scss'
 
-const TrainerDashboard = () => {
+const StaffDashboard = () => {
   const { colors } = useContext(ThemeColors)
 
 
   return (
-    <div id='dashboard-trainer'>
+    <div id='dashboard-staff'>
       <Row className='match-height'>
         <Col lg='4' md='4' xs='12'>
           <Earnings success={colors.success.main} cols={{ xl: '3', sm: '6' }} />
@@ -45,4 +45,4 @@ const TrainerDashboard = () => {
   )
 }
 
-export default TrainerDashboard
+export default StaffDashboard

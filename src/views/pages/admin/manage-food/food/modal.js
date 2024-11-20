@@ -209,7 +209,7 @@ const ModalComponent = () => {
               <Col lg={3} md={3} xs={12}>
                 <div className='mb-1'>
                   <Label className='form-label' for='add-portion'>
-                    Khẩu phần
+                    
                   </Label>
                   <Controller
                     id='portion'

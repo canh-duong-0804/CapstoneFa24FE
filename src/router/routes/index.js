@@ -2,18 +2,14 @@
 import { Fragment } from 'react'
 
 // ** Routes Imports
-import AppRoutes from './Apps'
-import FormRoutes from './Forms'
-import PagesRoutes from './Pages'
-import TablesRoutes from './Tables'
 import ChartsRoutes from './Charts'
-import DashboardRoutes from './Dashboards'
-import UiElementRoutes from './UiElements'
-import ExtensionsRoutes from './Extensions'
-import PageLayoutsRoutes from './PageLayouts'
 import AuthenticationRoutes from './Authentication'
 import AdminRoutes from './Admin'
 import TrainerRoutes from './Trainer'
+import MemberRoutes from './Member'
+import StaffRoutes from './Staff'
+import FoodTrainerRoutes from './FoodTrainer'
+import ExerciseTrainerRoutes from './ExerciseTrainer'
 
 // ** Layouts
 import BlankLayout from '@layouts/BlankLayout'
@@ -44,17 +40,14 @@ const DefaultAdminRoute = '/dashboard/ecomerce'
 // ** Merge Routes
 const Routes = [
   ...AuthenticationRoutes,
-  // ...DashboardRoutes,
-  // ...AppRoutes,
-  // ...PagesRoutes,
-  // ...UiElementRoutes,
-  // ...ExtensionsRoutes,
-  // ...PageLayoutsRoutes,
-  // ...FormRoutes,
-  // ...TablesRoutes,
   ...ChartsRoutes,
   ...AdminRoutes,
-  ...TrainerRoutes
+  ...TrainerRoutes,
+  ...MemberRoutes,
+  ...StaffRoutes,
+  ...FoodTrainerRoutes,
+  ...ExerciseTrainerRoutes
+
 ]
 
 const getRouteMeta = route => {

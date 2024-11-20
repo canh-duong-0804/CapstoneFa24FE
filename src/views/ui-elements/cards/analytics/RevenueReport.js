@@ -15,12 +15,24 @@ import {
   DropdownMenu,
   DropdownItem,
   DropdownToggle,
+  Dropdown,
   UncontrolledButtonDropdown
 } from 'reactstrap'
 
 const RevenueReport = props => {
   // ** State
   const [data, setData] = useState(null)
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()) // Khởi tạo năm hiện tại
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  
+  const toggleDropdown = () => setDropdownOpen(prevState => !prevState)
+  
+  // Hàm để xử lý thay đổi năm
+  const handleYearChange = (year) => {
+    setSelectedYear(year)
+    // Gọi API hoặc cập nhật dữ liệu cho biểu đồ theo năm đã chọn
+    // updateChartData(year);
+  }
 
   useEffect(() => {
     axios.get('/card/card-analytics/revenue-report').then(res => setData(res.data))
@@ -43,7 +55,7 @@ const RevenueReport = props => {
         }
       },
       xaxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+        categories: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9'],
         labels: {
           style: {
             colors: '#b9b9c3',
@@ -122,12 +134,20 @@ const RevenueReport = props => {
       <Row className='mx-0'>
         <Col className='revenue-report-wrapper' md='12' xs='12'>
           <div className='d-sm-flex justify-content-between align-items-center mb-3'>
-            <CardTitle className='mb-50 mb-sm-0'>Số lượng người dùng hoạt động trong tháng</CardTitle>
+            <CardTitle className='mb-50 mb-sm-0'>Số lượng người dùng hoạt động trong năm {selectedYear}</CardTitle>
             <div className='d-flex align-items-center'>
-              <div className='d-flex align-items-center me-2'>
-                <span className='bullet bullet-primary me-50 cursor-pointer'></span>
-                <span>Người dùng</span>
-              </div>
+              <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
+                <DropdownToggle caret>
+                  Chọn năm: {selectedYear}
+                </DropdownToggle>
+                <DropdownMenu>
+                  {[2020, 2021, 2022, 2023, 2024].map((year) => (
+                    <DropdownItem key={year} onClick={() => handleYearChange(year)}>
+                      {year}
+                    </DropdownItem>
+                  ))}
+                </DropdownMenu>
+              </Dropdown>
             </div>
           </div>
           <Chart id='revenue-report-chart' type='bar' height='230' options={revenueOptions} series={revenueSeries} />

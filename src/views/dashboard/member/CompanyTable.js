@@ -125,7 +125,7 @@ const CompanyTable = () => {
           </td>
           <td>
             <div className='d-flex align-items-center'>
-              <Avatar className='me-1' color={colorsArr[col.category]} icon={col.icon} /> 
+              <Avatar className='me-1' color={colorsArr[col.category]} icon={col.icon} />
               <span>{col.category}</span>
             </div>
           </td>

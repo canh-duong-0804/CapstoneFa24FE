@@ -27,7 +27,8 @@ const defaultValues = {
   exerciseImage: 'anh.png',
   caloriesPerHour: 0,
   createBy: 7,
-  createDate: new Date()
+  createDate: new Date(),
+  exerciseCategoryId: 1
 
 }
 
@@ -50,13 +51,14 @@ const ModalComponent = () => {
     typeModal } = useContext(UserContext)
   const { t } = useTranslation()
 
+
   const {
     control,
     // setError,
     clearErrors,
     handleSubmit,
     setValue,
-    //watch,
+    watch,
     //getValues,
     reset,
     formState: { errors }
@@ -64,14 +66,18 @@ const ModalComponent = () => {
 
 
   const [optionCategory, setOptionCategory] = useState([])
+  const [caloriesValue, setCaloriesValue] = useState('')
 
-  const optionLevel = [
-    { value: 0, label: 'Cường độ nhẹ' },
-    { value: 1, label: 'Cường độ vừa' },
-    { value: 2, label: 'Cường độ cao' }
+  // const optionLevel = [
+  //   { value: 0, label: 'Cường độ nhẹ' },
+  //   { value: 1, label: 'Cường độ vừa' },
+  //   { value: 2, label: 'Cường độ cao' }
 
-  ]
-
+  // ]
+  const handleChangeCalories = (e) => {
+    const value = e.target.value
+    setCaloriesValue(value)
+  }
   const renderData = () => {
     api.categoryExerciseApi.getListBoxCategoryExerciseApi().then((rs) => {
       setOptionCategory(rs)
@@ -138,6 +144,8 @@ const ModalComponent = () => {
       </Fragment>
     )
   }
+
+  console.log(watch('exerciseCategoryId'))
   return (
     <Fragment >
       <Modal
@@ -191,77 +199,375 @@ const ModalComponent = () => {
               {errors.exerciseCategoryId ? <FormFeedback>{errors.exerciseCategoryId.message}</FormFeedback> : null}
             </div>
             <div className='mb-1'>
-              <Label className='form-label' for='add-exerciseLevel'>
-                Cường độ vận động
+              <Label className='form-label' for='add-met'>
+                MET
               </Label>
               <Controller
-                id='exerciseLevel'
-                name='exerciseLevel'
+                id='exerciseName'
+                name='exerciseName'
                 control={control}
                 render={({ field }) => (
-                  <Select
-                    {...field}
-                    theme={selectThemeColors}
-                    className='react-select'
-                    classNamePrefix='select'
-                    placeholder='Chọn...'
-                    options={optionLevel}
-                    isClearable={true}
-                    onChange={(option) => {
-                      field.onChange(option ? option.value : '')
-                    }}
-                    value={optionLevel.find(option => option.value === field.value)}
-                  />
+                  <Input autoFocus placeholder='Nhập MET' invalid={errors.exerciseName && true} {...field} />
                 )}
               />
-              {errors.exerciseLevel ? <FormFeedback>{errors.exerciseLevel.message}</FormFeedback> : null}
+              {errors.exerciseName ? <FormFeedback>{errors.exerciseName.message}</FormFeedback> : null}
             </div>
-
-            <div className='mb-1'>
-              <Label className='form-label' for='add-reps'>
-                Reps
-              </Label>
-              <Controller
-                id='reps'
-                name='reps'
-                control={control}
-                render={({ field }) => (
-                  <Input type='number' placeholder='Nhập reps' invalid={errors.reps && true} {...field} />
-                )}
-              />
-              {errors.reps ? <FormFeedback>{errors.reps.message}</FormFeedback> : null}
-            </div>
-
-            <div className='mb-1'>
-              <Label className='form-label' for='add-phone'>
-                Sets
-              </Label>
-              <Controller
-                id='sets'
-                name='sets'
-                control={control}
-                render={({ field }) => (
-                  <Input type='number' placeholder='Nhập sets' invalid={errors.reps && true} {...field} />
-                )}
-              />
-              {errors.reps ? <FormFeedback>{errors.reps.message}</FormFeedback> : null}
-            </div>
-
-            <div className='mb-1'>
-              <Label className='form-label' for='add-phone'>
-                Phút
-              </Label>
-              <Controller
-                id='minutes'
-                name='minutes'
-                control={control}
-                render={({ field }) => (
-                  <Input type='number' placeholder='Nhập phút' invalid={errors.minutes && true} {...field} />
-                )}
-              />
-              {errors.minutes ? <FormFeedback>{errors.minutes.message}</FormFeedback> : null}
-            </div>
-
+            {watch('exerciseCategoryId') === 1 && (
+              <Row>
+                <Label className='form-label' for='add-foodName'>
+                  Cường độ nhẹ
+                </Label>
+                <Col lg={6} md={6} xs={12}>
+                  <div className='d-flex mb-1 align-items-center'>
+                    <Label className='form-label mb-0' for='add-foodName' style={{ marginRight: '10px' }}>
+                      Phút
+                    </Label>
+                    <Controller
+                      id='foodName'
+                      name='foodName'
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          autoFocus
+                          placeholder='Nhập phút'
+                          invalid={errors.foodName && true}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </div>
+                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                </Col>
+                <Col lg={6} md={6} xs={12}>
+                  <div className='d-flex mb-1 align-items-center'>
+                    <Label className='form-label mb-0' for='add-calories' style={{ marginRight: '10px' }}>
+                      Calo
+                    </Label>
+                    <Controller
+                      id='calories'
+                      name='calories'
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          autoFocus
+                          type='number'
+                          placeholder='Nhập Calo'
+                          invalid={errors.calories && true}
+                          value={caloriesValue}
+                          onChange={(e) => {
+                            handleChangeCalories(e)
+                            field.onChange(e)
+                          }}
+                        />
+                      )}
+                    />
+                  </div>
+                  {errors.calories && <FormFeedback>{errors.calories.message}</FormFeedback>}
+                </Col>
+                <Label className='form-label' for='add-foodName'>
+                  Cường độ vừa
+                </Label>
+                <Col lg={6} md={6} xs={12}>
+                  <div className='d-flex mb-1 align-items-center'>
+                    <Label className='form-label mb-0' for='add-foodName' style={{ marginRight: '10px' }}>
+                      Phút
+                    </Label>
+                    <Controller
+                      id='foodName'
+                      name='foodName'
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          autoFocus
+                          placeholder='Nhập phút'
+                          invalid={errors.foodName && true}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </div>
+                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                </Col>
+                <Col lg={6} md={6} xs={12}>
+                  <div className='d-flex mb-1 align-items-center'>
+                    <Label className='form-label mb-0' for='add-calories' style={{ marginRight: '10px' }}>
+                      Calo
+                    </Label>
+                    <Controller
+                      id='calories'
+                      name='calories'
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          autoFocus
+                          type='number'
+                          placeholder='Nhập Calo'
+                          invalid={errors.calories && true}
+                          value={caloriesValue}
+                          onChange={(e) => {
+                            handleChangeCalories(e)
+                            field.onChange(e)
+                          }}
+                        />
+                      )}
+                    />
+                  </div>
+                  {errors.calories && <FormFeedback>{errors.calories.message}</FormFeedback>}
+                </Col>
+                <Label className='form-label' for='add-foodName'>
+                  Cường độ cao
+                </Label>
+                <Col lg={6} md={6} xs={12}>
+                  <div className='d-flex mb-1 align-items-center'>
+                    <Label className='form-label mb-0' for='add-foodName' style={{ marginRight: '10px' }}>
+                      Phút
+                    </Label>
+                    <Controller
+                      id='foodName'
+                      name='foodName'
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          autoFocus
+                          placeholder='Nhập phút'
+                          invalid={errors.foodName && true}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </div>
+                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                </Col>
+                <Col lg={6} md={6} xs={12}>
+                  <div className='d-flex mb-1 align-items-center'>
+                    <Label className='form-label mb-0' for='add-calories' style={{ marginRight: '10px' }}>
+                      Calo
+                    </Label>
+                    <Controller
+                      id='calories'
+                      name='calories'
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          autoFocus
+                          type='number'
+                          placeholder='Nhập Calo'
+                          invalid={errors.calories && true}
+                          value={caloriesValue}
+                          onChange={(e) => {
+                            handleChangeCalories(e)
+                            field.onChange(e)
+                          }}
+                        />
+                      )}
+                    />
+                  </div>
+                  {errors.calories && <FormFeedback>{errors.calories.message}</FormFeedback>}
+                </Col>
+              </Row>
+            )}
+            {watch('exerciseCategoryId') === 2 && (
+              <Row>
+                <Label className='form-label' for='add-foodName'>
+                  Cường độ nhẹ
+                </Label>
+                <Col lg={4} md={4} xs={12}>
+                  <div className='d-flex mb-1 align-items-center'>
+                    <Label className='form-label mb-0' for='add-foodName' style={{ marginRight: '10px' }}>
+                      Reps
+                    </Label>
+                    <Controller
+                      id='foodName'
+                      name='foodName'
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          autoFocus
+                          placeholder='Nhập reps'
+                          invalid={errors.foodName && true}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </div>
+                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                </Col>
+                <Col lg={4} md={4} xs={12}>
+                  <div className='d-flex mb-1 align-items-center'>
+                    <Label className='form-label mb-0' for='add-foodName' style={{ marginRight: '10px' }}>
+                      Sets
+                    </Label>
+                    <Controller
+                      id='foodName'
+                      name='foodName'
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          autoFocus
+                          placeholder='Nhập sets'
+                          invalid={errors.foodName && true}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </div>
+                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                </Col>
+                <Col lg={4} md={4} xs={12}>
+                  <div className='d-flex mb-1 align-items-center'>
+                    <Label className='form-label mb-0' for='add-foodName' style={{ marginRight: '10px' }}>
+                      Phút
+                    </Label>
+                    <Controller
+                      id='foodName'
+                      name='foodName'
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          autoFocus
+                          placeholder='Nhập phút'
+                          invalid={errors.foodName && true}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </div>
+                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                </Col>
+                <Label className='form-label' for='add-foodName'>
+                  Cường độ vừa
+                </Label>
+                <Col lg={4} md={4} xs={12}>
+                  <div className='d-flex mb-1 align-items-center'>
+                    <Label className='form-label mb-0' for='add-foodName' style={{ marginRight: '10px' }}>
+                      Reps
+                    </Label>
+                    <Controller
+                      id='foodName'
+                      name='foodName'
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          autoFocus
+                          placeholder='Nhập reps'
+                          invalid={errors.foodName && true}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </div>
+                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                </Col>
+                <Col lg={4} md={4} xs={12}>
+                  <div className='d-flex mb-1 align-items-center'>
+                    <Label className='form-label mb-0' for='add-foodName' style={{ marginRight: '10px' }}>
+                      Sets
+                    </Label>
+                    <Controller
+                      id='foodName'
+                      name='foodName'
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          autoFocus
+                          placeholder='Nhập sets'
+                          invalid={errors.foodName && true}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </div>
+                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                </Col>
+                <Col lg={4} md={4} xs={12}>
+                  <div className='d-flex mb-1 align-items-center'>
+                    <Label className='form-label mb-0' for='add-foodName' style={{ marginRight: '10px' }}>
+                      Phút
+                    </Label>
+                    <Controller
+                      id='foodName'
+                      name='foodName'
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          autoFocus
+                          placeholder='Nhập phút'
+                          invalid={errors.foodName && true}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </div>
+                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                </Col>
+                <Label className='form-label' for='add-foodName'>
+                  Cường độ cao
+                </Label>
+                <Col lg={4} md={4} xs={12}>
+                  <div className='d-flex mb-1 align-items-center'>
+                    <Label className='form-label mb-0' for='add-foodName' style={{ marginRight: '10px' }}>
+                      Reps
+                    </Label>
+                    <Controller
+                      id='foodName'
+                      name='foodName'
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          autoFocus
+                          placeholder='Nhập reps'
+                          invalid={errors.foodName && true}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </div>
+                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                </Col>
+                <Col lg={4} md={4} xs={12}>
+                  <div className='d-flex mb-1 align-items-center'>
+                    <Label className='form-label mb-0' for='add-foodName' style={{ marginRight: '10px' }}>
+                      Sets
+                    </Label>
+                    <Controller
+                      id='foodName'
+                      name='foodName'
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          autoFocus
+                          placeholder='Nhập sets'
+                          invalid={errors.foodName && true}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </div>
+                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                </Col>
+                <Col lg={4} md={4} xs={12}>
+                  <div className='d-flex mb-1 align-items-center'>
+                    <Label className='form-label mb-0' for='add-foodName' style={{ marginRight: '10px' }}>
+                      Phút
+                    </Label>
+                    <Controller
+                      id='foodName'
+                      name='foodName'
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          autoFocus
+                          placeholder='Nhập phút'
+                          invalid={errors.foodName && true}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </div>
+                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                </Col>
+              </Row>
+            )}
             <div className='mb-1'>
               <Label className='form-label' for='add-description'>
                 Nhập mô tả

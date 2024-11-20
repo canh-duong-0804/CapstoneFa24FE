@@ -13,7 +13,7 @@ export default [
                 id: '15',
                 title: 'Món ăn',
                 icon: <Circle size={12} />,
-                navLink: '/trainer/manage-receipt',
+                navLink: '/trainer/manage-food',
                 action: 'read',
                 resource: 'All'
             },

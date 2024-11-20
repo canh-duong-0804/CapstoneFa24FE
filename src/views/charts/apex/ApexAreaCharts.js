@@ -73,16 +73,12 @@ const ApexAreaCharts = ({ direction }) => {
   // ** Chart Series
   const series = [
     {
-      name: 'Visits',
+      name: 'Cardiro',
       data: [100, 120, 90, 170, 130, 160, 140, 240, 220, 180, 270, 280, 375]
     },
     {
-      name: 'Clicks',
+      name: 'Kháng lực',
       data: [60, 80, 70, 110, 80, 100, 90, 180, 160, 140, 200, 220, 275]
-    },
-    {
-      name: 'Sales',
-      data: [20, 40, 30, 70, 40, 60, 50, 140, 120, 100, 140, 180, 220]
     }
   ]
   return (
@@ -90,9 +86,8 @@ const ApexAreaCharts = ({ direction }) => {
       <CardHeader className='d-flex flex-md-row flex-column justify-content-md-between justify-content-start align-items-md-center align-items-start'>
         <div>
           <CardTitle className='mb-75' tag='h4'>
-            Line Chart
+            Thể loại bài tập theo tháng
           </CardTitle>
-          <CardSubtitle className='text-muted'>Commercial networks</CardSubtitle>
         </div>
         <div className='d-flex align-items-center mt-md-0 mt-1'>
           <Calendar size={17} />

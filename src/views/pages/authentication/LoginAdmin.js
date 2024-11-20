@@ -34,8 +34,9 @@ const Login = () => {
     if (Object.values(data).every(field => field.length > 0)) {
       api.authApi.loginStaffApi(data)
         .then((rs) => {
+          console.log('rs', rs)
           if (rs.success === true) {
-            const data = { ...rs.objectResponse, accessToken: rs.data.accessToken, refreshToken: rs.data.refreshToken, ability: [{ action: 'read', subject: 'All' }] }
+            const data = { ...rs.staff, accessToken: rs.data.accessToken, refreshToken: rs.data.refreshToken, ability: [{ action: 'read', subject: 'All' }] }
             dispatch(handleLogin(data))
             ability.update([{ action: 'read', subject: 'All' }])
             navigate(getHomeRouteForLoggedInUser(data.role))
