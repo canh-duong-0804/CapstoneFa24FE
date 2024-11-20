@@ -1,10 +1,10 @@
 // ** Icons Import
-import { User, Circle } from 'react-feather'
+import { Circle, Activity, Coffee } from 'react-feather'
 export default [
     {
         id: '14',
         title: 'Quản lý món ăn',
-        icon: <User size={12} />,
+        icon: <Coffee size={12} />,
         action: 'read',
         resource: 'All',
         navLink: '/trainer/manage-food',
@@ -21,7 +21,7 @@ export default [
                 id: '16',
                 title: 'Công thức nấu ăn',
                 icon: <Circle size={12} />,
-                navLink: '/trainer/manage-receipt',
+                navLink: '/trainer/manage-recipe',
                 action: 'read',
                 resource: 'All'
             }, {
@@ -37,7 +37,7 @@ export default [
     {
         id: '18',
         title: 'Quản lý bài tập',
-        icon: <User size={12} />,
+        icon: <Activity size={12} />,
         action: 'read',
         resource: 'All',
         navLink: '/trainer/manage-excercise',
@@ -49,24 +49,16 @@ export default [
               navLink: '/trainer/manage-excercise',
               action: 'read',
               resource: 'All'
-            },
+            },         
             {
-                id: '20',
-                title: 'Thể loại bài tập',
-                icon: <Circle size={12} />,
-                navLink: '/trainer/exercise-category',
-                action: 'read',
-                resource: 'All'
-              },
-            {
-              id: '21',
+              id: '20',
               title: 'Gợi ý bài tập',
               icon: <Circle size={12} />,
               navLink: '/trainer/suggest-excercise',
               action: 'read',
               resource: 'All'
             }, {
-              id: '22',
+              id: '21',
               title: 'Thông tin bài tập',
               icon: <Circle size={12} />,
               navLink: '/trainer/excercise-information',

@@ -12,7 +12,7 @@ import navigation from '@src/navigation/vertical'
 const VerticalLayout = props => {
   const userData = window.localStorage.getItem('userData')
   const parsedData = JSON.parse(userData)
-    const role = parsedData.role
+  const role = parsedData.role
   const [menuData, setMenuData] = useState([])
   useEffect(() => {
     switch (role) {
@@ -20,12 +20,15 @@ const VerticalLayout = props => {
         setMenuData(navigation.filter(item => item.id >= 1 && item.id <= 13))
         break
       case 1:
-        setMenuData(navigation.filter(item => item.id >= 14 && item.id <= 22))
+        setMenuData(navigation.filter(item => item.id >= 14 && item.id <= 21))
         break
       case 2:
-        setMenuData(navigation.filter(item => item.id >= 15 && item.id <= 16))
+        setMenuData(navigation.filter(item => item.id >= 22 && item.id <= 25))
         break
       case 3:
+        setMenuData(navigation.filter(item => item.id >= 26 && item.id <= 29))
+        break
+      case 4:
         setMenuData(navigation.filter(item => item.id >= 17 && item.id <= 24))
         break
       default:

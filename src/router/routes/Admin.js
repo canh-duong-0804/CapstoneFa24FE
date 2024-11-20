@@ -8,6 +8,8 @@ const Category = lazy(() => import('../../views/pages/admin/manage-excercise/cat
 const Food = lazy(() => import('../../views/pages/admin/manage-food/food/index'))
 const Ingredient = lazy(() => import('../../views/pages/admin/manage-food/ingredient/index'))
 const Recipe = lazy(() => import('../../views/pages/admin/manage-food/recipe/index'))
+const MealPlan = lazy(() => import('../../views/pages/admin/manage-food/meal-plan/index'))
+
 const AdminRoutes = [
   {
     path: '/dashboard/admin',
@@ -68,6 +70,14 @@ const AdminRoutes = [
   {
     path: '/admin/manage-recipe',
     element: <Recipe />,
+    meta: {
+      action: 'read',
+      resource: 'All'
+    }
+  },
+  {
+    path: '/admin/manage-meal-plan',
+    element: <MealPlan />,
     meta: {
       action: 'read',
       resource: 'All'

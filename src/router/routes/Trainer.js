@@ -2,8 +2,9 @@ import { lazy } from 'react'
 
 const DashboardTrainer = lazy(() => import('../../views/dashboard/trainer/index'))
 const Statistic = lazy(() => import('../../views/pages/statistic/dashboard/index'))
-const Account = lazy(() => import('../../views/pages/admin/account/index'))
 const Excercise = lazy(() => import('../../views/pages/trainer/manage-exercise/excercise/index'))
+const Food = lazy(() => import('../../views/pages/admin/manage-food/food/index'))
+const Recipe = lazy(() => import('../../views/pages/admin/manage-food/recipe/index'))
 
 const TrainerRoutes = [
   {
@@ -23,8 +24,16 @@ const TrainerRoutes = [
     }
   },
   {
-    path: '/trainer/manage-account',
-    element: <Account />,
+    path: '/trainer/manage-food',
+    element: <Food />,
+    meta: {
+      action: 'read',
+      resource: 'All'
+    }
+  },
+  {
+    path: '/trainer/manage-recipe',
+    element: <Recipe />,
     meta: {
       action: 'read',
       resource: 'All'
