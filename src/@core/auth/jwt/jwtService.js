@@ -18,7 +18,7 @@ export default class JwtService {
     axios.interceptors.request.use(
       config => {
         // ** Get token from localStorage
-        const accessToken = this.getToken()
+        const accessToken = JSON.parse(this.getToken())
 
         // ** If token is present add it to request's Authorization Header
         if (accessToken) {
@@ -101,7 +101,7 @@ export default class JwtService {
   }
 
   refreshToken() {
-    return axios.post(this.jwtConfig.refreshEndpoint, {
+    return axios.post('link refresh', {
       refreshToken: this.getRefreshToken()
     })
   }

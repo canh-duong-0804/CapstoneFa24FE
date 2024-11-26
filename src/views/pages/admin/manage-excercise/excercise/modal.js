@@ -65,7 +65,7 @@ const ModalComponent = () => {
   } = useForm({ defaultValues, resolver: yupResolver(formSchema) })
 
 
-  const [optionCategory, setOptionCategory] = useState([])
+  // const [optionCategory, setOptionCategory] = useState([])
   const [caloriesValue, setCaloriesValue] = useState('')
 
   // const optionLevel = [
@@ -74,16 +74,22 @@ const ModalComponent = () => {
   //   { value: 2, label: 'Cường độ cao' }
 
   // ]
+   const optionType = [
+    { value: 1, label: 'Carlido' },
+    { value: 2, label: 'Kháng lực' }
+    
+
+  ]
   const handleChangeCalories = (e) => {
     const value = e.target.value
     setCaloriesValue(value)
   }
   const renderData = () => {
-    api.categoryExerciseApi.getListBoxCategoryExerciseApi().then((rs) => {
-      setOptionCategory(rs)
-    }).catch(() => {
+    // api.categoryExerciseApi.getListBoxCategoryExerciseApi().then((rs) => {
+    //   setOptionCategory(rs)
+    // }).catch(() => {
 
-    })
+    // })
   }
 
   const handleFormOpened = () => {
@@ -186,13 +192,13 @@ const ModalComponent = () => {
                     theme={selectThemeColors}
                     className='react-select'
                     classNamePrefix='select'
-                    options={optionCategory}
+                    options={optionType}
                     placeholder='Chọn...'
                     isClearable={true}
                     onChange={(option) => {
                       field.onChange(option ? option.value : '')
                     }}
-                    value={optionCategory.find(option => option.value === field.value)}
+                    value={optionType.find(option => option.value === field.value)}
                   />
                 )}
               />

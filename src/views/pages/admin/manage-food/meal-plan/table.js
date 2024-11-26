@@ -3,13 +3,12 @@ import ReactPaginate from 'react-paginate'
 import '@styles/react/libs/react-select/_react-select.scss'
 import '@styles/react/libs/tables/react-dataTable-component.scss'
 import { useTranslation } from 'react-i18next'
-import { Table, Tag, Modal, Space, Tooltip, Checkbox } from 'antd'
+import { Table, Space, Tooltip, Checkbox } from 'antd'
 import { EditOutlined, EyeOutlined, SearchOutlined, DeleteOutlined } from "@ant-design/icons"
 import {
   Card,
   Input,
   Button,
-  Badge,
   Col,
   Row,
   InputGroup
@@ -120,12 +119,13 @@ const Position = () => {
       setData([])
     }
   }
- 
+
   const fetchData = () => {
     setLoading(true)
-    api.ingredientApi.getAllIngredientApi()
+    api.mealPlanTrainerApi.getAllMealPlanTrainerApi(currentPage)
       .then((rs) => {
-        setData(rs)
+        console.log('rs', rs)
+        setData(rs.mealPlans)
         setTotalItems(rs.totalPages)
         setLoading(false)
         setTableParams({
@@ -138,7 +138,7 @@ const Position = () => {
       }).catch(() => {
         setLoading(false)
       })
-  }
+}
   useEffect(() => {
     fetchData()
   }, [JSON.stringify(tableParams), loadTable, searchTerm, currentStatus, currentPage])
@@ -201,9 +201,10 @@ const Position = () => {
   }
 
   const handleDelete = (item) => {
+    console.log('item', item)
     MySwal.fire({
       title: t("Xác nhận"),
-      text: t("Bạn có muốn xóa nguyên liệu này không?"),
+      text: t("Bạn có muốn xóa kế hoạch này không?"),
       allowOutsideClick: false,
       showCancelButton: true,
       confirmButtonText: t("Xác nhận"),
@@ -215,16 +216,16 @@ const Position = () => {
       buttonsStyling: false
     }).then(async (result) => {
       if (result.value) {
-        api.foodApi.deleteFoodByIdApi(item.staffId)
+        api.mealPlanTrainerApi.deleteMealPlanTrainerByIdApi(item.mealPlanId)
           .then(() => {
             handleLoadTable()
-            notificationSuccess(t('Xóa nguyên liệu thành công'))
+            notificationSuccess(t('Xóa kế hoạch thành công'))
             setSelectedItems([])
             setShowCheckbox(false)
 
           })
           .catch(() => {
-            notificationError(t('Xóa nguyên liệu thất bại'))
+            notificationError(t('Xóa kế hoạch thất bại'))
           })
         // handleDelete(contextMenuClick.rowInfo.rowData.id)
       } else if (result.dismiss === MySwal.DismissReason.cancel) {
@@ -247,8 +248,8 @@ const Position = () => {
   const headerColumns = [
     {
       title: <div style={{ textAlign: 'left' }}>{'Tên'}</div>,
-      dataIndex: 'ingredientId',
-      key: 'ingredientId',
+      dataIndex: 'name',
+      key: 'name',
       width: 120,
       minWidth: 100,
       maxWidth: 130,
@@ -256,8 +257,8 @@ const Position = () => {
     },
     {
       title: <div style={{ textAlign: 'center' }}>{'Chế độ ăn'}</div>,
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'dietName',
+      key: 'dietName',
       width: 120,
       minWidth: 100,
       maxWidth: 130,

@@ -31,7 +31,7 @@ const UserDropdown = () => {
       <DropdownToggle href='/' tag='a' className='nav-link dropdown-user-link' onClick={e => e.preventDefault()}>
         <div className='user-nav d-sm-flex d-none'>
           <span className='user-name fw-bold'>{(userData && userData['username']) || ''}</span>
-          <span className='user-status'>{userData && userData.role === 0 ? 'Admin' : userData && userData.role === 1 ? 'Huấn luyện viên' : userData && userData.role === 2 ? 'Quản lý' : 'Thành viên'}
+          <span className='user-status'>{userData && userData.role === 0 ? 'Admin' : userData && userData.role === 1 ? 'Huấn luyện viên' : userData && userData.role === 2 ? 'Huấn luyện viên món ăn' : userData && userData.role === 3 ? 'Huấn luyện viên bài tập' :  'Thành viên'}
           </span>
         </div>
         <Avatar img={userAvatar} imgHeight='40' imgWidth='40' status='online' />

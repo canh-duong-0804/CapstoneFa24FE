@@ -59,6 +59,17 @@ export const AUTH = {
     UPDATE_INGERDIENT_API: `${BASE_URL}/api/Ingredient/update-ingredient-status`,
     DELETE_INGERDIENT_BY_ID_API: `${BASE_URL}/api/Ingredient/Delete-Ingredient`,
     GET_LIST_BOX_INGERDIENT_API: `${BASE_URL}/api/Ingredient/get-list-box-ingredient-for-staff`
+  },
+  MEAL_PLAN_TRAINER_API: {
+    CREATE_MEAL_PLAN_TRAINER_API: `${BASE_URL}/api/MealPlanTrainner/create-meal-plan-by-trainner`,
+    CREATE_MEAL_PLAN_DETAIL_TRAINER_API: `${BASE_URL}/api/MealPlanTrainner/create-meal-plan-detail`,
+    GET_ALL_MEAL_PLAN_TRAINER_API: `${BASE_URL}/api/MealPlanTrainner/Get-all-meal-plan-for-staff`,
+    GET_MEAL_PLAN_DETAIL_API: `${BASE_URL}/api/MealPlanTrainner/get-meal-plan-detail`,
+    GET_MEAL_PLAN_TRAINER_BY_ID_API: `${BASE_URL}/api/MealPlanTrainner/Get-MealPlanTrainner-by-id`,
+    UPDATE_MEAL_PLAN_TRAINER_API: `${BASE_URL}/api/MealPlanTrainner/update-MealPlanTrainner-status`,
+    DELETE_MEAL_PLAN_TRAINER_BY_ID_API: `${BASE_URL}/api/MealPlanTrainner/delete-meal-plan-by-trainner`,
+    GET_LIST_BOX_INGERDIENT_API: `${BASE_URL}/api/MealPlanTrainner/get-list-box-MealPlanTrainner-for-staff`
   }
+
 
 }

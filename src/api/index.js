@@ -5,6 +5,7 @@ import categoryExerciseApi from './exercise-category'
 import foodApi from './food'
 import ingredientApi from './ingredient'
 import recipeApi from './recipe'
+import mealPlanTrainerApi from './meal-plan-trainer'
 
 
 const api = {
@@ -14,7 +15,8 @@ const api = {
     ...categoryExerciseApi,
     ...foodApi,
     ...ingredientApi,
-    ...recipeApi
+    ...recipeApi,
+    ...mealPlanTrainerApi
 }
 
 export default api

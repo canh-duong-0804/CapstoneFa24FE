@@ -23,7 +23,8 @@ import Select from 'react-select'
 // import Flatpickr from 'react-flatpickr'
 import { notificationError, notificationSuccess } from '../../../../../utility/notification'
 const defaultValues = {
-  name: ''
+  name: '',
+  mealPlanImage: 'anh.png'
 
 }
 
@@ -55,7 +56,6 @@ const ModalComponent = () => {
   } = useForm({ defaultValues,  resolver: yupResolver(formSchema) })
 
   const [optionDiet, setOptionDiet] = useState([])
-
 
   const renderData = () => {
     api.foodApi.getListboxDietApi().then((rs) => {
@@ -92,21 +92,23 @@ const ModalComponent = () => {
 
   const onSubmit = data => {
     if (typeModal === "Edit") {
-      api.ingredientApi.updateIngredientApi(data).then(() => {
+      api.mealPlanTrainerApi.updateRoleApi(data).then(() => {
         handleLoadTable()
         handleModal()
-        notificationSuccess(t('Sửa nguyên liệu thành công'))
+        notificationSuccess(t('Sửa kế hoạch thành công'))
 
       }).catch(() => {
-        notificationError(t('Sửa nguyên liệu thất bại'))
+        notificationError(t('Sửa kế hoạch thất bại'))
       })
     } else {
-      api.ingredientApi.createIngredientApi(data).then(() => {
+      // console.log('data', data)
+      // return
+      api.mealPlanTrainerApi.createMealPlanTrainerApi(data).then(() => {
           handleLoadTable()
           handleModal()
-          notificationSuccess(t('Thêm nguyên liệu thành công'))
+          notificationSuccess(t('Thêm kế hoạch thành công'))
       }).catch(() => {
-        notificationError(t('Thêm nguyên liệu thất bại'))
+        notificationError(t('Thêm kế hoạch thất bại'))
       }
       )
     }
@@ -179,32 +181,32 @@ const ModalComponent = () => {
                   {errors.dietId ? <FormFeedback>{errors.dietId.message}</FormFeedback> : null}
                 </div>
                 <div className='mb-1'>
-                <Label className='form-label' for='add-short'>
+                <Label className='form-label' for='add-shortDescription'>
                   Mô tả ngắn
                 </Label>
                 <Controller
-                  id=''
-                  name=''
+                  id='shortDescription'
+                  name='shortDescription'
                   control={control}
                   render={({ field }) => (
-                    <Input autoFocus placeholder='Nhập mô tả ngắn' invalid={errors.name && true} {...field} />
+                    <Input autoFocus placeholder='Nhập mô tả ngắn' invalid={errors.shortDescription && true} {...field} />
                   )}
                 />
-                {errors.name ? <FormFeedback>{errors.name.message}</FormFeedback> : null}
+                {errors.shortDescription ? <FormFeedback>{errors.shortDescription.message}</FormFeedback> : null}
               </div>
               <div className='mb-1'>
                 <Label className='form-label' for='add-longdesc'>
                   Mô tả dài
                 </Label>
                 <Controller
-                  id=''
-                  name=''
+                  id='longDescription'
+                  name='longDescription'
                   control={control}
                   render={({ field }) => (
-                    <Input autoFocus placeholder='Nhập tên kế hoạch bữa ăn' invalid={errors.name && true} {...field} />
+                    <Input autoFocus placeholder='Nhập tên kế hoạch bữa ăn' invalid={errors.longDescription && true} {...field} />
                   )}
                 />
-                {errors.name ? <FormFeedback>{errors.name.message}</FormFeedback> : null}
+                {errors.longDescription ? <FormFeedback>{errors.longDescription.message}</FormFeedback> : null}
               </div>
           </ModalBody>
           <div

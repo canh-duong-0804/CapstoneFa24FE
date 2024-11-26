@@ -6,7 +6,7 @@ export const requester = {
   getGoogle: (url, params = {}, config = {}) => axios.get(url, { params, ...config }).then(responseBody),
 
   // eslint-disable-next-line
-  get: (url, params = {}, config = {}) => axios.get(url, { params, headers: { 'token': config } }).then(responseBody),
+  get: (url, params = {}, config = {}) => axios.get(url, { params, ...config}).then(responseBody),
   post: (url, data = {}, config = {}) => axios.post(url, data, {
     // eslint-disable-next-line
     headers: { 'token': config }
