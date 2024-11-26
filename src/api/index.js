@@ -6,6 +6,7 @@ import foodApi from './food'
 import ingredientApi from './ingredient'
 import recipeApi from './recipe'
 import mealPlanTrainerApi from './meal-plan-trainer'
+import mainDashboardApi from './member'
 
 
 const api = {
@@ -16,7 +17,8 @@ const api = {
     ...foodApi,
     ...ingredientApi,
     ...recipeApi,
-    ...mealPlanTrainerApi
+    ...mealPlanTrainerApi,
+    ...mainDashboardApi
 }
 
 export default api

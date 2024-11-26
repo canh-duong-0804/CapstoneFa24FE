@@ -69,6 +69,9 @@ export const AUTH = {
     UPDATE_MEAL_PLAN_TRAINER_API: `${BASE_URL}/api/MealPlanTrainner/update-MealPlanTrainner-status`,
     DELETE_MEAL_PLAN_TRAINER_BY_ID_API: `${BASE_URL}/api/MealPlanTrainner/delete-meal-plan-by-trainner`,
     GET_LIST_BOX_INGERDIENT_API: `${BASE_URL}/api/MealPlanTrainner/get-list-box-MealPlanTrainner-for-staff`
+  },
+  DASHBOARD_MOBLIE_API: {
+    GET_DASHBOARD_MOBLIE_API: `${BASE_URL}/api/MainDashBoardMobile/Get-main-dashboard-for-member-by-id`
   }
 
 

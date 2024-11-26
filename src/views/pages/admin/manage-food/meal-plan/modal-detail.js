@@ -77,6 +77,8 @@ const ModalComponent = () => {
   const [items, setItems] = useState(initialItems)
   const [optionFood, setOptionFood] = useState([])
   const [data, setData] = useState(null)
+  const [selectedFoods, setSelectedFoods] = useState([])
+
   const onChange = (newActiveKey) => {
     const index = items.findIndex(item => item.key === newActiveKey)
     console.log('Tab index:', index + 1)
@@ -119,6 +121,8 @@ const ModalComponent = () => {
         reset(defaultValues)
       })
   }
+
+  console.log('select', selectedFoods)
 
 
   const add = () => {
@@ -175,6 +179,7 @@ const ModalComponent = () => {
       .then((rs) => {
         if (rs) {
           setData(rs)
+          setSelectedFoods(rs.listFoodIdBreakfasts)
           const calculateCalories = (foodListName, caloriesField) => {
             const value = rs[foodListName]
             if (Array.isArray(value)) {
@@ -207,10 +212,11 @@ const ModalComponent = () => {
       })
   }
 
-  const calculateTotalCalories = (selectedFoodIds) => {
-    if (!Array.isArray(selectedFoodIds) || !selectedFoodIds.length) return 0
-    const selectedFoods = optionFood.filter(option => selectedFoodIds.some(val => val.foodId === option.value))
-    return selectedFoods.reduce((sum, option) => sum + option.calories, 0)
+  const calculateTotalCalories = (foods) => {
+    return foods.reduce((total, food) => {
+      const foodOption = optionFood.find(opt => opt.value === food.foodId)
+      return total + ((foodOption?.calories || 0) * food.quantity)
+    }, 0)
   }
 
   useEffect(() => {
@@ -254,6 +260,7 @@ const ModalComponent = () => {
     handleModalDetail()
     setDataItem({})
     setItems(initialItems)
+    setSelectedFoods([])
   }
 
   const renderFooterButtons = () => {
@@ -298,32 +305,62 @@ const ModalComponent = () => {
                       name='listFoodIdBreakfasts'
                       control={control}
                       render={({ field }) => (
-                        <Select
-                          {...field}
-                          theme={selectThemeColors}
-                          closeMenuOnSelect={false}
-                          className='react-select'
-                          classNamePrefix='select'
-                          isMulti
-                          components={animatedComponents}
-                          placeholder='Chọn...'
-                          options={optionFood}
-                          isClearable={false}
-                          onChange={(selectedOptions) => {
-                            const formattedIngredients = selectedOptions ? selectedOptions.map(option => ({ foodId: option.value, quantity: 0 })) : []
+                        <div>
+                          <Select
+                            {...field}
+                            theme={selectThemeColors}
+                            closeMenuOnSelect={false}
+                            className='react-select mb-2'
+                            classNamePrefix='select'
+                            isMulti
+                            components={animatedComponents}
+                            placeholder='Chọn món ăn...'
+                            options={optionFood}
+                            isClearable={false}
+                            onChange={(selectedOptions) => {
+                              const newFoods = selectedOptions ? selectedOptions.map(option => ({
+                                foodId: option.value,
+                                quantity: 0,
+                                foodName: option.label
+                              })) : []
 
-                            const totalCalories = calculateTotalCalories(formattedIngredients)
-
-                            field.onChange(formattedIngredients)
-                            setValue('caloriesBreakfast', totalCalories)
-                          }}
-                          value={optionFood.filter(option => field.value?.some(val => val.foodId === option.value))}
-                        />
+                              setSelectedFoods(newFoods)
+                              field.onChange(newFoods)
+                              setValue('caloriesBreakfast', 0)
+                            }}
+                            value={optionFood.filter(option => field.value?.some(val => val.foodId === option.value))}
+                          />
+                          {/* Danh sách món ăn đã chọn với input số lượng */}
+                          <div className="selected-foods">
+                            {selectedFoods.map((food, index) => (
+                              <div key={food.foodId} className="d-flex align-items-center gap-2 mb-2">
+                                <span className="flex-grow-1">{food.foodName}</span>
+                                <Input
+                                  type="number"
+                                  className="w-25"
+                                  placeholder="Số lượng"
+                                  value={food.quantity}
+                                  min={0}
+                                  onChange={(e) => {
+                                    const newQuantity = parseFloat(e.target.value) || 0
+                                    const updatedFoods = selectedFoods.map((f, i) => (i === index ? { ...f, quantity: newQuantity } : f))
+                                    setSelectedFoods(updatedFoods)
+                                    field.onChange(updatedFoods)
+                                    setValue('caloriesBreakfast', calculateTotalCalories(updatedFoods))
+                                  }}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       )}
                     />
-                    {errors.listFoodIdBreakfasts ? <FormFeedback>{errors.listFoodIdBreakfasts.message}</FormFeedback> : null}
+                    {errors.listFoodIdBreakfasts && (
+                      <FormFeedback>{errors.listFoodIdBreakfasts.message}</FormFeedback>
+                    )}
                   </div>
                 </Col>
+
                 <Col lg={3} md={3} xs={12}>
                   <div className='mb-1'>
                     <Label className='form-label' for='add-calories'>
@@ -334,10 +371,15 @@ const ModalComponent = () => {
                       name='caloriesBreakfast'
                       control={control}
                       render={({ field }) => (
-                        <Input autoFocus placeholder='' invalid={errors.caloriesBreakfast && true} {...field} />
+                        <Input
+                          {...field}
+                          disabled
+                          placeholder='0'
+                          invalid={errors.caloriesBreakfast && true}
+                        />
                       )}
                     />
-                    {errors.calories ? <FormFeedback>{errors.calories.message}</FormFeedback> : null}
+                    {errors.calories && <FormFeedback>{errors.calories.message}</FormFeedback>}
                   </div>
                 </Col>
                 <Col lg={12} md={12} xs={12}>

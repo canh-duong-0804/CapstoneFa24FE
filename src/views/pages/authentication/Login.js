@@ -129,7 +129,7 @@ const Login = () => {
                   render={({ field }) => (
                     <Input
                       autoFocus
-                      type='email'
+                      // type='email'
                       placeholder=''
                       invalid={errors.email && true}
                       {...field}
