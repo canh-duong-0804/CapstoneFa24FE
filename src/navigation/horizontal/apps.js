@@ -34,13 +34,13 @@ export default [
         id: 'todo',
         title: 'Todo',
         icon: <CheckSquare />,
-        navLink: '/apps/todo'
+        navLink: '/food/member'
       },
       {
         id: 'calendar',
         title: 'Calendar',
         icon: <Calendar />,
-        navLink: '/apps/calendar'
+        navLink: '/exercise/member'
       },
       {
         id: 'kanban',

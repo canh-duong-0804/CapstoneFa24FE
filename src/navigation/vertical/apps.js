@@ -19,15 +19,15 @@ export default [
   },
   {
     id: 'todo',
-    title: 'Todo',
+    title: 'Food',
     icon: <CheckSquare size={20} />,
-    navLink: '/apps/todo'
+    navLink: '/food/member'
   },
   {
     id: 'calendar',
-    title: 'Calendar',
+    title: 'Exercise',
     icon: <Calendar size={20} />,
-    navLink: '/apps/calendar'
+    navLink: '/exercise/member'
   },
   {
     id: 'kanban',

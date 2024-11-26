@@ -10,3 +10,54 @@ NOTE:
 PLACE HERE YOUR OWN SCSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER STYLESHEETS.
 WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
 @import 'pages/dashboard';
+.circular-progress-container {
+	position: relative;
+	width: 200px;
+	height: 200px;
+  }
+  
+  .circular-progress {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	border: 10px solid #e9ecef;
+	
+	&::before {
+	  content: '';
+	  position: absolute;
+	  top: -10px;
+	  left: -10px;
+	  right: -10px;
+	  bottom: -10px;
+	  border-radius: 50%;
+	  border: 10px solid;
+	  border-color: #28c76f #28c76f transparent transparent;
+	  transform: rotate(45deg);
+	}
+  }
+  
+  .circular-progress-value {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	text-align: center;
+  }
+  
+  .progress-bar {
+	height: 8px;
+	border-radius: 4px;
+	
+	&-primary {
+	  background-color: #7367f0;
+	}
+	
+	&-warning {
+	  background-color: #ff9f43;
+	}
+	
+	&-success {
+	  background-color: #28c76f;
+	}
+  }
