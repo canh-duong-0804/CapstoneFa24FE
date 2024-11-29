@@ -76,7 +76,8 @@ const ModalComponent = () => {
   // ]
    const optionType = [
     { value: 1, label: 'Carlido' },
-    { value: 2, label: 'Kháng lực' }
+    { value: 2, label: 'Kháng lực' },
+    { value: 3, label: 'Khác' }
     
 
   ]

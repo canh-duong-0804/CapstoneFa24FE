@@ -6,9 +6,16 @@ import '@styles/react/libs/charts/apex-charts.scss'
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null)
-  
+  const date = new Date()
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0') 
+
+  // Định dạng thành YYYY-MM-DD
+  const formattedDate = `${year}-${month}-${day}`
+  console.log('date', formattedDate)
   useEffect(() => {
-    api.mainDashboardApi.getMainDashboardApi(new Date()).then(response => {
+    api.mainDashboardApi.getMainDashboardApi(formattedDate).then(response => {
       setDashboardData(response)
     }).catch(error => {
       console.error('Error fetching dashboard data:', error)
@@ -21,7 +28,7 @@ const Dashboard = () => {
         <Col lg='8' md='12'>
           <Card>
             <CardHeader className='d-flex justify-content-between align-items-center'>
-              <div>
+              <div className="align-items-center">
                 <CardTitle tag='h4'>Mục tiêu calorie</CardTitle>
                 <h2 className='text-primary'>{dashboardData?.totalCalories || 0} cals</h2>
               </div>
@@ -44,7 +51,7 @@ const Dashboard = () => {
                 </Col>
 
                 <Col md='4'>
-                  <div className='d-flex justify-content-center align-items-center' style={{height: '100%'}}>
+                  <div className='d-flex justify-content-center align-items-center' style={{ height: '100%' }}>
                     <div className='circular-progress-container'>
                       <div className='circular-progress'>
                         <div className='circular-progress-value'>
@@ -60,21 +67,21 @@ const Dashboard = () => {
                 <Col md='4'>
                   <div className='d-flex flex-column align-items-center mb-2'>
                     <h6 className='mb-1'>Protein ({dashboardData?.proteinIntake || 0}g)</h6>
-                    <Progress 
+                    <Progress
                       value={(dashboardData?.proteinIntake / dashboardData?.totalProtein) * 100}
                       className='progress-bar-primary'
                     />
                   </div>
                   <div className='d-flex flex-column align-items-center mb-2'>
                     <h6 className='mb-1'>Carbs ({dashboardData?.carbsIntake || 0}g)</h6>
-                    <Progress 
+                    <Progress
                       value={(dashboardData?.carbsIntake / dashboardData?.totalCarb) * 100}
                       className='progress-bar-warning'
                     />
                   </div>
                   <div className='d-flex flex-column align-items-center'>
                     <h6 className='mb-1'>Fat ({dashboardData?.fatIntake || 0}g)</h6>
-                    <Progress 
+                    <Progress
                       value={(dashboardData?.fatIntake / dashboardData?.totalFat) * 100}
                       className='progress-bar-success'
                     />
@@ -90,7 +97,7 @@ const Dashboard = () => {
             <CardBody>
               <div className='mb-2'>
                 <p>
-                  Kế hoạch cân nặng: {dashboardData?.goalType} {Math.abs(dashboardData?.weightDifference)}kg trong {dashboardData?.targetDate}
+                  Kế hoạch cân nặng: {dashboardData?.goalType} {Math.abs(dashboardData?.weightDifference)}kg đến {dashboardData?.targetDate}
                 </p>
               </div>
               <div className='mb-2'>

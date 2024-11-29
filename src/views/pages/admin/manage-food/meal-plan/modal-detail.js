@@ -43,9 +43,7 @@ const defaultValues = {
   descriptionBreakFast: '',
   descriptionLunch: '',
   descriptionDinner: '',
-  descriptionSnack: '',
-  activeKey: initialItems[0].key
-
+  descriptionSnack: ''
 }
 
 const ModalComponent = () => {
@@ -90,6 +88,7 @@ const ModalComponent = () => {
         console.log('rs', rs)
         if (rs) {
           setData(rs)
+          setSelectedFoods(rs.listFoodIdBreakfasts)
           const calculateCalories = (foodListName, caloriesField) => {
             const value = rs[foodListName]
             if (Array.isArray(value)) {
@@ -121,9 +120,6 @@ const ModalComponent = () => {
         reset(defaultValues)
       })
   }
-
-  console.log('select', selectedFoods)
-
 
   const add = () => {
     const newTabNumber = items.length + 1
@@ -258,6 +254,7 @@ const ModalComponent = () => {
   const handleCancel = () => {
     reset(defaultValues)
     handleModalDetail()
+    setActiveKey('1')
     setDataItem({})
     setItems(initialItems)
     setSelectedFoods([])
