@@ -41,6 +41,7 @@ const Calendar = props => {
 
   // ** calendarOptions(Props)
   const calendarOptions = {
+    locale: 'vi',
     events: store.events.length ? store.events : [],
     plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin],
     initialView: 'dayGridMonth',

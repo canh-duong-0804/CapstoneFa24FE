@@ -1,5 +1,5 @@
 // ** Dropdowns Imports
-import IntlDropdown from './IntlDropdown'
+// import IntlDropdown from './IntlDropdown'
 import CartDropdown from './CartDropdown'
 import UserDropdown from './UserDropdown'
 import NavbarSearch from './NavbarSearch'
@@ -26,7 +26,7 @@ const NavbarUser = props => {
 
   return (
     <ul className='nav navbar-nav align-items-center ms-auto'>
-      <IntlDropdown />
+      {/* <IntlDropdown /> */}
       <NavItem className='d-none d-lg-block'>
         <NavLink className='nav-link-style'>
           <ThemeToggler />
