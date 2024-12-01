@@ -33,22 +33,14 @@ export default [
         action: 'read',
         resource: 'All'
       },
-      {
-        id: '5',
-        title: 'Công thức nấu ăn',
-        icon: <Circle size={12} />,
-        navLink: '/admin/manage-recipe',
-        action: 'read',
-        resource: 'All'
-      },
-      {
-        id: '6',
-        title: 'Nguyên liệu',
-        icon: <Circle size={12} />,
-        navLink: '/admin/manage-ingredient',
-        action: 'read',
-        resource: 'All'
-      },
+      // {
+      //   id: '5',
+      //   title: 'Công thức nấu ăn',
+      //   icon: <Circle size={12} />,
+      //   navLink: '/admin/manage-recipe',
+      //   action: 'read',
+      //   resource: 'All'
+      // },
       {
         id: '7',
         title: 'Gợi ý kế hoạch',
@@ -76,37 +68,30 @@ export default [
         resource: 'All'
       },
       {
-        id: '10',
-        title: 'Thể loại bài tập',
-        icon: <Circle size={12} />,
-        navLink: '/admin/exercise-category',
-        action: 'read',
-        resource: 'All'
-      },
-      {
         id: '11',
         title: 'Gợi ý bài tập',
         icon: <Circle size={12} />,
-        navLink: '/admin/suggest-excercise',
-        action: 'read',
-        resource: 'All'
-      }, {
-        id: '12',
-        title: 'Thông tin bài tập',
-        icon: <Circle size={12} />,
-        navLink: '/admin/excercise-information',
+        navLink: '/admin/exercise-plan',
         action: 'read',
         resource: 'All'
       }
+      // {
+      //   id: '12',
+      //   title: 'Thông tin bài tập',
+      //   icon: <Circle size={12} />,
+      //   navLink: '/admin/excercise-information',
+      //   action: 'read',
+      //   resource: 'All'
+      // }
     ]
-  },
-  {
-    id: '13',
-    title: 'Quản lý blog',
-    icon: <Book size={12} />,
-    action: 'read',
-    resource: 'All',
-    navLink: '/admin/manage-blog'
   }
+  // {
+  //   id: '13',
+  //   title: 'Quản lý blog',
+  //   icon: <Book size={12} />,
+  //   action: 'read',
+  //   resource: 'All',
+  //   navLink: '/admin/manage-blog'
+  // }
 
 ]

@@ -38,7 +38,7 @@ import '@styles/base/core/menu/menu-types/vertical-overlay-menu.scss'
 
 const VerticalLayout = props => {
   // ** Props
-  const { menu, navbar, footer, children, menuData } = props
+  const { menu, navbar, children, menuData } = props
 
   // ** Hooks
   const [isRtl, setIsRtl] = useRTL()
@@ -214,7 +214,7 @@ const VerticalLayout = props => {
           'd-none': footerType === 'hidden'
         })}
       >
-        {footer ? footer : <FooterComponent footerType={footerType} footerClasses={footerClasses} />}
+        {/* {footer ? footer : <FooterComponent footerType={footerType} footerClasses={footerClasses} />} */}
       </footer>
       
 

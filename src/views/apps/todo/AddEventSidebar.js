@@ -1,4 +1,10 @@
+// ** React Imports
 import { Fragment, useState } from 'react'
+
+// ** Custom Components
+import Avatar from '@components/avatar'
+
+// ** Third Party Components
 import { X } from 'react-feather'
 import toast from 'react-hot-toast'
 import Flatpickr from 'react-flatpickr'
@@ -12,11 +18,17 @@ import { Button, Modal, ModalHeader, ModalBody, Label, Input, Form } from 'react
 // ** Utils
 import { selectThemeColors, isObjEmpty } from '@utils'
 
+// ** Avatar Images
+import img1 from '@src/assets/images/avatars/1-small.png'
+import img2 from '@src/assets/images/avatars/3-small.png'
+import img3 from '@src/assets/images/avatars/5-small.png'
+import img4 from '@src/assets/images/avatars/7-small.png'
+import img5 from '@src/assets/images/avatars/9-small.png'
+import img6 from '@src/assets/images/avatars/11-small.png'
+
 // ** Styles Imports
 import '@styles/react/libs/react-select/_react-select.scss'
 import '@styles/react/libs/flatpickr/flatpickr.scss'
-import makeAnimated from 'react-select/animated'
-import api from '../../../api/index'
 
 const AddEventSidebar = props => {
   // ** Props
@@ -24,6 +36,7 @@ const AddEventSidebar = props => {
     open,
     store,
     dispatch,
+    addEvent,
     calendarApi,
     selectEvent,
     updateEvent,
@@ -33,8 +46,6 @@ const AddEventSidebar = props => {
     handleAddEventSidebar
   } = props
 
-  const animatedComponents = makeAnimated()
-
   // ** Vars & Hooks
   const selectedEvent = store.selectedEvent,
     {
@@ -42,26 +53,38 @@ const AddEventSidebar = props => {
       setError,
       setValue,
       getValues,
-      reset,
       handleSubmit,
       formState: { errors }
     } = useForm({
-      defaultValues: { listFoodIdBreakfasts: [] }
+      defaultValues: { title: '' }
     })
 
   // ** States
+  const [url, setUrl] = useState('')
+  const [desc, setDesc] = useState('')
+  const [guests, setGuests] = useState({})
+  const [allDay, setAllDay] = useState(false)
+  const [location, setLocation] = useState('')
   const [endPicker, setEndPicker] = useState(new Date())
   const [startPicker, setStartPicker] = useState(new Date())
-  const [calendarLabel, setCalendarLabel] = useState([{ value: 1, label: 'Bữa sáng', color: 'danger' }])
-  const [optionFood, setOptionFood] = useState([])
-  const [selectedFoods, setSelectedFoods] = useState([])
+  const [calendarLabel, setCalendarLabel] = useState([{ value: 'Business', label: 'Business', color: 'primary' }])
 
   // ** Select Options
   const options = [
-    { value: 1, label: 'Bữa sáng', color: 'danger' },
-    { value: 2, label: 'Bữa trưa', color: 'warning' },
-    { value: 3, label: 'Bữa tối', color: 'success' },
-    { value: 4, label: 'Bữa phụ', color: 'info' }
+    { value: 'Business', label: 'Business', color: 'primary' },
+    { value: 'Personal', label: 'Personal', color: 'danger' },
+    { value: 'Family', label: 'Family', color: 'warning' },
+    { value: 'Holiday', label: 'Holiday', color: 'success' },
+    { value: 'ETC', label: 'ETC', color: 'info' }
+  ]
+
+  const guestsOptions = [
+    { value: 'Donna Frank', label: 'Donna Frank', avatar: img1 },
+    { value: 'Jane Foster', label: 'Jane Foster', avatar: img2 },
+    { value: 'Gabrielle Robertson', label: 'Gabrielle Robertson', avatar: img3 },
+    { value: 'Lori Spears', label: 'Lori Spears', avatar: img4 },
+    { value: 'Sandy Vega', label: 'Sandy Vega', avatar: img5 },
+    { value: 'Cheryl May', label: 'Cheryl May', avatar: img6 }
   ]
 
   // ** Custom select components
@@ -74,70 +97,55 @@ const AddEventSidebar = props => {
     )
   }
 
+  const GuestsComponent = ({ data, ...props }) => {
+    return (
+      <components.Option {...props}>
+        <div className='d-flex flex-wrap align-items-center'>
+          <Avatar className='my-0 me-1' size='sm' img={data.avatar} />
+          <div>{data.label}</div>
+        </div>
+      </components.Option>
+    )
+  }
+
   // ** Adds New Event
   const handleAddEvent = () => {
-    const getMealType = (label) => {
-      switch (label[0].value) {
-        case 1: return 1
-        case 2: return 2
-        case 3: return 3
-        case 4: return 4
-        default: return 1
-      }
-    }
-   
     const obj = {
-      mealType: getMealType(calendarLabel),
-      selectDate: startPicker, 
-      listFoodIdToAdd: selectedFoods.map(food => ({
-        foodId: food.foodId,
-        quantity: food.quantity
-      }))
-    }
-  
-    api.foodDairyApi.createFoodDairyApi(obj)
-    .then(async () => {
-      // Ensure refetchEvents is called
-      if (refetchEvents) {
-        await refetchEvents()
+      title: getValues('title'),
+      start: startPicker,
+      end: endPicker,
+      allDay,
+      display: 'block',
+      extendedProps: {
+        calendar: calendarLabel[0].label,
+        url: url.length ? url : undefined,
+        guests: guests.length ? guests : undefined,
+        location: location.length ? location : undefined,
+        desc: desc.length ? desc : undefined
       }
-      toast.success('Thêm món ăn thành công')
-
-      // Reset form
-      reset({
-        listFoodIdToAdd: [],
-        caloriesBreakfast: 0
-      })
-      setSelectedFoods([])
-      setCalendarLabel([{ value: 1, label: 'Bữa sáng', color: 'danger' }])
-      setStartPicker(new Date())
-      handleAddEventSidebar()
-    })
-    .catch((error) => {
-      toast.error('Thêm món ăn thất bại')
-      console.error('Error adding food:', error)
-    })
+    }
+    dispatch(addEvent(obj))
+    refetchEvents()
+    handleAddEventSidebar()
+    toast.success('Event Added')
   }
 
   // ** Reset Input Values on Close
   const handleResetInputValues = () => {
     dispatch(selectEvent({}))
-    setCalendarLabel([{ value: 1, label: 'Bữa sáng', color: 'danger' }])
+    setValue('title', '')
+    setAllDay(false)
+    setUrl('')
+    setLocation('')
+    setDesc('')
+    setGuests({})
+    setCalendarLabel([{ value: 'Business', label: 'Business', color: 'primary' }])
     setStartPicker(new Date())
     setEndPicker(new Date())
-    setSelectedFoods([])
-  }
-  const renderData = () => {
-    api.foodApi.getListBoxFoodApi().then((rs) => {
-      setOptionFood(rs)
-    }).catch(() => {
-
-    })
   }
 
   // ** Set sidebar fields
   const handleSelectedEvent = () => {
-    renderData()
     if (!isObjEmpty(selectedEvent)) {
       const calendar = selectedEvent.extendedProps.calendar
 
@@ -145,20 +153,19 @@ const AddEventSidebar = props => {
         if (calendar.length) {
           return { label: calendar, value: calendar, color: calendarsColor[calendar] }
         } else {
-          return { value: 1, label: 'Bữa sáng', color: 'danger' }
+          return { value: 'Business', label: 'Business', color: 'primary' }
         }
       }
+      setValue('title', selectedEvent.title || getValues('title'))
+      setAllDay(selectedEvent.allDay || allDay)
+      setUrl(selectedEvent.url || url)
+      setLocation(selectedEvent.extendedProps.location || location)
+      setDesc(selectedEvent.extendedProps.description || desc)
+      setGuests(selectedEvent.extendedProps.guests || guests)
       setStartPicker(new Date(selectedEvent.start))
       setEndPicker(selectedEvent.allDay ? new Date(selectedEvent.start) : new Date(selectedEvent.end))
       setCalendarLabel([resolveLabel()])
     }
-  }
-
-  const calculateTotalCalories = (foods) => {
-    return foods.reduce((total, food) => {
-      const foodOption = optionFood.find(opt => opt.value === food.foodId)
-      return total + ((foodOption?.calories || 0) * food.quantity)
-    }, 0)
   }
 
   // ** (UI) updateEventInCalendar
@@ -201,6 +208,9 @@ const AddEventSidebar = props => {
         url,
         display: allDay === false ? 'block' : undefined,
         extendedProps: {
+          location,
+          description: desc,
+          guests,
           calendar: calendarLabel[0].label
         }
       }
@@ -237,10 +247,10 @@ const AddEventSidebar = props => {
       return (
         <Fragment>
           <Button className='me-1' type='submit' color='primary'>
-            Thêm
+            Add
           </Button>
           <Button color='secondary' type='reset' onClick={handleAddEventSidebar} outline>
-            Hủy
+            Cancel
           </Button>
         </Fragment>
       )
@@ -248,10 +258,10 @@ const AddEventSidebar = props => {
       return (
         <Fragment>
           <Button className='me-1' color='primary' onClick={handleUpdateEvent}>
-            Cập nhật
+            Update
           </Button>
           <Button color='danger' onClick={handleDeleteEvent} outline>
-            Xóa
+            Delete
           </Button>
         </Fragment>
       )
@@ -273,108 +283,45 @@ const AddEventSidebar = props => {
     >
       <ModalHeader className='mb-1' toggle={handleAddEventSidebar} close={CloseBtn} tag='div'>
         <h5 className='modal-title'>
-          {selectedEvent && selectedEvent.title && selectedEvent.title.length ? 'Sửa' : 'Thêm'} Món ăn
+          {selectedEvent && selectedEvent.title && selectedEvent.title.length ? 'Update' : 'Add'} Event
         </h5>
       </ModalHeader>
       <PerfectScrollbar options={{ wheelPropagation: false }}>
         <ModalBody className='flex-grow-1 pb-sm-0 pb-3'>
           <Form
             onSubmit={handleSubmit(data => {
-              if (isObjEmpty(errors)) {
-                if (isObjEmpty(selectedEvent) || (!isObjEmpty(selectedEvent) && !selectedEvent.title.length)) {
-                  handleAddEvent(data)
-                } else {
-                  handleUpdateEvent()
+              if (data.title.length) {
+                if (isObjEmpty(errors)) {
+                  if (isObjEmpty(selectedEvent) || (!isObjEmpty(selectedEvent) && !selectedEvent.title.length)) {
+                    handleAddEvent()
+                  } else {
+                    handleUpdateEvent()
+                  }
+                  handleAddEventSidebar()
                 }
+              } else {
+                setError('title', {
+                  type: 'manual'
+                })
               }
             })}
           >
             <div className='mb-1'>
-              <Label className='form-label' for='add-listFoodIdToAdd'>
-                Món ăn
+              <Label className='form-label' for='title'>
+                Title <span className='text-danger'>*</span>
               </Label>
               <Controller
-                id='listFoodIdToAdd'
-                name='listFoodIdToAdd'
+                name='title'
                 control={control}
                 render={({ field }) => (
-                  <div>
-                    <Select
-                      {...field}
-                      theme={selectThemeColors}
-                      closeMenuOnSelect={false}
-                      className='react-select mb-2'
-                      classNamePrefix='select'
-                      isMulti
-                      components={animatedComponents}
-                      placeholder='Chọn món ăn...'
-                      options={optionFood}
-                      isClearable={false}
-                      onChange={(selectedOptions) => {
-                        const newFoods = selectedOptions ? selectedOptions.map(option => ({
-                          foodId: option.value,
-                          quantity: 0,
-                          foodName: option.label
-                        })) : []
-
-                        setSelectedFoods(newFoods)
-                        field.onChange(newFoods)
-                        setValue('caloriesBreakfast', 0)
-                      }}
-                      value={optionFood.filter(option => field.value?.some(val => val.foodId === option.value))}
-                    />
-                    {/* Danh sách món ăn đã chọn với input số lượng */}
-                    <div className="selected-foods">
-                      {selectedFoods.map((food, index) => (
-                        <div key={food.foodId} className="d-flex align-items-center gap-2 mb-2">
-                          <span className="flex-grow-1">{food.foodName}</span>
-                          <Input
-                            type="number"
-                            className="w-25"
-                            placeholder="Số lượng"
-                            value={food.quantity}
-                            min={0}
-                            onChange={(e) => {
-                              const newQuantity = parseFloat(e.target.value) || 0
-                              const updatedFoods = selectedFoods.map((f, i) => (i === index ? { ...f, quantity: newQuantity } : f))
-                              setSelectedFoods(updatedFoods)
-                              field.onChange(updatedFoods)
-                              setValue('caloriesBreakfast', calculateTotalCalories(updatedFoods))
-                            }}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                  <Input id='title' placeholder='Title' invalid={errors.title && true} {...field} />
                 )}
               />
-              {errors.listFoodIdBreakfasts && (
-                <FormFeedback>{errors.listFoodIdBreakfasts.message}</FormFeedback>
-              )}
-            </div>
-            <div className='mb-1'>
-              <Label className='form-label' for='add-calories'>
-                Calories
-              </Label>
-              <Controller
-                id='caloriesBreakfast'
-                name='caloriesBreakfast'
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    disabled
-                    placeholder='0'
-                    invalid={errors.caloriesBreakfast && true}
-                  />
-                )}
-              />
-              {errors.calories && <FormFeedback>{errors.calories.message}</FormFeedback>}
             </div>
 
             <div className='mb-1'>
               <Label className='form-label' for='label'>
-                Loại bữa
+                Label
               </Label>
               <Select
                 id='label'
@@ -382,7 +329,6 @@ const AddEventSidebar = props => {
                 options={options}
                 theme={selectThemeColors}
                 className='react-select'
-                styles={{}}
                 classNamePrefix='select'
                 isClearable={false}
                 onChange={data => setCalendarLabel([data])}
@@ -393,19 +339,108 @@ const AddEventSidebar = props => {
             </div>
 
             <div className='mb-1'>
-              <Label className='form-label' for='selectDate'>
-                Ngày
+              <Label className='form-label' for='startDate'>
+                Start Date
               </Label>
               <Flatpickr
                 required
-                id='selectDate'
-                name='selectDate'
+                id='startDate'
+                name='startDate'
                 className='form-control'
                 onChange={date => setStartPicker(date[0])}
                 value={startPicker}
                 options={{
-                  dateFormat: 'd-m-Y'
+                  enableTime: allDay === false,
+                  dateFormat: 'Y-m-d H:i'
                 }}
+              />
+            </div>
+
+            <div className='mb-1'>
+              <Label className='form-label' for='endDate'>
+                End Date
+              </Label>
+              <Flatpickr
+                required
+                id='endDate'
+                // tag={Flatpickr}
+                name='endDate'
+                className='form-control'
+                onChange={date => setEndPicker(date[0])}
+                value={endPicker}
+                options={{
+                  enableTime: allDay === false,
+                  dateFormat: 'Y-m-d H:i'
+                }}
+              />
+            </div>
+
+            <div className='form-switch mb-1'>
+              <Input
+                id='allDay'
+                type='switch'
+                className='me-1'
+                checked={allDay}
+                name='customSwitch'
+                onChange={e => setAllDay(e.target.checked)}
+              />
+              <Label className='form-label' for='allDay'>
+                All Day
+              </Label>
+            </div>
+
+            <div className='mb-1'>
+              <Label className='form-label' for='eventURL'>
+                Event URL
+              </Label>
+              <Input
+                type='url'
+                id='eventURL'
+                value={url}
+                onChange={e => setUrl(e.target.value)}
+                placeholder='https://www.google.com'
+              />
+            </div>
+
+            <div className='mb-1'>
+              <Label className='form-label' for='guests'>
+                Guests
+              </Label>
+              <Select
+                isMulti
+                id='guests'
+                className='react-select'
+                classNamePrefix='select'
+                isClearable={false}
+                options={guestsOptions}
+                theme={selectThemeColors}
+                value={guests.length ? [...guests] : null}
+                onChange={data => setGuests([...data])}
+                components={{
+                  Option: GuestsComponent
+                }}
+              />
+            </div>
+
+            <div className='mb-1'>
+              <Label className='form-label' for='location'>
+                Location
+              </Label>
+              <Input id='location' value={location} onChange={e => setLocation(e.target.value)} placeholder='Office' />
+            </div>
+
+            <div className='mb-1'>
+              <Label className='form-label' for='description'>
+                Description
+              </Label>
+              <Input
+                type='textarea'
+                name='text'
+                id='description'
+                rows='3'
+                value={desc}
+                onChange={e => setDesc(e.target.value)}
+                placeholder='Description'
               />
             </div>
             <div className='d-flex mb-1'>

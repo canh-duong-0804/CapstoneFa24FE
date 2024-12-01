@@ -55,21 +55,6 @@ const CustomHeader = ({ handleAdd, handleFilter }) => {
             <SearchOutlined></SearchOutlined>
           </span>
         </InputGroup>
-        {/*<div className='d-flex align-items-center mx-50' style={{ minWidth: "220px", maxWidth: "220px" }}>
-          <Select
-            //theme={selectThemeColors}
-            isClearable={true}
-            className='my-25 react-select w-100'
-            classNamePrefix='select'
-            menuPosition="fixed"
-            placeholder={t('Select status')}
-            options={isDefaultOptions}
-            value={currentStatus}
-            onChange={data => {
-              setcurrentStatus(data)
-            }}
-          />
-        </div>*/}
       </div>
       <div className='d-flex justify-content-end mx-2'>
         <Button className='add-new-semester mx-50 my-25' color='primary' onClick={handleAdd}>
@@ -123,13 +108,9 @@ const Position = () => {
 
   const fetchData = () => {
     setLoading(true)
-    api.exerciseApi.getAllExerciseApi()
+    api.exerciseApi.getAllExerciseApi(currentPage)
       .then((rs) => {
-        const updatedData = rs.map(item => ({
-          ...item
-          // role: getRoleName(item.role)
-        }))
-        setData(updatedData)
+        setData(rs.data)
         setTotalItems(rs.totalPages)
         setLoading(false)
         setTableParams({
@@ -207,7 +188,7 @@ const Position = () => {
   const handleDelete = (item) => {
     MySwal.fire({
       title: t("Xác nhận"),
-      text: t("Bạn có muốn xóa tài khoản này không?"),
+      text: t("Bạn có muốn xóa bài tập này không?"),
       allowOutsideClick: false,
       showCancelButton: true,
       confirmButtonText: t("Xác nhận"),
@@ -219,16 +200,16 @@ const Position = () => {
       buttonsStyling: false
     }).then(async (result) => {
       if (result.value) {
-        api.exerciseApi.deleteExerciseByIdApi(item.staffId)
+        api.exerciseApi.deleteExerciseByIdApi(item.exerciseId)
           .then(() => {
             handleLoadTable()
-            notificationSuccess(t('Xóa tài khoản thành công'))
+            notificationSuccess(t('Xóa bài tập thành công'))
             setSelectedItems([])
             setShowCheckbox(false)
 
           })
           .catch(() => {
-            notificationError(t('Xóa tài khoản thất bại'))
+            notificationError(t('Xóa bài tập thất bại'))
           })
         // handleDelete(contextMenuClick.rowInfo.rowData.id)
       } else if (result.dismiss === MySwal.DismissReason.cancel) {
@@ -237,6 +218,7 @@ const Position = () => {
   }
 
   const handleEdit = (item) => {
+    console.log('item', item)
     setDataItem(item)
     setTypeModal('Edit')
     handleModal()
@@ -259,41 +241,23 @@ const Position = () => {
     },
     {
       title: <div style={{ textAlign: 'left' }}>{'Thể loại bài tập'}</div>,
-      dataIndex: 'exerciseCategoryName',
-      key: 'exerciseCategoryName',
+      dataIndex: 'typeExercise',
+      key: 'typeExercise',
       width: 120,
       minWidth: 100,
-      maxWidth: 130
-    },
-    {
-      title: <div style={{ textAlign: 'center' }}>{'Cường độ vận động'}</div>,
-      dataIndex: 'exerciseLevel',
-      key: 'exerciseLevel',
-      width: 150,
-      minWidth: 50,
-      maxWidth: 200,
-      align: 'center',
-      render: (exerciseLevel) => {
-        switch (exerciseLevel) {
-          case 0:
-            return 'Cường độ nhẹ'
-          case 1:
-            return 'Cường độ vừa'
-          case 2:
-            return 'Cường độ cao'
+      maxWidth: 130,
+      render: (typeExercise) => {
+        switch (typeExercise) {
+          case "Cardio":
+            return 'Cardio'
+          case "Strength":
+            return 'Kháng lực'
+          case "Unknown":
+            return 'Khác'
           default:
             return ''
         }
       }
-    },
-    {
-      title: <div style={{ textAlign: 'center' }}>{t('Người tạo')}</div>,
-      dataIndex: 'createBy',
-      key: 'createBy',
-      width: 100,
-      minWidth: 50,
-      maxWidth: 150,
-      align: 'center'
     },
     {
       title: (

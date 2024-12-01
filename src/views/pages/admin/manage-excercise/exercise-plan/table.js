@@ -122,10 +122,10 @@ const Position = () => {
 
   const fetchData = () => {
     setLoading(true)
-    api.mealPlanTrainerApi.getAllMealPlanTrainerApi(currentPage)
+    api.exercisePlanTrainerApi.getAllExercisePlanTrainerApi(currentPage)
       .then((rs) => {
         console.log('rs', rs)
-        setData(rs.mealPlans)
+        setData(rs.data)
         setTotalItems(rs.totalPages)
         setLoading(false)
         setTableParams({
@@ -201,6 +201,7 @@ const Position = () => {
   }
 
   const handleDelete = (item) => {
+    console.log('item', item)
     MySwal.fire({
       title: t("Xác nhận"),
       text: t("Bạn có muốn xóa kế hoạch này không?"),
@@ -255,9 +256,9 @@ const Position = () => {
       align: 'left'
     },
     {
-      title: <div style={{ textAlign: 'center' }}>{'Chế độ ăn'}</div>,
-      dataIndex: 'dietName',
-      key: 'dietName',
+      title: <div style={{ textAlign: 'center' }}>{'Calories đốt cháy'}</div>,
+      dataIndex: 'totalCaloriesBurned',
+      key: 'totalCaloriesBurned',
       width: 120,
       minWidth: 100,
       maxWidth: 130,
@@ -303,7 +304,7 @@ const Position = () => {
   return (
     <Fragment >
       <Card className='overflow-hidden'>
-        <h2 style={{ fontWeight: '700' }} className='px-2 mt-2'>{t('Quản lý kế hoạch món ăn')}</h2>
+        <h2 style={{ fontWeight: '700' }} className='px-2 mt-2'>{t('Quản lý kế hoạch bài tập')}</h2>
         <Row>
           <Col xl={12} lg={12} md={12}>
             <CustomHeader

@@ -12,7 +12,7 @@ import navigation from '@src/navigation/vertical'
 const VerticalLayout = props => {
   const userData = window.localStorage.getItem('userData')
   const parsedData = JSON.parse(userData)
-  const role = parsedData.role
+  const role = parsedData?.role
   const [menuData, setMenuData] = useState([])
   useEffect(() => {
     switch (role) {

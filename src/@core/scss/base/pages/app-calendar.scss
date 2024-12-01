@@ -229,7 +229,9 @@ $fc-day-toggle-btn-padding: 0.55rem 1.5rem;
     }
   }
 }
-
+.event-sidebar .react-select {
+  z-index: auto !important;
+}
 // App Calendar specific
 .app-calendar {
   position: relative;

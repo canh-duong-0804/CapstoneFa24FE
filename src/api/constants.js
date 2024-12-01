@@ -18,11 +18,12 @@ export const AUTH = {
     UPDATE_PERSONAL_ACCOUNT_API: `${BASE_URL}/api/Staff/update-personal-account-staff-by-staff`
   },
   EXERCISE_API: {
-    CREATE_EXERCISE_API: `${BASE_URL}/api/Exercise/Create-exercise`,
-    GET_ALL_EXERCISE_API: `${BASE_URL}/api/Exercise/Get-all-exercises`,
-    GET_EXERCISE_BY_ID_API: `${BASE_URL}/api/Exercise/Get-exercise-by-id`,
-    UPDATE_EXERCISE_API: `${BASE_URL}/api/Exercise/Update-exercise`,
-    DELETE_EXERCISE_BY_ID_API: `${BASE_URL}/api/Exercise/Delete-exercise`
+    CREATE_EXERCISE_API: `${BASE_URL}/api/ExerciseTrainer/create-exercise`,
+    UPLOAD_IMAGE_EXERCISE_API: `${BASE_URL}/api/ExerciseTrainer/upload-image-exercise`,
+    GET_ALL_EXERCISE_API: `${BASE_URL}/api/ExerciseTrainer/get-all-exercises`,
+    GET_EXERCISE_BY_ID_API: `${BASE_URL}/api/ExerciseTrainer/get-exercise-detail`,
+    UPDATE_EXERCISE_API: `${BASE_URL}/api/ExerciseTrainer/update-exercise`,
+    DELETE_EXERCISE_BY_ID_API: `${BASE_URL}/api/ExerciseTrainer/delete-exercise`
   },
   EXERCISE_CATEGORY_API: {
     CREATE_EXERCISE_CATEGORY_API: `${BASE_URL}/api/CategoryExercise/Create-category-exercise`,
@@ -72,6 +73,23 @@ export const AUTH = {
   },
   DASHBOARD_MOBLIE_API: {
     GET_DASHBOARD_MOBLIE_API: `${BASE_URL}/api/MainDashBoardMobile/Get-main-dashboard-for-member-by-id`
+  },
+  FOOD_DAIRY_API: {
+    CREATE_FOOD_DAIRY_API: `${BASE_URL}/api/FoodDiary/addFoodListToDiaryForWebsite`,
+    GET_ALL_FOOD_DAIRY_API: `${BASE_URL}/api/FoodDiary/get-all-diaries-for-month-with-meal-types`,
+    GET_FOOD_DAIRY_DETAIL_API: `${BASE_URL}/api/FoodDiary/Get-Food-dairy-detail-website`,
+    UPDATE_FOOD_DAIRY_API: `${BASE_URL}/api/Ingredient/update-ingredient-status`,
+    DELETE_FOOD_DAIRY_BY_ID_API: `${BASE_URL}/api/Ingredient/Delete-Ingredient`,
+    GET_LIST_BOX_FOOD_DAIRY_API: `${BASE_URL}/api/Ingredient/get-list-box-ingredient-for-staff`
+  },
+  MEAL_PLAN_EXERCISE_TRAINER_API: {
+    CREATE_PLAN_EXERCISE_TRAINER_API: `${BASE_URL}/api/ExecrisePlanTrainer/create-exercise-plan`,
+    CREATE_PLAN_EXERCISE_DETAIL_TRAINER_API: `${BASE_URL}/api/ExecrisePlanTrainer/create-exercise-plan-detail`,
+    GET_ALL_PLAN_EXERCISE_TRAINER_API: `${BASE_URL}/api/ExecrisePlanTrainer/get-all-exercise-plans`,
+    GET_PLAN_EXERCISE_DETAIL_API: `${BASE_URL}/api/ExecrisePlanTrainer/get-exercise-plan-detail`,
+    GET_PLAN_EXERCISE_TRAINER_BY_ID_API: `${BASE_URL}/api/MealPlanTrainner/Get-MealPlanTrainner-by-id`,
+    UPDATE_PLAN_EXERCISE_TRAINER_API: `${BASE_URL}/api/ExecrisePlanTrainer/update-exercise-plan-detail`,
+    DELETE_PLAN_EXERCISE_TRAINER_BY_ID_API: `${BASE_URL}/api/MealPlanTrainner/delete-meal-plan-by-trainner`
   }
 
 

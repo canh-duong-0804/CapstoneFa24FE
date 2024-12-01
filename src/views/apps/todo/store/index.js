@@ -4,61 +4,83 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 // ** Axios Imports
 import axios from 'axios'
 
-export const getTasks = createAsyncThunk('appTodo/getTasks', async params => {
-  const response = await axios.get('/apps/todo/tasks', { params })
+export const fetchEvents = createAsyncThunk('appCalendar/fetchEvents', async calendars => {
+  const response = await axios.get('/apps/calendar/events', { calendars })
+  return response.data
+})
 
-  return {
-    params,
-    data: response.data
+export const addEvent = createAsyncThunk('appCalendar/addEvent', async (event, { dispatch, getState }) => {
+  await axios.post('/apps/calendar/add-event', { event })
+  await dispatch(fetchEvents(getState().calendar.selectedCalendars))
+  return event
+})
+
+export const updateEvent = createAsyncThunk('appCalendar/updateEvent', async (event, { dispatch, getState }) => {
+  await axios.post('/apps/calendar/update-event', { event })
+  await dispatch(fetchEvents(getState().calendar.selectedCalendars))
+  return event
+})
+
+export const updateFilter = createAsyncThunk('appCalendar/updateFilter', async (filter, { dispatch, getState }) => {
+  if (getState().calendar.selectedCalendars.includes(filter)) {
+    await dispatch(fetchEvents(getState().calendar.selectedCalendars.filter(i => i !== filter)))
+  } else {
+    await dispatch(fetchEvents([...getState().calendar.selectedCalendars, filter]))
   }
+  return filter
 })
 
-export const addTask = createAsyncThunk('appTodo/addTask', async (task, { dispatch, getState }) => {
-  const response = await axios.post('/apps/todo/add-tasks', { task })
-  await dispatch(getTasks(getState().todo.params))
-  return response.data
+export const updateAllFilters = createAsyncThunk('appCalendar/updateAllFilters', async (value, { dispatch }) => {
+  if (value === true) {
+    await dispatch(fetchEvents(['Personal', 'Business', 'Family', 'Holiday', 'ETC']))
+  } else {
+    await dispatch(fetchEvents([]))
+  }
+  return value
 })
 
-export const updateTask = createAsyncThunk('appTodo/updateTask', async (task, { dispatch, getState }) => {
-  const response = await axios.post('/apps/todo/update-task', { task })
-  await dispatch(getTasks(getState().todo.params))
-  return response.data
+export const removeEvent = createAsyncThunk('appCalendar/removeEvent', async id => {
+  await axios.delete('/apps/calendar/remove-event', { id })
+  return id
 })
 
-export const deleteTask = createAsyncThunk('appTodo/deleteTask', async (taskId, { dispatch, getState }) => {
-  const response = await axios.delete('/apps/todo/delete-task', { taskId })
-  await dispatch(getTasks(getState().todo.params))
-  return response.data
-})
-
-export const appTodoSlice = createSlice({
-  name: 'appTodo',
+export const appCalendarSlice = createSlice({
+  name: 'appCalendar',
   initialState: {
-    tasks: [],
-    selectedTask: {},
-    params: {
-      filter: '',
-      q: '',
-      sort: '',
-      tag: ''
-    }
+    events: [],
+    selectedEvent: {},
+    selectedCalendars: ['Personal', 'Business', 'Family', 'Holiday', 'ETC']
   },
   reducers: {
-    reOrderTasks: (state, action) => {
-      state.tasks = action.payload
-    },
-    selectTask: (state, action) => {
-      state.selectedTask = action.payload
+    selectEvent: (state, action) => {
+      state.selectedEvent = action.payload
     }
   },
   extraReducers: builder => {
-    builder.addCase(getTasks.fulfilled, (state, action) => {
-      state.tasks = action.payload.data
-      state.params = action.payload.params
-    })
+    builder
+      .addCase(fetchEvents.fulfilled, (state, action) => {
+        state.events = action.payload
+      })
+      .addCase(updateFilter.fulfilled, (state, action) => {
+        if (state.selectedCalendars.includes(action.payload)) {
+          state.selectedCalendars.splice(state.selectedCalendars.indexOf(action.payload), 1)
+        } else {
+          state.selectedCalendars.push(action.payload)
+        }
+      })
+      .addCase(updateAllFilters.fulfilled, (state, action) => {
+        const value = action.payload
+        let selected = []
+        if (value === true) {
+          selected = ['Personal', 'Business', 'Family', 'Holiday', 'ETC']
+        } else {
+          selected = []
+        }
+        state.selectedCalendars = selected
+      })
   }
 })
 
-export const { reOrderTasks, selectTask } = appTodoSlice.actions
+export const { selectEvent } = appCalendarSlice.actions
 
-export default appTodoSlice.reducer
+export default appCalendarSlice.reducer

@@ -7,6 +7,8 @@ import ingredientApi from './ingredient'
 import recipeApi from './recipe'
 import mealPlanTrainerApi from './meal-plan-trainer'
 import mainDashboardApi from './member'
+import foodDairyApi from './food-diary'
+import exercisePlanTrainerApi from './exercise-plan'
 
 
 const api = {
@@ -18,7 +20,9 @@ const api = {
     ...ingredientApi,
     ...recipeApi,
     ...mealPlanTrainerApi,
-    ...mainDashboardApi
+    ...mainDashboardApi,
+    ...foodDairyApi,
+    ...exercisePlanTrainerApi
 }
 
 export default api

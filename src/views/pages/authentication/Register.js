@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { Button, message, Steps, Modal, theme, Radio, Space, Typography, Form, Select, InputNumber, DatePicker, Input } from 'antd'
 import api from '../../../api/index'
+import { useNavigate } from 'react-router-dom'
+
 
 const FirstContent = ({ activityLevel, setActivityLevel }) => {
   const radioStyle = {
@@ -80,7 +82,7 @@ const DietContent = ({ diet, setDiet }) => {
           <Radio value="3" style={diet === "3" ? selectedStyle : radioStyle}>
             Ăn chay
           </Radio>
-          <Radio value="3" style={diet === "4" ? selectedStyle : radioStyle}>
+          <Radio value="4" style={diet === "4" ? selectedStyle : radioStyle}>
             Eat clean
           </Radio>
         </Space>
@@ -229,14 +231,14 @@ const FourthContent = ({ userInfo, setUserInfo }) => {
       
       <Form layout="vertical" style={{ width: '100%', maxWidth: '400px' }}>
         <Form.Item 
-          label="Họ và tên" 
+          label="Tên đăng nhập" 
           required
-          rules={[{ required: true, message: 'Vui lòng nhập họ tên' }]}
+          rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập' }]}
         >
           <Input 
             value={userInfo?.userName}
             onChange={(e) => handleChange('userName', e.target.value)}
-            placeholder="Nhập họ và tên"
+            placeholder="Nhập tên đăng nhập"
           />
         </Form.Item>
 
@@ -291,6 +293,7 @@ const FourthContent = ({ userInfo, setUserInfo }) => {
 
 const Register = () => {
   const { token } = theme.useToken()
+  const navigate = useNavigate()
   const [current, setCurrent] = useState(0)
   const [visible, setVisible] = useState(true)
   const [activityLevel, setActivityLevel] = useState(null)
@@ -313,7 +316,7 @@ const Register = () => {
 
   const steps = [
     {
-      title: 'Mức độ vận động',
+      title: 'Mức độ',
       content: <FirstContent activityLevel={activityLevel} setActivityLevel={setActivityLevel} />
     },
     {
@@ -363,6 +366,7 @@ const Register = () => {
           navigate('/login')
         })
         .catch(err => console.log(err))
+        navigate('/login')
     
   }
 

@@ -28,7 +28,7 @@ const defaultValues = {
   caloriesPerHour: 0,
   createBy: 7,
   createDate: new Date(),
-  exerciseCategoryId: 1
+  typeExercise: 1
 
 }
 
@@ -66,35 +66,31 @@ const ModalComponent = () => {
 
 
   // const [optionCategory, setOptionCategory] = useState([])
-  const [caloriesValue, setCaloriesValue] = useState('')
+  const [calories1Value, setCalories1Value] = useState('')
+  const [calories2Value, setCalories2Value] = useState('')
+  const [calories3Value, setCalories3Value] = useState('')
 
-  // const optionLevel = [
-  //   { value: 0, label: 'Cường độ nhẹ' },
-  //   { value: 1, label: 'Cường độ vừa' },
-  //   { value: 2, label: 'Cường độ cao' }
+  const handleChangeCalories1 = (e) => {
+    setCalories1Value(e.target.value)
+  }
 
-  // ]
+  const handleChangeCalories2 = (e) => {
+    setCalories2Value(e.target.value)
+  }
+
+  const handleChangeCalories3 = (e) => {
+    setCalories3Value(e.target.value)
+  }
+
+ 
    const optionType = [
     { value: 1, label: 'Carlido' },
     { value: 2, label: 'Kháng lực' },
     { value: 3, label: 'Khác' }
     
-
   ]
-  const handleChangeCalories = (e) => {
-    const value = e.target.value
-    setCaloriesValue(value)
-  }
-  const renderData = () => {
-    // api.categoryExerciseApi.getListBoxCategoryExerciseApi().then((rs) => {
-    //   setOptionCategory(rs)
-    // }).catch(() => {
-
-    // })
-  }
-
+  
   const handleFormOpened = () => {
-    renderData()
     if (typeModal === "Edit") {
       if (dataItem) {
         Object.entries(dataItem).forEach(
@@ -114,8 +110,35 @@ const ModalComponent = () => {
 
 
   const onSubmit = data => {
+    const transformedData = {
+      exerciseName: data.exerciseName,
+      description: data.description,
+      exerciseImage: data.exerciseImage,
+      typeExercise: data.typeExercise,
+      metValue: parseFloat(data.metValue) || 0,
+      resistanceMetrics: {
+        reps1: parseInt(data.reps1) || 0,
+        reps2: parseInt(data.reps2) || 0,
+        reps3: parseInt(data.reps3) || 0,
+        sets1: parseInt(data.sets1) || 0,
+        sets2: parseInt(data.sets2) || 0,
+        sets3: parseInt(data.sets3) || 0,
+        minutes1: parseInt(data.minutes1) || 0,
+        minutes2: parseInt(data.minutes2) || 0,
+        minutes3: parseInt(data.minutes3) || 0
+      },
+      cardioMetrics: {
+        minutes1: parseInt(data.minutes1) || 0,
+        minutes2: parseInt(data.minutes2) || 0,
+        minutes3: parseInt(data.minutes3) || 0,
+        calories1: parseInt(data.calories1) || 0,
+        calories2: parseInt(data.calories2) || 0,
+        calories3: parseInt(data.calories3) || 0
+      }
+    }
     if (typeModal === "Edit") {
-      api.exerciseApi.updateExerciseApi(data).then(() => {
+      console.log('obj', transformedData)
+      api.exerciseApi.updateExerciseApi(transformedData).then(() => {
         handleLoadTable()
         handleModal()
         notificationSuccess(t('Sửa bài tập thành công'))
@@ -126,7 +149,7 @@ const ModalComponent = () => {
     } else {
       // console.log('data', data)
       // return
-      api.exerciseApi.createExerciseApi(data).then(() => {
+      api.exerciseApi.createExerciseApi(transformedData).then(() => {
         handleLoadTable()
         handleModal()
         notificationSuccess(t('Thêm bài tập thành công'))
@@ -152,7 +175,7 @@ const ModalComponent = () => {
     )
   }
 
-  console.log(watch('exerciseCategoryId'))
+  console.log(watch('typeExercise'))
   return (
     <Fragment >
       <Modal
@@ -184,8 +207,8 @@ const ModalComponent = () => {
                 Thể loại bài tập
               </Label>
               <Controller
-                id='exerciseCategoryId'
-                name='exerciseCategoryId'
+                id='typeExercise'
+                name='typeExercise'
                 control={control}
                 render={({ field }) => (
                   <Select
@@ -203,47 +226,47 @@ const ModalComponent = () => {
                   />
                 )}
               />
-              {errors.exerciseCategoryId ? <FormFeedback>{errors.exerciseCategoryId.message}</FormFeedback> : null}
+              {errors.typeExercise ? <FormFeedback>{errors.typeExercise.message}</FormFeedback> : null}
             </div>
             <div className='mb-1'>
               <Label className='form-label' for='add-met'>
                 MET
               </Label>
               <Controller
-                id='exerciseName'
-                name='exerciseName'
+                id='metValue'
+                name='metValue'
                 control={control}
                 render={({ field }) => (
-                  <Input autoFocus placeholder='Nhập MET' invalid={errors.exerciseName && true} {...field} />
+                  <Input autoFocus placeholder='Nhập MET' invalid={errors.metValue && true} {...field} />
                 )}
               />
-              {errors.exerciseName ? <FormFeedback>{errors.exerciseName.message}</FormFeedback> : null}
+              {errors.metValue ? <FormFeedback>{errors.metValue.message}</FormFeedback> : null}
             </div>
-            {watch('exerciseCategoryId') === 1 && (
+            {watch('typeExercise') === 1 && (
               <Row>
-                <Label className='form-label' for='add-foodName'>
+                <Label className='form-label' for='add-reps1'>
                   Cường độ nhẹ
                 </Label>
                 <Col lg={6} md={6} xs={12}>
                   <div className='d-flex mb-1 align-items-center'>
-                    <Label className='form-label mb-0' for='add-foodName' style={{ marginRight: '10px' }}>
+                    <Label className='form-label mb-0' for='add-reps1' style={{ marginRight: '10px' }}>
                       Phút
                     </Label>
                     <Controller
-                      id='foodName'
-                      name='foodName'
+                      id='reps1'
+                      name='reps1'
                       control={control}
                       render={({ field }) => (
                         <Input
                           autoFocus
                           placeholder='Nhập phút'
-                          invalid={errors.foodName && true}
+                          invalid={errors.reps1 && true}
                           {...field}
                         />
                       )}
                     />
                   </div>
-                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                  {errors.reps1 && <FormFeedback>{errors.reps1.message}</FormFeedback>}
                 </Col>
                 <Col lg={6} md={6} xs={12}>
                   <div className='d-flex mb-1 align-items-center'>
@@ -251,25 +274,25 @@ const ModalComponent = () => {
                       Calo
                     </Label>
                     <Controller
-                      id='calories'
-                      name='calories'
+                      id='calories1'
+                      name='calories1'
                       control={control}
                       render={({ field }) => (
                         <Input
                           autoFocus
                           type='number'
                           placeholder='Nhập Calo'
-                          invalid={errors.calories && true}
-                          value={caloriesValue}
+                          invalid={errors.calories1 && true}
+                          value={calories1Value}
                           onChange={(e) => {
-                            handleChangeCalories(e)
+                            handleChangeCalories1(e)
                             field.onChange(e)
                           }}
                         />
                       )}
                     />
                   </div>
-                  {errors.calories && <FormFeedback>{errors.calories.message}</FormFeedback>}
+                  {errors.calories1 && <FormFeedback>{errors.calories1.message}</FormFeedback>}
                 </Col>
                 <Label className='form-label' for='add-foodName'>
                   Cường độ vừa
@@ -280,20 +303,20 @@ const ModalComponent = () => {
                       Phút
                     </Label>
                     <Controller
-                      id='foodName'
-                      name='foodName'
+                      id='minutes2'
+                      name='minutes2'
                       control={control}
                       render={({ field }) => (
                         <Input
                           autoFocus
                           placeholder='Nhập phút'
-                          invalid={errors.foodName && true}
+                          invalid={errors.minutes2 && true}
                           {...field}
                         />
                       )}
                     />
                   </div>
-                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                  {errors.minutes2 && <FormFeedback>{errors.minutes2.message}</FormFeedback>}
                 </Col>
                 <Col lg={6} md={6} xs={12}>
                   <div className='d-flex mb-1 align-items-center'>
@@ -301,25 +324,25 @@ const ModalComponent = () => {
                       Calo
                     </Label>
                     <Controller
-                      id='calories'
-                      name='calories'
+                      id='calories2'
+                      name='calories2'
                       control={control}
                       render={({ field }) => (
                         <Input
                           autoFocus
                           type='number'
                           placeholder='Nhập Calo'
-                          invalid={errors.calories && true}
-                          value={caloriesValue}
+                          invalid={errors.calories2 && true}
+                          value={calories2Value}
                           onChange={(e) => {
-                            handleChangeCalories(e)
+                            handleChangeCalories2(e)
                             field.onChange(e)
                           }}
                         />
                       )}
                     />
                   </div>
-                  {errors.calories && <FormFeedback>{errors.calories.message}</FormFeedback>}
+                  {errors.calories2 && <FormFeedback>{errors.calories2.message}</FormFeedback>}
                 </Col>
                 <Label className='form-label' for='add-foodName'>
                   Cường độ cao
@@ -330,20 +353,20 @@ const ModalComponent = () => {
                       Phút
                     </Label>
                     <Controller
-                      id='foodName'
-                      name='foodName'
+                      id='minutes3'
+                      name='minutes3'
                       control={control}
                       render={({ field }) => (
                         <Input
                           autoFocus
                           placeholder='Nhập phút'
-                          invalid={errors.foodName && true}
+                          invalid={errors.minutes3 && true}
                           {...field}
                         />
                       )}
                     />
                   </div>
-                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                  {errors.minutes3 && <FormFeedback>{errors.minutes3.message}</FormFeedback>}
                 </Col>
                 <Col lg={6} md={6} xs={12}>
                   <div className='d-flex mb-1 align-items-center'>
@@ -351,29 +374,29 @@ const ModalComponent = () => {
                       Calo
                     </Label>
                     <Controller
-                      id='calories'
-                      name='calories'
+                      id='calories3'
+                      name='calories3'
                       control={control}
                       render={({ field }) => (
                         <Input
                           autoFocus
                           type='number'
                           placeholder='Nhập Calo'
-                          invalid={errors.calories && true}
-                          value={caloriesValue}
+                          invalid={errors.calories3 && true}
+                          value={calories3Value}
                           onChange={(e) => {
-                            handleChangeCalories(e)
+                            handleChangeCalories3(e)
                             field.onChange(e)
                           }}
                         />
                       )}
                     />
                   </div>
-                  {errors.calories && <FormFeedback>{errors.calories.message}</FormFeedback>}
+                  {errors.calories3 && <FormFeedback>{errors.calories3.message}</FormFeedback>}
                 </Col>
               </Row>
             )}
-            {watch('exerciseCategoryId') === 2 && (
+            {watch('typeExercise') === 2 && (
               <Row>
                 <Label className='form-label' for='add-foodName'>
                   Cường độ nhẹ
@@ -384,20 +407,20 @@ const ModalComponent = () => {
                       Reps
                     </Label>
                     <Controller
-                      id='foodName'
-                      name='foodName'
+                      id='reps1'
+                      name='reps1'
                       control={control}
                       render={({ field }) => (
                         <Input
                           autoFocus
                           placeholder='Nhập reps'
-                          invalid={errors.foodName && true}
+                          invalid={errors.reps1 && true}
                           {...field}
                         />
                       )}
                     />
                   </div>
-                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                  {errors.reps1 && <FormFeedback>{errors.reps1.message}</FormFeedback>}
                 </Col>
                 <Col lg={4} md={4} xs={12}>
                   <div className='d-flex mb-1 align-items-center'>
@@ -405,20 +428,20 @@ const ModalComponent = () => {
                       Sets
                     </Label>
                     <Controller
-                      id='foodName'
-                      name='foodName'
+                      id='sets1'
+                      name='sets1'
                       control={control}
                       render={({ field }) => (
                         <Input
                           autoFocus
                           placeholder='Nhập sets'
-                          invalid={errors.foodName && true}
+                          invalid={errors.sets1 && true}
                           {...field}
                         />
                       )}
                     />
                   </div>
-                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                  {errors.sets1 && <FormFeedback>{errors.sets1.message}</FormFeedback>}
                 </Col>
                 <Col lg={4} md={4} xs={12}>
                   <div className='d-flex mb-1 align-items-center'>
@@ -426,20 +449,20 @@ const ModalComponent = () => {
                       Phút
                     </Label>
                     <Controller
-                      id='foodName'
-                      name='foodName'
+                      id='minutes1'
+                      name='minutes1'
                       control={control}
                       render={({ field }) => (
                         <Input
                           autoFocus
                           placeholder='Nhập phút'
-                          invalid={errors.foodName && true}
+                          invalid={errors.minutes1 && true}
                           {...field}
                         />
                       )}
                     />
                   </div>
-                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                  {errors.minutes1 && <FormFeedback>{errors.minutes1.message}</FormFeedback>}
                 </Col>
                 <Label className='form-label' for='add-foodName'>
                   Cường độ vừa
@@ -450,20 +473,20 @@ const ModalComponent = () => {
                       Reps
                     </Label>
                     <Controller
-                      id='foodName'
-                      name='foodName'
+                      id='reps2'
+                      name='reps2'
                       control={control}
                       render={({ field }) => (
                         <Input
                           autoFocus
                           placeholder='Nhập reps'
-                          invalid={errors.foodName && true}
+                          invalid={errors.reps2 && true}
                           {...field}
                         />
                       )}
                     />
                   </div>
-                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                  {errors.reps2 && <FormFeedback>{errors.reps2.message}</FormFeedback>}
                 </Col>
                 <Col lg={4} md={4} xs={12}>
                   <div className='d-flex mb-1 align-items-center'>
@@ -471,20 +494,20 @@ const ModalComponent = () => {
                       Sets
                     </Label>
                     <Controller
-                      id='foodName'
-                      name='foodName'
+                      id='sets2'
+                      name='sets2'
                       control={control}
                       render={({ field }) => (
                         <Input
                           autoFocus
                           placeholder='Nhập sets'
-                          invalid={errors.foodName && true}
+                          invalid={errors.sets2 && true}
                           {...field}
                         />
                       )}
                     />
                   </div>
-                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                  {errors.sets2 && <FormFeedback>{errors.sets2.message}</FormFeedback>}
                 </Col>
                 <Col lg={4} md={4} xs={12}>
                   <div className='d-flex mb-1 align-items-center'>
@@ -492,20 +515,20 @@ const ModalComponent = () => {
                       Phút
                     </Label>
                     <Controller
-                      id='foodName'
-                      name='foodName'
+                      id='minutes2'
+                      name='minutes2'
                       control={control}
                       render={({ field }) => (
                         <Input
                           autoFocus
                           placeholder='Nhập phút'
-                          invalid={errors.foodName && true}
+                          invalid={errors.minutes2 && true}
                           {...field}
                         />
                       )}
                     />
                   </div>
-                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                  {errors.minutes2 && <FormFeedback>{errors.minutes2.message}</FormFeedback>}
                 </Col>
                 <Label className='form-label' for='add-foodName'>
                   Cường độ cao
@@ -516,20 +539,20 @@ const ModalComponent = () => {
                       Reps
                     </Label>
                     <Controller
-                      id='foodName'
-                      name='foodName'
+                      id='reps3'
+                      name='reps3'
                       control={control}
                       render={({ field }) => (
                         <Input
                           autoFocus
                           placeholder='Nhập reps'
-                          invalid={errors.foodName && true}
+                          invalid={errors.reps3 && true}
                           {...field}
                         />
                       )}
                     />
                   </div>
-                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                  {errors.reps3 && <FormFeedback>{errors.reps3.message}</FormFeedback>}
                 </Col>
                 <Col lg={4} md={4} xs={12}>
                   <div className='d-flex mb-1 align-items-center'>
@@ -537,20 +560,20 @@ const ModalComponent = () => {
                       Sets
                     </Label>
                     <Controller
-                      id='foodName'
-                      name='foodName'
+                      id='sets3'
+                      name='sets3'
                       control={control}
                       render={({ field }) => (
                         <Input
                           autoFocus
                           placeholder='Nhập sets'
-                          invalid={errors.foodName && true}
+                          invalid={errors.sets3 && true}
                           {...field}
                         />
                       )}
                     />
                   </div>
-                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                  {errors.sets3 && <FormFeedback>{errors.sets3.message}</FormFeedback>}
                 </Col>
                 <Col lg={4} md={4} xs={12}>
                   <div className='d-flex mb-1 align-items-center'>
@@ -558,20 +581,20 @@ const ModalComponent = () => {
                       Phút
                     </Label>
                     <Controller
-                      id='foodName'
-                      name='foodName'
+                      id='minutes3'
+                      name='minutes3'
                       control={control}
                       render={({ field }) => (
                         <Input
                           autoFocus
                           placeholder='Nhập phút'
-                          invalid={errors.foodName && true}
+                          invalid={errors.minutes3 && true}
                           {...field}
                         />
                       )}
                     />
                   </div>
-                  {errors.foodName && <FormFeedback>{errors.foodName.message}</FormFeedback>}
+                  {errors.minutes3 && <FormFeedback>{errors.minutes3.message}</FormFeedback>}
                 </Col>
               </Row>
             )}

@@ -31,20 +31,20 @@ const defaultValues = {
 }
 
 const formSchema = yup.object().shape({
-  fullName: yup.string()
-    .required('Họ tên là bắt buộc'),
-  password: yup.string()
-    .required('Mật khẩu là bắt buộc'),
-  email: yup
-    .string()
-    .email('Email không đúng định dạng')
-    .nullable()
-    .max(250, 'Email không vượt quá 250 ký tự'),
-  phoneNumber: yup
-    .string()
-    .matches(/^0\d{10}$|^0\d{9}$|^$/, 'Số điện thoại không đúng định dạng')
-    .nullable()
-    .max(11, 'Số điện thoại không quá 11 ký tự')
+  // fullName: yup.string()
+  //   .required('Họ tên là bắt buộc'),
+  // password: yup.string()
+  //   .required('Mật khẩu là bắt buộc'),
+  // email: yup
+  //   .string()
+  //   .email('Email không đúng định dạng')
+  //   .nullable()
+  //   .max(250, 'Email không vượt quá 250 ký tự'),
+  // phoneNumber: yup
+  //   .string()
+  //   .matches(/^0\d{10}$|^0\d{9}$|^$/, 'Số điện thoại không đúng định dạng')
+  //   .nullable()
+  //   .max(11, 'Số điện thoại không quá 11 ký tự')
 })
 
 const ModalComponent = () => {
@@ -83,7 +83,9 @@ const ModalComponent = () => {
 
   const optionRole = [
     { value: 1, label: 'Huấn luyện viên' },
-    { value: 2, label: 'Quản lý' }
+    { value: 2, label: 'Huấn luyện viên món ăn' },
+    { value: 3, label: 'Huấn luyện viên bài tập' }
+
   ]
 
 
@@ -130,9 +132,6 @@ const ModalComponent = () => {
     reset()
     setDataItem({})
   }
-
-  console.log('dataItem', dataItem)
-
 
   const onSubmit = data => {
     if (typeModal === "Edit") {

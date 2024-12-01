@@ -306,7 +306,9 @@ const Position = () => {
           case 1:
             return 'Huấn luyện viên'
           case 2:
-            return 'Quản lý'
+            return 'HLV món ăn'
+          case 3:
+            return 'HLV bài tập'
           default:
             return 'Unknown'
         }

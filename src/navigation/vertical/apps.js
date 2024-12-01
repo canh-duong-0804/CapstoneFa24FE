@@ -9,7 +9,7 @@ export default [
     id: 'email',
     title: 'Email',
     icon: <Mail size={20} />,
-    navLink: '/apps/email'
+    navLink: '/dashboard/member'
   },
   {
     id: 'chat',

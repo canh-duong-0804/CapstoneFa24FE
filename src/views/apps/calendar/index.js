@@ -17,11 +17,10 @@ import { fetchEvents, selectEvent, updateEvent, updateFilter, updateAllFilters, 
 import '@styles/react/apps/app-calendar.scss'
 // ** CalendarColors
 const calendarsColor = {
-  Business: 'primary',
-  Holiday: 'success',
-  Personal: 'danger',
-  Family: 'warning',
-  ETC: 'info'
+  danger: 'danger',    // Màu cho bữa sáng
+  warning: 'warning',  // Màu cho bữa trưa 
+  success: 'success',  // Màu cho bữa tối
+  info: 'info'         // Màu cho bữa phụ
 }
 const ExerciseMember = () => {
   // ** Variables
@@ -57,7 +56,7 @@ const ExerciseMember = () => {
       calendarApi.refetchEvents()
     }
   }
-  // ** Fetch Events On Mount
+  // **   
   useEffect(() => {
     dispatch(fetchEvents(store.selectedCalendars))
   }, [])

@@ -1,14 +1,7 @@
-// ** React Imports
 import { useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
-
-// ** Icons Imports
 import { Disc, X, Circle } from 'react-feather'
-
-// ** Config
 import themeConfig from '@configs/themeConfig'
-
-// ** Utils
 import { getUserData, getHomeRouteForLoggedInUser } from '@utils'
 
 const VerticalMenuHeader = props => {
@@ -50,10 +43,8 @@ const VerticalMenuHeader = props => {
     <div className='navbar-header'>
       <ul className='nav navbar-nav flex-row'>
         <li className='nav-item me-auto'>
-          <NavLink to={user ? getHomeRouteForLoggedInUser(user.role) : '/'} className='navbar-brand'>
-            <span className='brand-logo'>
-              <img src={themeConfig.app.appLogoImage} alt='logo' />
-            </span>
+          <NavLink style={{marginTop : 8}} to={user ? getHomeRouteForLoggedInUser(user.role) : '/'} className='navbar-brand'>
+            <img height={50} w src={themeConfig.app.appLogoImage} alt='logo' />
             <h2 className='brand-text mb-0'>{themeConfig.app.appName}</h2>
           </NavLink>
         </li>

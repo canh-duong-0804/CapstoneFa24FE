@@ -68,8 +68,8 @@ const AppRoutes = [
     path: '/apps/chat',
     element: <Chat />,
     meta: {
-      appLayout: true,
-      className: 'chat-application'
+      action: 'read',
+      resource: 'User'
     }
   },
   {

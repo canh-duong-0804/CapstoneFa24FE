@@ -11,9 +11,7 @@ const Dashboard = () => {
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0') 
 
-  // Định dạng thành YYYY-MM-DD
   const formattedDate = `${year}-${month}-${day}`
-  console.log('date', formattedDate)
   useEffect(() => {
     api.mainDashboardApi.getMainDashboardApi(formattedDate).then(response => {
       setDashboardData(response)

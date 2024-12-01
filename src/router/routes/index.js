@@ -79,13 +79,8 @@ const MergeLayoutRoutes = (layout, defaultLayout) => {
           RouteTag = route.meta.publicRoute ? PublicRoute : PrivateRoute
         }
         if (route.element) {
-          const Wrapper =
-            // eslint-disable-next-line multiline-ternary
-            isObjEmpty(route.element.props) && isBlank === false
-              ? // eslint-disable-next-line multiline-ternary
-                LayoutWrapper
-              : Fragment
 
+          const Wrapper = isObjEmpty(route.element.props) && isBlank === false ? LayoutWrapper : Fragment
           route.element = (
             <Wrapper {...(isBlank === false ? getRouteMeta(route) : {})}>
               <RouteTag route={route}>{route.element}</RouteTag>

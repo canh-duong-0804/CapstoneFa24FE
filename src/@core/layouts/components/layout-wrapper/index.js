@@ -55,7 +55,7 @@ const LayoutWrapper = props => {
       if (routeMeta.menuCollapsed) {
         dispatch(handleMenuCollapsed(routeMeta.menuCollapsed))
       }
-      if (routeMeta.menuHidden) {
+      if (routeMeta.menuHidden && routeMeta.menuHidden !== store.layout.menuHidden) {
         dispatch(handleMenuHidden(routeMeta.menuHidden))
       }
     }
