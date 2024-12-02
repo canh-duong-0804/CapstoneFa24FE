@@ -240,12 +240,13 @@ const Position = () => {
       align: 'left'
     },
     {
-      title: <div style={{ textAlign: 'left' }}>{'Thể loại bài tập'}</div>,
+      title: <div style={{ textAlign: 'center' }}>{'Thể loại bài tập'}</div>,
       dataIndex: 'typeExercise',
       key: 'typeExercise',
       width: 120,
       minWidth: 100,
       maxWidth: 130,
+      align: 'center',
       render: (typeExercise) => {
         switch (typeExercise) {
           case "Cardio":

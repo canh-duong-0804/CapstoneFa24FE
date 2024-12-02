@@ -123,9 +123,9 @@ const Position = () => {
  
   const fetchData = () => {
     setLoading(true)
-    api.foodApi.getAllFoodForStaffApi()
+    api.foodApi.getAllFoodForStaffApi(currentPage)
       .then((rs) => {
-        setData(rs)
+        setData(rs.foods)
         setTotalItems(rs.totalPages)
         setLoading(false)
         setTableParams({
@@ -244,13 +244,13 @@ const Position = () => {
     setTypeModal('Detail')
   }
 
-  const formatDate = (date) => {
-    const d = new Date(date)
-    const day = String(d.getDate()).padStart(2, '0')
-    const month = String(d.getMonth() + 1).padStart(2, '0') 
-    const year = d.getFullYear()
-    return `${day}-${month}-${year}`
-  }
+  // const formatDate = (date) => {
+  //   const d = new Date(date)
+  //   const day = String(d.getDate()).padStart(2, '0')
+  //   const month = String(d.getMonth() + 1).padStart(2, '0') 
+  //   const year = d.getFullYear()
+  //   return `${day}-${month}-${year}`
+  // }
 
   const headerColumns = [
     {
@@ -280,16 +280,16 @@ const Position = () => {
       maxWidth: 200,
       align: 'center'
     },
-    {
-      title: <div style={{ textAlign: 'center' }}>{t('Ngày tạo')}</div>,
-      dataIndex: 'createDate',
-      key: 'createDate',
-      width: 100,
-      minWidth: 50,
-      maxWidth: 150,
-      align: 'center',
-      render: (text) => formatDate(text) 
-    },
+    // {
+    //   title: <div style={{ textAlign: 'center' }}>{t('Ngày tạo')}</div>,
+    //   dataIndex: 'createDate',
+    //   key: 'createDate',
+    //   width: 100,
+    //   minWidth: 50,
+    //   maxWidth: 150,
+    //   align: 'center',
+    //   render: (text) => formatDate(text) 
+    // },
     {
       title: (
         <div>

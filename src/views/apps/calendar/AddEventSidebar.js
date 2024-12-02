@@ -74,6 +74,8 @@ const AddEventSidebar = props => {
     )
   }
 
+  console.log('selectEvent', selectEvent)
+
   // ** Adds New Event
   const handleAddEvent = () => {
     const getMealType = (label) => {

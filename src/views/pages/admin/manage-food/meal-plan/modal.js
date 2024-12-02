@@ -24,7 +24,7 @@ import Select from 'react-select'
 import { notificationError, notificationSuccess } from '../../../../../utility/notification'
 const defaultValues = {
   name: '',
-  mealPlanImage: 'anh.png'
+  mealPlanImage: 'https://www.shape.com/thmb/Nti_HBKTZCavOIQkCKRJS2sx9W8=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/shutterstock_1069332170-2000-364c5bccbb1e4e2a83a0e4cfdc15723a.jpg'
 
 }
 

@@ -20,11 +20,12 @@ import { selectThemeColors } from '@utils'
 import * as yup from "yup"
 import { yupResolver } from '@hookform/resolvers/yup'
 import Select from 'react-select'
+import {Upload } from 'lucide-react'
 // import Flatpickr from 'react-flatpickr'
 import { notificationError, notificationSuccess } from '../../../../../utility/notification'
 
 const defaultValues = {
-  exerciseImage: 'anh.png',
+  exerciseImage: '',
   caloriesPerHour: 0,
   createBy: 7,
   createDate: new Date(),
@@ -70,6 +71,22 @@ const ModalComponent = () => {
   const [calories2Value, setCalories2Value] = useState('')
   const [calories3Value, setCalories3Value] = useState('')
 
+  const [imagePreview, setImagePreview] = useState(null)
+  
+  const handleImageChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      setValue('exerciseImage', file)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImagePreview(reader.result)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  console.log('exc', watch('exerciseImage'))
+
   const handleChangeCalories1 = (e) => {
     setCalories1Value(e.target.value)
   }
@@ -106,14 +123,15 @@ const ModalComponent = () => {
     clearErrors()
     reset()
     setDataItem({})
+    setImagePreview({})
   }
 
 
   const onSubmit = data => {
+    const imageFile = data.exerciseImage
     const transformedData = {
       exerciseName: data.exerciseName,
       description: data.description,
-      exerciseImage: data.exerciseImage,
       typeExercise: data.typeExercise,
       metValue: parseFloat(data.metValue) || 0,
       resistanceMetrics: {
@@ -149,7 +167,10 @@ const ModalComponent = () => {
     } else {
       // console.log('data', data)
       // return
-      api.exerciseApi.createExerciseApi(transformedData).then(() => {
+      api.exerciseApi.createExerciseApi(transformedData).then((rs) => {
+        if (imageFile && typeof imageFile !== 'string') {
+          api.exerciseApi.updateExerciseImageApi(imageFile, rs)
+        }
         handleLoadTable()
         handleModal()
         notificationSuccess(t('Thêm bài tập thành công'))
@@ -611,6 +632,54 @@ const ModalComponent = () => {
                 )}
               />
               {errors.description ? <FormFeedback>{errors.description.message}</FormFeedback> : null}
+            </div>
+
+            <div className='mb-1'>
+              <Label className='form-label' for='exerciseImage'>
+                Hình ảnh bài tập
+              </Label>
+              <div className='d-flex flex-column align-items-center'>
+                {imagePreview ? (
+                  <div className='position-relative mb-1'>
+                    <img
+                      src={imagePreview}
+                      alt='Exercise preview'
+                      className='rounded'
+                      style={{ maxWidth: '200px', maxHeight: '200px', objectFit: 'cover' }}
+                    />
+                    <Button
+                      color='danger'
+                      size='sm'
+                      className='position-absolute top-0 end-0 mt-1 me-1'
+                      onClick={() => {
+                        setValue('exerciseImage', '')
+                        setImagePreview(null)
+                      }}
+                    >
+                      ×
+                    </Button>
+                  </div>
+                ) : (
+                  <div 
+                    className='d-flex flex-column align-items-center justify-content-center p-3 border rounded'
+                    style={{ width: '200px', height: '200px', cursor: 'pointer' }}
+                    onClick={() => document.getElementById('exerciseImage').click()}
+                  >
+                    <Upload size={48} className='mb-1 text-muted' />
+                    <span className='text-muted'>Click để tải ảnh lên</span>
+                  </div>
+                )}
+                <input
+                  type='file'
+                  id='exerciseImage'
+                  hidden
+                  accept='image/*'
+                  onChange={handleImageChange}
+                />
+                {errors.exerciseImage && (
+                  <div className='text-danger mt-1'>{errors.exerciseImage.message}</div>
+                )}
+              </div>
             </div>
           </ModalBody>
           <div

@@ -36,12 +36,9 @@ const defaultValues = {
   vitaminB1: 0,
   vitaminB2: 0,
   vitaminB3: 0,
-  createBy: 7,
   foodImage: 'anh.png',
   dietname: '',
-  status: true,
-  createDate: new Date()
-
+  status: true
 }
 
 const formSchema = yup.object().shape({
@@ -97,7 +94,6 @@ const ModalComponent = () => {
 
   ]
 
-
   const renderData = () => {
     api.foodApi.getListboxDietApi().then((rs) => {
       const formattedOptions = rs.map(item => ({
@@ -149,7 +145,13 @@ const ModalComponent = () => {
         notificationError(t('Sửa món ăn thất bại'))
       })
     } else {
-      data.createDate = new Date()
+      const currentDate = new Date()
+    // Format date to dd-mm-yyyy
+    const day = String(currentDate.getDate()).padStart(2, '0')
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0') // Month is 0-based
+    const year = currentDate.getFullYear()
+    
+    data.createDate = `${day}-${month}-${year}`
       api.foodApi.createFoodApi(data).then(() => {
         handleLoadTable()
         handleModal()

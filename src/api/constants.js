@@ -20,10 +20,12 @@ export const AUTH = {
   EXERCISE_API: {
     CREATE_EXERCISE_API: `${BASE_URL}/api/ExerciseTrainer/create-exercise`,
     UPLOAD_IMAGE_EXERCISE_API: `${BASE_URL}/api/ExerciseTrainer/upload-image-exercise`,
-    GET_ALL_EXERCISE_API: `${BASE_URL}/api/ExerciseTrainer/get-all-exercises`,
+    GET_ALL_EXERCISE_API: `${BASE_URL}/api/ExerciseTrainer/get-all-exercises-trainer`,
     GET_EXERCISE_BY_ID_API: `${BASE_URL}/api/ExerciseTrainer/get-exercise-detail`,
     UPDATE_EXERCISE_API: `${BASE_URL}/api/ExerciseTrainer/update-exercise`,
-    DELETE_EXERCISE_BY_ID_API: `${BASE_URL}/api/ExerciseTrainer/delete-exercise`
+    DELETE_EXERCISE_BY_ID_API: `${BASE_URL}/api/ExerciseTrainer/delete-exercise`,
+    UPLOAD_EXERCISE_IMAGE_API: `${BASE_URL}/api/ExerciseTrainer/upload-image-exercise`
+
   },
   EXERCISE_CATEGORY_API: {
     CREATE_EXERCISE_CATEGORY_API: `${BASE_URL}/api/CategoryExercise/Create-category-exercise`,
