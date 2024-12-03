@@ -92,7 +92,10 @@ export const AUTH = {
     GET_PLAN_EXERCISE_TRAINER_BY_ID_API: `${BASE_URL}/api/MealPlanTrainner/Get-MealPlanTrainner-by-id`,
     UPDATE_PLAN_EXERCISE_TRAINER_API: `${BASE_URL}/api/ExecrisePlanTrainer/update-exercise-plan-detail`,
     DELETE_PLAN_EXERCISE_TRAINER_BY_ID_API: `${BASE_URL}/api/MealPlanTrainner/delete-meal-plan-by-trainner`
+  },
+  DASHBOARD_ADMIN_API: {
+    GET_MAIN_DASHBOARD_ADMIN_API: `${BASE_URL}/api/MainDashboardTrainer/Get-main-dashboard-for-Main-Admin`
+    
   }
-
 
 }

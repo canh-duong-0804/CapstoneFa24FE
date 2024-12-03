@@ -2,8 +2,8 @@
 import { useEffect, useState } from 'react'
 
 // ** Third Party Components
-import axios from 'axios'
 import Chart from 'react-apexcharts'
+import api from '../../../../api/index'
 
 // ** Reactstrap Imports
 import {
@@ -33,9 +33,15 @@ const RevenueReport = props => {
     // Gọi API hoặc cập nhật dữ liệu cho biểu đồ theo năm đã chọn
     // updateChartData(year);
   }
+  
+  const date = new Date()
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0') 
 
+  const formattedDate = `${year}-${month}-${day}`
   useEffect(() => {
-    axios.get('/card/card-analytics/revenue-report').then(res => setData(res.data))
+    api.dashboardApi.getMainDashboardAdminApi(formattedDate).then(res => setData(res.userRegistrationStatistics))
     return () => setData(null)
   }, [])
 
@@ -55,7 +61,12 @@ const RevenueReport = props => {
         }
       },
       xaxis: {
-        categories: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9'],
+        // Cập nhật categories để bao gồm đủ 12 tháng
+        categories: [
+          'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 
+          'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 
+          'Tháng 11', 'Tháng 12'
+        ],
         labels: {
           style: {
             colors: '#b9b9c3',
@@ -94,47 +105,32 @@ const RevenueReport = props => {
     },
     revenueSeries = [
       {
-        name: 'Earning',
-        data: [95, 177, 284, 256, 105, 63, 168, 218, 72]
+        name: 'Người dùng',
+        data: data ? [
+          data.find(item => item.month === 1)?.userCount || 0,
+          data.find(item => item.month === 2)?.userCount || 0,
+          data.find(item => item.month === 3)?.userCount || 0,
+          data.find(item => item.month === 4)?.userCount || 0,
+          data.find(item => item.month === 5)?.userCount || 0,
+          data.find(item => item.month === 6)?.userCount || 0,
+          data.find(item => item.month === 7)?.userCount || 0,
+          data.find(item => item.month === 8)?.userCount || 0,
+          data.find(item => item.month === 9)?.userCount || 0,
+          data.find(item => item.month === 10)?.userCount || 0,
+          data.find(item => item.month === 11)?.userCount || 0,
+          data.find(item => item.month === 12)?.userCount || 0
+        ] : []
       }
-      // {
-      //   name: 'Expense',
-      //   data: [-145, -80, -60, -180, -100, -60, -85, -75, -100]
-      // }
     ]
-
-  // const budgetSeries = [
-  //     {
-  //       data: [61, 48, 69, 52, 60, 40, 79, 60, 59, 43, 62]
-  //     },
-  //     {
-  //       data: [20, 10, 30, 15, 23, 0, 25, 15, 20, 5, 27]
-  //     }
-  //   ],
-  //   budgetOptions = {
-  //     chart: {
-  //       toolbar: { show: false },
-  //       zoom: { enabled: false },
-  //       type: 'line',
-  //       sparkline: { enabled: true }
-  //     },
-  //     stroke: {
-  //       curve: 'smooth',
-  //       dashArray: [0, 5],
-  //       width: [2]
-  //     },
-  //     colors: [props.primary, '#dcdae3'],
-  //     tooltip: {
-  //       enabled: false
-  //     }
-  //   }
 
   return data !== null ? (
     <Card className='card-revenue-budget'>
       <Row className='mx-0'>
         <Col className='revenue-report-wrapper' md='12' xs='12'>
           <div className='d-sm-flex justify-content-between align-items-center mb-3'>
-            <CardTitle className='mb-50 mb-sm-0'>Số lượng người dùng hoạt động trong năm {selectedYear}</CardTitle>
+            <CardTitle className='mb-50 mb-sm-0'>
+              Số lượng người đăng ký trong năm {selectedYear}
+            </CardTitle>
             <div className='d-flex align-items-center'>
               <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
                 <DropdownToggle caret>
@@ -150,7 +146,13 @@ const RevenueReport = props => {
               </Dropdown>
             </div>
           </div>
-          <Chart id='revenue-report-chart' type='bar' height='230' options={revenueOptions} series={revenueSeries} />
+          <Chart 
+            id='revenue-report-chart' 
+            type='bar' 
+            height='230' 
+            options={revenueOptions} 
+            series={revenueSeries} 
+          />
         </Col>
       </Row>
     </Card>
