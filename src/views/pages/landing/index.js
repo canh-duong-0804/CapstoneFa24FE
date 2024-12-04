@@ -267,7 +267,7 @@ const Landing = () => {
                       <div className='feature-item'>
                         <div className='feature-title'>
                           <i className='fas fa-check-circle text-success'></i>
-                          <h5>Đ���ng bộ đa thiết bị</h5>
+                          <h5>Đồng bộ đa thiết bị</h5>
                         </div>
                         <p>Dữ liệu được đồng bộ tức thì giữa các thiết bị</p>
                       </div>
