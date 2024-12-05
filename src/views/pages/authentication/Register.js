@@ -1,7 +1,11 @@
 import React, { useState } from 'react'
-import { Button, message, Steps, Modal, theme, Radio, Space, Typography, Form, Select, InputNumber, DatePicker, Input } from 'antd'
+import { Button, Steps, Modal, theme, Radio, Space, Typography, Form, Select, InputNumber, DatePicker, Input } from 'antd'
 import api from '../../../api/index'
 import { useNavigate } from 'react-router-dom'
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useForm } from 'react-hook-form'
+import { toast } from 'react-hot-toast'
 
 
 const FirstContent = ({ activityLevel, setActivityLevel }) => {
@@ -91,9 +95,11 @@ const DietContent = ({ diet, setDiet }) => {
   )
 }
 
-const SecondContent = ({ userInfo, setUserInfo }) => {
-  const handleChange = (name, value) => {
+const SecondContent = ({ userInfo, setUserInfo, errors, setValue, trigger }) => {
+  const handleChange = async (name, value) => {
     setUserInfo(prev => ({ ...prev, [name]: value }))
+    setValue(name, value)
+    await trigger(name)
   }
 
   return (
@@ -101,9 +107,14 @@ const SecondContent = ({ userInfo, setUserInfo }) => {
       <Typography.Title level={4}>Thông tin cá nhân</Typography.Title>
       
       <Form layout="vertical" style={{ width: '100%', maxWidth: '400px' }}>
-        <Form.Item label="Giới tính" required>
+        <Form.Item 
+          label="Giới tính" 
+          required
+          validateStatus={errors?.gender ? 'error' : ''}
+          help={errors?.gender?.message}
+        >
           <Select
-            value={userInfo?.gender}
+            value={userInfo.gender}
             onChange={(value) => handleChange('gender', value)}
             placeholder="Chọn giới tính"
             options={[
@@ -111,53 +122,76 @@ const SecondContent = ({ userInfo, setUserInfo }) => {
               { value: 'female', label: 'Nữ' },
               { value: 'other', label: 'Khác' }
             ]}
+            status={errors?.gender ? 'error' : ''}
           />
         </Form.Item>
 
-        <Form.Item label="Ngày sinh" required>
+        <Form.Item 
+          label="Ngày sinh" 
+          required
+          validateStatus={errors?.dob ? 'error' : ''}
+          help={errors?.dob?.message}
+        >
           <DatePicker
-            value={userInfo?.dob}
+            value={userInfo.dob}
             onChange={(date) => handleChange('dob', date)}
             style={{ width: '100%' }}
             placeholder="Chọn ngày sinh"
             format="DD/MM/YYYY"
+            status={errors?.dob ? 'error' : ''}
           />
         </Form.Item>
 
-        <Form.Item label="Chiều cao (cm)" required>
+        <Form.Item 
+          label="Chiều cao (cm)" 
+          required
+          validateStatus={errors?.height ? 'error' : ''}
+          help={errors?.height?.message}
+        >
           <InputNumber
-            value={userInfo?.height}
+            value={userInfo.height}
             onChange={(value) => handleChange('height', value)}
             min={1}
             max={300}
             style={{ width: '100%' }}
             placeholder="Nhập chiều cao"
+            status={errors?.height ? 'error' : ''}
           />
         </Form.Item>
 
-        <Form.Item label="Cân nặng (kg)" required>
+        <Form.Item 
+          label="Cân nặng (kg)" 
+          required
+          validateStatus={errors?.weight ? 'error' : ''}
+          help={errors?.weight?.message}
+        >
           <InputNumber
-            value={userInfo?.weight}
+            value={userInfo.weight}
             onChange={(value) => handleChange('weight', value)}
             min={1}
             max={500}
             style={{ width: '100%' }}
             placeholder="Nhập cân nặng"
+            status={errors?.weight ? 'error' : ''}
           />
         </Form.Item>
 
-        <Form.Item label="Cân nặng mong muốn(kg)" required>
+        <Form.Item 
+          label="Cân nặng mong muốn (kg)" 
+          required
+          validateStatus={errors?.targetWeight ? 'error' : ''}
+          help={errors?.targetWeight?.message}
+        >
           <InputNumber
-            value={userInfo?.targetWeight}
+            value={userInfo.targetWeight}
             onChange={(value) => handleChange('targetWeight', value)}
             min={1}
             max={500}
             style={{ width: '100%' }}
             placeholder="Nhập cân nặng mong muốn"
+            status={errors?.targetWeight ? 'error' : ''}
           />
         </Form.Item>
-
-        
       </Form>
     </div>
   )
@@ -220,9 +254,11 @@ const ThirdContent = ({ weight, targetWeight, goal, setGoal }) => {
   )
 }
 
-const FourthContent = ({ userInfo, setUserInfo }) => {
-  const handleChange = (name, value) => {
+const FourthContent = ({ userInfo, setUserInfo, errors, setValue, trigger }) => {
+  const handleChange = async (name, value) => {
     setUserInfo(prev => ({ ...prev, [name]: value }))
+    setValue(name, value)
+    await trigger(name)
   }
 
   return (
@@ -233,57 +269,56 @@ const FourthContent = ({ userInfo, setUserInfo }) => {
         <Form.Item 
           label="Tên đăng nhập" 
           required
-          rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập' }]}
+          validateStatus={errors?.userName ? 'error' : ''}
+          help={errors?.userName?.message}
         >
           <Input 
-            value={userInfo?.userName}
+            value={userInfo.userName}
             onChange={(e) => handleChange('userName', e.target.value)}
             placeholder="Nhập tên đăng nhập"
+            status={errors?.userName ? 'error' : ''}
           />
         </Form.Item>
 
         <Form.Item 
           label="Email" 
           required
-          rules={[
-            { required: true, message: 'Vui lòng nhập email' },
-            { type: 'email', message: 'Email không hợp lệ' }
-          ]}
+          validateStatus={errors?.email ? 'error' : ''}
+          help={errors?.email?.message}
         >
           <Input 
-            value={userInfo?.email}
+            value={userInfo.email}
             onChange={(e) => handleChange('email', e.target.value)}
             placeholder="Nhập email"
+            status={errors?.email ? 'error' : ''}
           />
         </Form.Item>
 
         <Form.Item 
           label="Số điện thoại" 
           required
-          rules={[
-            { required: true, message: 'Vui lòng nhập số điện thoại' },
-            { pattern: /^[0-9]+$/, message: 'Số điện thoại chỉ được chứa số' }
-          ]}
+          validateStatus={errors?.phoneNumber ? 'error' : ''}
+          help={errors?.phoneNumber?.message}
         >
           <Input 
-            value={userInfo?.phoneNumber}
+            value={userInfo.phoneNumber}
             onChange={(e) => handleChange('phoneNumber', e.target.value)}
             placeholder="Nhập số điện thoại"
+            status={errors?.phoneNumber ? 'error' : ''}
           />
         </Form.Item>
 
         <Form.Item 
           label="Mật khẩu" 
           required
-          rules={[
-            { required: true, message: 'Vui lòng nhập mật khẩu' },
-            { min: 6, message: 'Mật khẩu phải có ít nhất 6 ký tự' }
-          ]}
+          validateStatus={errors?.password ? 'error' : ''}
+          help={errors?.password?.message}
         >
           <Input.Password 
-            value={userInfo?.password}
+            value={userInfo.password}
             onChange={(e) => handleChange('password', e.target.value)}
             placeholder="Nhập mật khẩu"
+            status={errors?.password ? 'error' : ''}
           />
         </Form.Item>
       </Form>
@@ -291,27 +326,81 @@ const FourthContent = ({ userInfo, setUserInfo }) => {
   )
 }
 
+// Thêm schema validation
+const formSchema = yup.object().shape({
+  userName: yup.string()
+    .required('Vui lòng nhập tên đăng nhập')
+    .min(3, 'Tên đăng nhập phải có ít nhất 3 ký tự'),
+  
+  email: yup.string()
+    .required('Vui lòng nhập email')
+    .email('Email không hợp lệ'),
+  
+  phoneNumber: yup.string()
+    .required('Vui lòng nhập số điện thoại')
+    .matches(/(84|0[3|5|7|8|9])+([0-9]{8})\b/g, 'Số điện thoại không hợp lệ'),
+  
+  password: yup.string()
+    .required('Vui lòng nhập mật khẩu')
+    .min(8, 'Mật khẩu phải có ít nhất 8 ký tự')
+    .matches(
+      /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/,
+      'Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 số và 1 ký tự đặc biệt'
+    ),
+  
+  height: yup.number()
+    .required('Vui lòng nhập chiều cao')
+    .min(50, 'Chiều cao không hợp lệ')
+    .max(250, 'Chiều cao không hợp lệ'),
+  
+  weight: yup.number()
+    .required('Vui lòng nhập cân nặng')
+    .min(20, 'Cân nặng không hợp lệ')
+    .max(300, 'Cân nặng không hợp lệ'),
+  
+  targetWeight: yup.number()
+    .required('Vui lòng nhập cân nặng mục tiêu')
+    .min(20, 'Cân nặng mục tiêu không hợp lệ')
+    .max(300, 'Cân nặng mục tiêu không hợp lệ'),
+  
+  dob: yup.date()
+    .required('Vui lòng chọn ngày sinh')
+    .max(new Date(), 'Ngày sinh không hợp lệ'),
+  
+  gender: yup.string()
+    .required('Vui lòng chọn giới tính')
+})
+
 const Register = () => {
   const { token } = theme.useToken()
   const navigate = useNavigate()
   const [current, setCurrent] = useState(0)
   const [visible, setVisible] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [activityLevel, setActivityLevel] = useState(null)
   const [diet, setDiet] = useState(null)
   const [goal, setGoal] = useState(null)
   const [userInfo, setUserInfo] = useState({
-    gender: undefined,
-    height: undefined,
-    weight: undefined,
-    targetWeight: undefined,
-    dob: undefined
+    gender: '',
+    height: '',
+    weight: '',
+    targetWeight: '',
+    dob: null
   })
   const [accountInfo, setAccountInfo] = useState({
-    ...userInfo,
-    name: undefined,
+    userName: undefined,
     email: undefined,
-    phone: undefined,
+    phoneNumber: undefined,
     password: undefined
+  })
+
+  const {
+    trigger,
+    formState: { errors },
+    setValue
+  } = useForm({
+    resolver: yupResolver(formSchema),
+    mode: 'onChange'
   })
 
   const steps = [
@@ -325,7 +414,7 @@ const Register = () => {
     },
     {
       title: 'Thông số',
-      content: <SecondContent userInfo={userInfo} setUserInfo={setUserInfo} />
+      content: <SecondContent userInfo={userInfo} setUserInfo={setUserInfo} errors={errors} setValue={setValue} trigger={trigger} />
     },
     {
       title: 'Tiến độ',
@@ -340,48 +429,105 @@ const Register = () => {
     },
     {
       title: 'Tài khoản',
-      content: <FourthContent userInfo={accountInfo} setUserInfo={setAccountInfo} />
+      content: (
+        <FourthContent 
+          userInfo={accountInfo} 
+          setUserInfo={setAccountInfo} 
+          errors={errors}
+          setValue={setValue}
+          trigger={trigger}
+        />
+      )
     }
   ]
-
-  const handleSubmit = () => {
-    const formData = {
-      userName: accountInfo.userName,
-      email: accountInfo.email,
-      password: accountInfo.password,
-      dob: userInfo.dob?.toISOString(),
-      gender: userInfo.gender === 'male',
-      height: userInfo.height,
-      weight: userInfo.weight,
-      weightPerWeek: Number(goal),
-      targetWeight: userInfo.targetWeight,
-      dietId: Number(diet),
-      exerciseLevel: Number(activityLevel),
-      phoneNumber: accountInfo.phoneNumber
-    }
-
-    api.authApi.registerApi(formData)
-        .then(() => {
-          message.success('Đăng ký thành công!')
-          navigate('/login')
-        })
-        .catch(err => console.log(err))
-        navigate('/login')
-    
-  }
-
-  const next = () => {
-    setCurrent(current + 1)
-  }
-
-  const prev = () => {
-    setCurrent(current - 1)
-  }
 
   const items = steps.map((item) => ({
     key: item.title,
     title: item.title
   }))
+
+  // Validate từng bước
+  const validateStep = async () => {
+    let isValid = true
+    
+    switch (current) {
+      case 0:
+        if (!activityLevel) {
+          toast.error('Vui lòng chọn mức độ hoạt động')
+          isValid = false
+        }
+        break
+        
+      case 1:
+        if (!diet) {
+          toast.error('Vui lòng chọn chế độ ăn')
+          isValid = false
+        }
+        break
+        
+      case 2:
+        const fieldsToValidate = ['height', 'weight', 'targetWeight', 'dob', 'gender']
+        const results = await Promise.all(fieldsToValidate.map(field => trigger(field)))
+        isValid = results.every(result => result === true)
+        break
+        
+      case 3:
+        if (!goal) {
+          toast.error('Vui lòng chọn mục tiêu')
+          isValid = false
+        }
+        break
+        
+      case 4:
+        isValid = await trigger(['userName', 'email', 'phoneNumber', 'password'])
+        break
+        
+      default:
+        break
+    }
+    
+    return isValid
+  }
+
+  const next = async () => {
+    const isValid = await validateStep()
+    if (isValid) {
+      setCurrent(current + 1)
+    }
+  }
+
+  const onSubmit = async () => {
+    try {
+      setIsLoading(true)
+      
+      const formData = {
+        userName: accountInfo.userName,
+        email: accountInfo.email,
+        password: accountInfo.password,
+        dob: userInfo.dob?.toISOString(),
+        gender: userInfo.gender === 'male',
+        height: userInfo.height,
+        weight: userInfo.weight,
+        weightPerWeek: Number(goal),
+        targetWeight: userInfo.targetWeight,
+        dietId: Number(diet),
+        exerciseLevel: Number(activityLevel),
+        phoneNumber: accountInfo.phoneNumber
+      }
+
+      await api.authApi.registerApi(formData)
+      toast.success('Đăng ký thành công!')
+      navigate('/login')
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Đăng ký thất bại, vui lòng thử lại')
+    } finally {
+      setIsLoading(false) 
+    }
+  }
+
+  const prev = () => {
+    setCurrent(current - 1)
+  }
 
   const contentStyle = {
     lineHeight: '260px',
@@ -398,7 +544,12 @@ const Register = () => {
     <Modal
       title="Đăng ký"
       visible={visible}
-      onCancel={() => setVisible(false)}
+      onCancel={() => {
+        if (window.confirm('Bạn có chắc muốn hủy đăng ký?')) {
+          setVisible(false)
+          navigate('/')
+        }
+      }}
       footer={null}
       width={700}
       style={{ padding: '16px' }}
@@ -407,13 +558,13 @@ const Register = () => {
       <div style={contentStyle}>{steps[current].content}</div>
       <div style={{ marginTop: 24 }}>
         {current < steps.length - 1 && (
-          <Button type="primary" onClick={() => next()}>
+          <Button type="primary" onClick={next} loading={isLoading}>
             Tiếp
           </Button>
         )}
         {current === steps.length - 1 && (
-          <Button type="primary" onClick={handleSubmit}>
-            Xong
+          <Button type="primary" onClick={onSubmit} loading={isLoading}>
+            Hoàn tất
           </Button>
         )}
         {current > 0 && (

@@ -1,0 +1,148 @@
+// Import landing navbar styles
+@import '../pages/landing.scss';
+
+.features-wrapper {
+  position: relative;
+}
+
+.features-hero {
+  padding: 8rem 0 6rem;
+  background: linear-gradient(135deg, #28c76f 0%, #1f9d55 100%);
+  color: white;
+  
+  h1, p {
+    color: white;
+  }
+}
+
+.feature-card {
+  transition: all 0.3s ease;
+  border-radius: 1rem;
+  overflow: hidden;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+  }
+
+  .feature-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    i {
+      font-size: 24px;
+    }
+  }
+
+  .feature-details {
+    i {
+      font-size: 1.1rem;
+    }
+    
+    span {
+      font-size: 0.95rem;
+      color: #6e6b7b;
+    }
+  }
+}
+
+.app-integration {
+  background-color: #f8f9fa;
+  
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+.features-cta {
+  background: linear-gradient(135deg, #7367f0 0%, #5e50ee 100%);
+  color: white;
+  
+  h2, p {
+    color: white;
+  }
+}
+
+// Animation classes
+.fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease;
+  
+  &.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 991.98px) {
+  .features-hero {
+    padding: 4rem 0;
+    text-align: center;
+    
+    img {
+      margin-top: 2rem;
+    }
+  }
+  
+  .app-integration {
+    text-align: center;
+    
+    img {
+      margin-bottom: 2rem;
+    }
+  }
+}
+
+// Navbar styles
+.landing-navbar {
+  transition: all 0.3s ease;
+  padding: 1rem 1.5rem;
+  
+  // Default state (trong suốt)
+  background: transparent;
+  
+  // Scrolled state
+  &.scrolled {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    
+    .navbar-brand {
+      .brand-text {
+        color: #28a745;
+      }
+    }
+    
+    .auth-buttons {
+      button {
+        &.btn-white {
+          background: white;
+          color: #28a745;
+          border-color: #28a745;
+          
+          &:hover {
+            background: #f8f9fa;
+          }
+        }
+        
+        &.btn-outline-white {
+          color: white;
+          background: #ff9f43;
+          border-color: #ff9f43;
+          
+          &:hover {
+            background: #ff8510;
+            border-color: #ff8510;
+          }
+        }
+      }
+    }
+  }
+} 

@@ -1,12 +1,11 @@
-import React, { Suspense } from 'react'
-
-// ** Router Import
-import Router from './router/Router'
+import { Suspense } from 'react'
+import AppRoutes from './router/Router'
+import Spinner from './@core/components/spinner/Fallback-spinner'
 
 const App = () => {
   return (
-    <Suspense fallback={null}>
-      <Router />
+    <Suspense fallback={<Spinner />}>
+      <AppRoutes />
     </Suspense>
   )
 }

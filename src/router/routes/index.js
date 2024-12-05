@@ -1,5 +1,5 @@
 // ** React Imports
-import { Fragment } from 'react'
+import { Fragment, lazy } from 'react'
 
 // ** Routes Imports
 import ChartsRoutes from './Charts'
@@ -24,6 +24,9 @@ import PrivateRoute from '@components/routes/PrivateRoute'
 // ** Utils
 import { isObjEmpty } from '@utils'
 
+// Import Features component
+const Features = lazy(() => import('../../views/pages/features'))
+
 const getLayout = {
   blank: <BlankLayout />,
   vertical: <VerticalLayout />,
@@ -46,8 +49,15 @@ const Routes = [
   ...MemberRoutes,
   ...StaffRoutes,
   ...FoodTrainerRoutes,
-  ...ExerciseTrainerRoutes
-
+  ...ExerciseTrainerRoutes,
+  {
+    path: '/features',
+    element: <Features />,
+    meta: {
+      layout: 'blank',
+      publicRoute: true
+    }
+  }
 ]
 
 const getRouteMeta = route => {

@@ -1,4 +1,3 @@
-
 import admin from './admin'
 import trainer from './trainer'
 import foodtrainer from './food-trainer'
