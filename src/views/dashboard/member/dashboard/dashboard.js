@@ -1,34 +1,51 @@
 import { useEffect, useState } from "react"
 import { Card, CardHeader, CardBody, CardTitle, Row, Col, Progress, Button } from 'reactstrap'
+import { DatePicker } from 'antd'
+import moment from 'moment'
 import { Circle } from 'react-feather'
 import api from '../../../../api/index'
 import '@styles/react/libs/charts/apex-charts.scss'
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar'
+import 'react-circular-progressbar/dist/styles.css'
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null)
-  const date = new Date()
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0') 
+  const [selectedDate, setSelectedDate] = useState(moment())
 
-  const formattedDate = `${year}-${month}-${day}`
   useEffect(() => {
+    const formattedDate = selectedDate.format('YYYY-MM-DD')
     api.mainDashboardApi.getMainDashboardApi(formattedDate).then(response => {
       setDashboardData(response)
     }).catch(error => {
       console.error('Error fetching dashboard data:', error)
     })
-  }, [])
+  }, [selectedDate])
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date)
+  }
 
   return (
     <div className='dashboard-container'>
       <Row className='match-height'>
         <Col lg='8' md='12'>
           <Card>
+            <div className="align-items-center">
+              <DatePicker
+                value={selectedDate}
+                onChange={handleDateChange}
+                format="DD/MM/YYYY"
+                style={{
+                  width: 150,
+                  marginRight: 10
+                }}
+              />
+            </div>
             <CardHeader className='d-flex justify-content-between align-items-center'>
-              <div className="align-items-center">
-                <CardTitle tag='h4'>Mục tiêu calorie</CardTitle>
-                <h2 className='text-primary'>{dashboardData?.totalCalories || 0} cals</h2>
+              <CardTitle tag='h4' className="me-3">Mục tiêu calorie</CardTitle>
+              <h2 className='text-primary'>{dashboardData?.totalCalories || 0} cals</h2>
+              <div>
+
               </div>
             </CardHeader>
             <CardBody>
@@ -49,18 +66,35 @@ const Dashboard = () => {
                 </Col>
 
                 <Col md='4'>
-                  <div className='d-flex justify-content-center align-items-center' style={{ height: '100%' }}>
-                    <div className='circular-progress-container'>
-                      <div className='circular-progress'>
-                        <div className='circular-progress-value'>
-                          <h3 className='text-success mb-0'>{dashboardData?.caloriesIntake || 0}</h3>
-                          <small>ĐÃ TIÊU THỤ</small>
-                          <h4 className='text-muted'>{Math.max(0, (dashboardData?.totalCalories || 0) - (dashboardData?.caloriesIntake || 0))}</h4>
+                    <div className='d-flex justify-content-center align-items-center' style={{ height: '100%' }}>
+                      <div style={{ width: 200, height: 200 }}>
+                        <CircularProgressbar 
+                          value={dashboardData?.totalCalories > 0 ? Math.min(100, (dashboardData?.caloriesIntake / dashboardData?.totalCalories) * 100) : 0}
+                          text={`${dashboardData?.caloriesIntake || 0}`}
+                          textChildren={
+                            <div className='text-center mt-2'>
+                              <small className='d-block'>ĐÃ TIÊU THỤ</small>
+                              <h4 className='text-muted'>
+                                {Math.max(0, (dashboardData?.totalCalories || 0) - (dashboardData?.caloriesIntake || 0))} cals còn lại
+                              </h4>
+                            </div>
+                          }
+                          styles={buildStyles({
+                            pathColor: '#28c76f', 
+                            textColor: '#28c76f',
+                            trailColor: '#e9ecef',
+                            pathTransitionDuration: 0.5
+                          })}
+                        />
+                        <div className='text-center mt-2'>
+                          <small className='d-block'>ĐÃ TIÊU THỤ</small>
+                          <h4 className='text-muted'>
+                            {Math.max(0, (dashboardData?.totalCalories || 0) - (dashboardData?.caloriesIntake || 0))} cals còn lại
+                          </h4>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </Col>
+                  </Col>
 
                 <Col md='4'>
                   <div className='d-flex flex-column align-items-center mb-2'>

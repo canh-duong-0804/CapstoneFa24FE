@@ -4,129 +4,126 @@ import { useEffect, useState } from 'react'
 import api from '../../../../api'
 
 // ** Reactstrap Imports
-import { Card, CardTitle, CardText, CardBody, Row, Col } from 'reactstrap'
+import { Card, CardHeader, CardTitle, CardBody, CardSubtitle } from 'reactstrap'
 
-const Earnings = ({ success }) => {
-   const [data, setData] = useState(null)
-   const date = new Date()
-   const year = date.getFullYear()
-   const month = String(date.getMonth() + 1).padStart(2, '0')
-   const day = String(date.getDate()).padStart(2, '0')
-   
-   const formattedDate = `${year}-${month}-${day}`
+const ApexRadiarChart = () => {
+  const [data, setData] = useState(null)
+  const date = new Date()
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0') 
 
-   useEffect(() => {
-     api.dashboardApi.getMainDashboardAdminApi(formattedDate).then(res => setData(res.topFoodStatistics))
-     return () => setData(null)
-   }, [])
+  const formattedDate = `${year}-${month}-${day}`
 
-   // Prepare chart options and series based on API data
-   const chartOptions = {
-     chart: {
-       toolbar: {
-         show: false
-       }
-     },
-     dataLabels: {
-       enabled: false
-     },
-     legend: { show: false },
-     labels: data ? data.map(item => item.foodName) : [],
-     stroke: { width: 0 },
-     colors: ['#28c76f66', '#28c76f33', success],
-     grid: {
-       padding: {
-         right: -20,
-         bottom: -8,
-         left: -20
-       }
-     },
-     plotOptions: {
-       pie: {
-         startAngle: -10,
-         donut: {
-           labels: {
-             show: true,
-             name: {
-               offsetY: 15
-             },
-             value: {
-               offsetY: -15,
-               formatter(val) {
-                 return `${parseInt(val)} %`
-               }
-             },
-             total: {
-               show: true,
-               offsetY: 15,
-               label: 'Tỷ lệ',
-               formatter() {
-                 return '100%'
-               }
-             }
-           }
-         }
-       }
-     },
-     responsive: [
-       {
-         breakpoint: 1325,
-         options: {
-           chart: {
-             height: 100
-           }
-         }
-       },
-       {
-         breakpoint: 1200,
-         options: {
-           chart: {
-             height: 120
-           }
-         }
-       },
-       {
-         breakpoint: 1065,
-         options: {
-           chart: {
-             height: 100
-           }
-         }
-       },
-       {
-         breakpoint: 992,
-         options: {
-           chart: {
-             height: 120
-           }
-         }
-       }
-     ]
-   }
+  useEffect(() => {
+    api.dashboardApi.getMainDashboardTrainerApi(formattedDate).then(res => setData(res))
+    return () => setData(null)
+  }, [])
 
-   return (
-     <Card className='earnings-card'>
-       <CardBody>
-         <Row>
-           <Col xs='6'>
-             <CardTitle className='mb-1'>Món ăn được sử dụng nhiều nhất</CardTitle>
-             <CardText className='text-muted font-small-2'>
-             </CardText>
-           </Col>
-           <Col xs='6'>
-             {data && (
-               <Chart 
-                 options={chartOptions} 
-                 series={data.map(item => item.usagePercentage)} 
-                 type='donut' 
-                 height={120} 
-               />
-             )}
-           </Col>
-         </Row>
-       </CardBody>
-     </Card>
-   )
+  // Đảm bảo `data` đã được lấy từ API và đã có dữ liệu
+  if (!data) return null
+
+  const donutColors = {
+    series1: '#ffe700',
+    series2: '#00d4bd',
+    series3: '#826bf8',
+    series4: '#2b9bf4',
+    series5: '#FFA1A1'
+  }
+
+  // ** Chart Options
+  const options = {
+    legend: {
+      show: true,
+      position: 'bottom'
+    },
+    labels: ['Eat-clean', 'Low-crab', 'Bình thường', 'Ăn chay'],
+
+    colors: [donutColors.series1, donutColors.series5, donutColors.series3, donutColors.series2],
+    dataLabels: {
+      enabled: true,
+      formatter(val) {
+        return `${parseInt(val)}%`
+      }
+    },
+    plotOptions: {
+      pie: {
+        donut: {
+          labels: {
+            show: true,
+            name: {
+              fontSize: '2rem',
+              fontFamily: 'Montserrat'
+            },
+            value: {
+              fontSize: '1rem',
+              fontFamily: 'Montserrat',
+              formatter(val) {
+                return `${parseInt(val)}%`
+              }
+            }
+          }
+        }
+      }
+    },
+    responsive: [
+      {
+        breakpoint: 992,
+        options: {
+          chart: {
+            height: 380
+          },
+          legend: {
+            position: 'bottom'
+          }
+        }
+      },
+      {
+        breakpoint: 576,
+        options: {
+          chart: {
+            height: 320
+          },
+          plotOptions: {
+            pie: {
+              donut: {
+                labels: {
+                  show: true,
+                  name: {
+                    fontSize: '1.5rem'
+                  },
+                  value: {
+                    fontSize: '1rem'
+                  },
+                  total: {
+                    fontSize: '1.5rem'
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+
+  // ** Chart Series
+  const series = [data.totalMemberUseEatClean, data.totalMemberUseLowCarb, data.totalMemberUseNormal, data.totalMemberUseVegetarian]
+
+  return (
+    <Card>
+      <CardHeader>
+        <div>
+          <CardTitle className='mb-75' tag='h3'>
+            Phân bổ người dùng theo chế độ ăn
+          </CardTitle>
+        </div>
+      </CardHeader>
+      <CardBody>
+        <Chart options={options} series={series} type='donut' height={350} />
+      </CardBody>
+    </Card>
+  )
 }
 
-export default Earnings
+export default ApexRadiarChart

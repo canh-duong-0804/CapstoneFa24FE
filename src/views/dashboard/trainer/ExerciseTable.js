@@ -1,8 +1,8 @@
-import React from 'react'
 import { Table, Card } from 'reactstrap'
 import api from '../../../api'
-import { useEffect, useState } from 'react'
-const TopFoodsTable = ({ data }) => {
+import { useEffect, useState, React } from 'react'
+// import { CardTitle } from 'antd'
+const TopFoodsTable = () => {
   const [data, setData] = useState(null)
   const date = new Date()
   const year = date.getFullYear()
@@ -20,18 +20,21 @@ const TopFoodsTable = ({ data }) => {
   if (!data) return null
   return (
     <Card className='card-top-foods-table'>
+      {/* <CardHeader>
+        <CardTitle tag='h4'>Top 5 Món Ăn</CardTitle>
+      </CardHeader> */}
       <Table responsive>
         <thead>
           <tr>
-            <th>Food Name</th>
-            <th>Usage Count</th>
-            <th>Usage Percentage</th>
+            <th>Tên bài tập</th>
+            <th>Số người tập</th>
+            <th>Tỷ Lệ %</th>
           </tr>
         </thead>
         <tbody>
-          {data.topFoodStatistics.map((food) => (
-            <tr key={food.foodId}>
-              <td>{food.foodName}</td>
+          {data.topExerciseStatistics.map((food) => (
+            <tr key={food.exerciseId}>
+              <td>{food.exerciseName}</td>
               <td>{food.usageCount}</td>
               <td>{food.usagePercentage.toFixed(2)}%</td>
             </tr>

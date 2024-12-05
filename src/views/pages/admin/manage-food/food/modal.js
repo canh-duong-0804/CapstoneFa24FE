@@ -38,7 +38,9 @@ const defaultValues = {
   vitaminB3: 0,
   foodImage: 'anh.png',
   dietname: '',
-  status: true
+  status: true,
+  protion: 'Bát',
+  serving: ''
 }
 
 const formSchema = yup.object().shape({
@@ -63,7 +65,7 @@ const ModalComponent = () => {
     handleSubmit,
     setValue,
     //watch,
-    //getValues,
+    getValues,
     reset,
     formState: { errors }
   } = useForm({ defaultValues, resolver: yupResolver(formSchema) })
@@ -92,6 +94,27 @@ const ModalComponent = () => {
     { value: true, label: 'Hoạt động' },
     { value: false, label: 'Không hoạt động' }
 
+  ]
+
+  const optionUnits = [
+    { value: "Bát", label: "Bát" },
+    { value: "Tô", label: "Tô" },
+    { value: "Đĩa", label: "Đĩa" },
+    { value: "Phần", label: "Phần" },
+    { value: "Khay", label: "Khay" },
+    { value: "Chén", label: "Chén" },
+    { value: "Ly", label: "Ly" },
+    { value: "Cốc", label: "Cốc" },
+    { value: "Tách", label: "Tách" },
+    { value: "Chai", label: "Chai" },
+    { value: "Lon", label: "Lon" },
+    { value: "Bình", label: "Bình" },
+    { value: "Quả", label: "Quả" },
+    { value: "Miếng", label: "Miếng" },
+    { value: "Múi", label: "Múi" },
+    { value: "Nải", label: "Nải" },
+    { value: "Chùm", label: "Chùm" },
+    { value: "Trái", label: "Trái" }
   ]
 
   const renderData = () => {
@@ -146,12 +169,12 @@ const ModalComponent = () => {
       })
     } else {
       const currentDate = new Date()
-    // Format date to dd-mm-yyyy
-    const day = String(currentDate.getDate()).padStart(2, '0')
-    const month = String(currentDate.getMonth() + 1).padStart(2, '0') // Month is 0-based
-    const year = currentDate.getFullYear()
-    
-    data.createDate = `${day}-${month}-${year}`
+      // Format date to dd-mm-yyyy
+      const day = String(currentDate.getDate()).padStart(2, '0')
+      const month = String(currentDate.getMonth() + 1).padStart(2, '0') // Month is 0-based
+      const year = currentDate.getFullYear()
+
+      data.createDate = `${day}-${month}-${year}`
       api.foodApi.createFoodApi(data).then(() => {
         handleLoadTable()
         handleModal()
@@ -191,7 +214,7 @@ const ModalComponent = () => {
           <ModalHeader typeModal={typeModal} handleModal={handleCancel} title={typeModal === 'Add' ? 'Thêm món ăn' : 'Sửa món ăn'} />
           <ModalBody>
             <Row>
-              <Col lg={3} md={3} xs={12}>
+              <Col lg={2} md={2} xs={12}>
                 <div className='mb-1'>
                   <Label className='form-label' for='add-foodName'>
                     Tên món ăn
@@ -200,32 +223,91 @@ const ModalComponent = () => {
                     id='foodName'
                     name='foodName'
                     control={control}
+                    rules={{ required: 'Tên món ăn là bắt buộc' }}
                     render={({ field }) => (
-                      <Input autoFocus placeholder='Nhập tên món ăn' invalid={errors.foodName && true} {...field} />
+                      <Input autoFocus required placeholder='Nhập tên món ăn' invalid={errors.foodName && true} {...field} />
                     )}
                   />
                   {errors.foodName ? <FormFeedback>{errors.foodName.message}</FormFeedback> : null}
                 </div>
               </Col>
 
-              <Col lg={3} md={3} xs={12}>
+              <Col lg={2} md={2} xs={12}>
                 <div className='mb-1'>
                   <Label className='form-label' for='add-portion'>
-                    
+                    Đơn vị
                   </Label>
                   <Controller
                     id='portion'
                     name='portion'
                     control={control}
                     render={({ field }) => (
-                      <Input autoFocus placeholder='Nhập khẩu phần ăn' invalid={errors.portion && true} {...field} />
+                      <Select
+                        {...field}
+                        theme={selectThemeColors}
+                        className='react-select'
+                        classNamePrefix='select'
+                        placeholder='Chọn...'
+                        options={optionUnits}
+                        isClearable={false}
+                        onChange={(option) => {
+                          field.onChange(option ? option.value : '')
+                          // Cập nhật giá trị của khẩu phần ăn khi unit thay đổi
+                          setValue('portion1', `1 ${option ? option.value : ''} (${getValues('serving')})`)
+                        }}
+                        value={optionUnits.find(option => option.value === field.value)}
+                      />
+                    )}
+                  />
+                  {errors.unit ? <FormFeedback>{errors.unit.message}</FormFeedback> : null}
+                </div>
+              </Col>
+
+              <Col lg={2} md={2} xs={12}>
+                <div className='mb-1'>
+                  <Label className='form-label' for='add-serving'>
+                    Định lượng
+                  </Label>
+                  <Controller
+                    id='serving'
+                    name='serving'
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        autoFocus
+                        placeholder='Nhập định lượng'
+                        invalid={errors.serving && true}
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e)
+                          // Cập nhật giá trị của khẩu phần ăn khi serving thay đổi
+                          setValue('portion1', `1 ${getValues('portion')} (${e.target.value})`)
+                        }}
+                      />
+                    )}
+                  />
+                  {errors.serving ? <FormFeedback>{errors.serving.message}</FormFeedback> : null}
+                </div>
+              </Col>
+
+              <Col lg={2} md={2} xs={12}>
+                <div className='mb-1'>
+                  <Label className='form-label' for='add-portion'>
+                    Khẩu phần ăn
+                  </Label>
+                  <Controller
+                    id='portion1'
+                    name='portion1'
+                    control={control}
+                    render={({ field }) => (
+                      <Input autoFocus disabled invalid={errors.portion && true} {...field} />
                     )}
                   />
                   {errors.portion ? <FormFeedback>{errors.portion.message}</FormFeedback> : null}
                 </div>
               </Col>
 
-              <Col lg={3} md={3} xs={12}>
+              <Col lg={2} md={2} xs={12}>
 
                 <div className='mb-1'>
                   <Label className='form-label' for='add-dietId'>
@@ -255,7 +337,7 @@ const ModalComponent = () => {
                 </div>
               </Col>
 
-              <Col lg={3} md={3} xs={12}>
+              <Col lg={2} md={2} xs={12}>
                 <div className='mb-1'>
                   <Label className='form-label' for='add-calories'>
                     Calories

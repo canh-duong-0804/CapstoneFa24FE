@@ -24,20 +24,20 @@ const RevenueReport = props => {
   const [data, setData] = useState(null)
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()) // Khởi tạo năm hiện tại
   const [dropdownOpen, setDropdownOpen] = useState(false)
-  
+
   const toggleDropdown = () => setDropdownOpen(prevState => !prevState)
-  
+
   // Hàm để xử lý thay đổi năm
   const handleYearChange = (year) => {
     setSelectedYear(year)
     // Gọi API hoặc cập nhật dữ liệu cho biểu đồ theo năm đã chọn
     // updateChartData(year);
   }
-  
+
   const date = new Date()
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0') 
+  const day = String(date.getDate()).padStart(2, '0')
 
   const formattedDate = `${year}-${month}-${day}`
   useEffect(() => {
@@ -46,63 +46,64 @@ const RevenueReport = props => {
   }, [])
 
   const revenueOptions = {
-      chart: {
-        stacked: true,
-        type: 'bar',
-        toolbar: { show: false }
-      },
-      grid: {
-        padding: {
-          top: -20,
-          bottom: -10
-        },
-        yaxis: {
-          lines: { show: false }
-        }
-      },
-      xaxis: {
-        // Cập nhật categories để bao gồm đủ 12 tháng
-        categories: [
-          'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 
-          'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 
-          'Tháng 11', 'Tháng 12'
-        ],
-        labels: {
-          style: {
-            colors: '#b9b9c3',
-            fontSize: '0.86rem'
-          }
-        },
-        axisTicks: {
-          show: false
-        },
-        axisBorder: {
-          show: false
-        }
-      },
-      legend: {
-        show: false
-      },
-      dataLabels: {
-        enabled: false
-      },
-      colors: [props.primary, props.warning],
-      plotOptions: {
-        bar: {
-          columnWidth: '17%',
-          borderRadius: [5]
-        },
-        distributed: true
+    chart: {
+      stacked: true,
+      type: 'bar',
+      toolbar: { show: false }
+    },
+    grid: {
+      padding: {
+        top: -20,
+        bottom: -10
       },
       yaxis: {
-        labels: {
-          style: {
-            colors: '#b9b9c3',
-            fontSize: '0.86rem'
-          }
-        }
+        lines: { show: false }
       }
     },
+    xaxis: {
+      categories: [
+        'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5',
+        'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10',
+        'Tháng 11', 'Tháng 12'
+      ],
+      labels: {
+        style: {
+          colors: '#b9b9c3',
+          fontSize: '0.86rem',
+          transform: 'rotate(-45deg)',  // Rotate the labels to 45 degrees
+          textAlign: 'right'  // Align the text to the right
+        }
+      },
+      axisTicks: {
+        show: false
+      },
+      axisBorder: {
+        show: false
+      }
+    },
+    legend: {
+      show: false
+    },
+    dataLabels: {
+      enabled: false
+    },
+    colors: [props.primary, props.warning],
+    plotOptions: {
+      bar: {
+        columnWidth: '17%',
+        borderRadius: [5]
+      },
+      distributed: true
+    },
+    yaxis: {
+      labels: {
+        style: {
+          colors: '#b9b9c3',
+          fontSize: '0.86rem'
+        }
+      }
+    }
+  },
     revenueSeries = [
       {
         name: 'Người dùng',
@@ -146,12 +147,12 @@ const RevenueReport = props => {
               </Dropdown>
             </div>
           </div>
-          <Chart 
-            id='revenue-report-chart' 
-            type='bar' 
-            height='230' 
-            options={revenueOptions} 
-            series={revenueSeries} 
+          <Chart
+            id='revenue-report-chart'
+            type='bar'
+            height='230'
+            options={revenueOptions}
+            series={revenueSeries}
           />
         </Col>
       </Row>

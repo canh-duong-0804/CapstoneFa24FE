@@ -43,7 +43,8 @@ const defaultValues = {
   descriptionBreakFast: '',
   descriptionLunch: '',
   descriptionDinner: '',
-  descriptionSnack: ''
+  descriptionSnack: '',
+  selectedFoods: []
 }
 
 const ModalComponent = () => {
@@ -65,7 +66,7 @@ const ModalComponent = () => {
     // clearErrors,
     handleSubmit,
     setValue,
-    // watch,
+    watch,
     //getValues,
     reset,
     formState: { errors }
@@ -126,6 +127,56 @@ const ModalComponent = () => {
         reset(defaultValues)
       })
   }
+
+  const listFoodIdBreakfasts = watch('listFoodIdBreakfasts')
+
+  useEffect(() => {
+    const newSelectedFoods = listFoodIdBreakfasts.map(food => ({
+      foodId: food.foodId,
+      quantity: food.quantity || 1, 
+      foodName: food.foodName || ''
+    }))
+
+    if (JSON.stringify(newSelectedFoods) !== JSON.stringify(selectedFoods)) {
+      setSelectedFoods(newSelectedFoods)
+    }
+  }, [listFoodIdBreakfasts])
+
+  const listFoodIdLunches = watch('listFoodIdLunches')
+  useEffect(() => {
+    const newSelectedFoods = listFoodIdLunches.map(food => ({
+      foodId: food.foodId,
+      quantity: food.quantity || 1,
+      foodName: food.foodName || ''
+    }))
+    if (JSON.stringify(newSelectedFoods) !== JSON.stringify(selectedFoodLunch)) {
+      setSelectedFoodLunch(newSelectedFoods)
+    }
+  }, [listFoodIdLunches])
+
+  const listFoodIdDinners = watch('listFoodIdDinners')
+  useEffect(() => {
+    const newSelectedFoods = listFoodIdDinners.map(food => ({
+      foodId: food.foodId,
+      quantity: food.quantity || 1,
+      foodName: food.foodName || ''
+    }))
+    if (JSON.stringify(newSelectedFoods) !== JSON.stringify(selectedFoodDinner)) {
+      setSelectedFoodDinner(newSelectedFoods)
+    }
+  }, [listFoodIdDinners])
+
+  const listFoodIdSnacks = watch('listFoodIdSnacks')
+  useEffect(() => {
+    const newSelectedFoods = listFoodIdSnacks.map(food => ({
+      foodId: food.foodId,
+      quantity: food.quantity || 1,
+      foodName: food.foodName || ''
+    }))
+    if (JSON.stringify(newSelectedFoods) !== JSON.stringify(selectedFoodSnack)) {
+      setSelectedFoodSnack(newSelectedFoods)
+    }
+  }, [listFoodIdSnacks])
 
   const add = () => {
     const newTabNumber = items.length + 1
@@ -298,7 +349,7 @@ const ModalComponent = () => {
               items={items}
             />
             <div className='box form-box__border mb-2' style={{ border: '1px solid #ccc', borderRadius: '4px', padding: '15px' }}>
-              <h5 className='form-box__border--title' style={{ marginBottom: '15px', fontWeight: 'bold' }}>
+              <h5 className='form-box__border--title' style={{ marginBottom: '15px', fontWeight: 'bold'}}>
                 {'Bữa sáng'}
               </h5>
               <Row className="gy-1">
@@ -327,37 +378,79 @@ const ModalComponent = () => {
                             onChange={(selectedOptions) => {
                               const newFoods = selectedOptions ? selectedOptions.map(option => ({
                                 foodId: option.value,
-                                quantity: 0,
-                                foodName: option.label
+                                quantity: 1, // Mặc định số lượng là 1
+                                foodName: `${option.label} - ${option.portion}`
                               })) : []
-
+                            
+                              // Tính tổng calories ngay khi chọn
+                              const totalCalories = newFoods.reduce((total, food) => {
+                                const foodOption = optionFood.find(opt => opt.value === food.foodId)
+                                return total + (foodOption ? foodOption.calories * food.quantity : 0)
+                              }, 0)
+                            
                               setSelectedFoods(newFoods)
                               field.onChange(newFoods)
-                              setValue('caloriesBreakfast', 0)
+                              setValue('caloriesBreakfast', totalCalories)
                             }}
                             value={optionFood.filter(option => field.value?.some(val => val.foodId === option.value))}
                           />
                           {/* Danh sách món ăn đã chọn với input số lượng */}
                           <div className="selected-foods">
-                            {selectedFoods.map((food, index) => (
-                              <div key={food.foodId} className="d-flex align-items-center gap-2 mb-2">
-                                <span className="flex-grow-1">{food.foodName}</span>
-                                <Input
-                                  type="number"
-                                  className="w-25"
-                                  placeholder="Số lượng"
-                                  value={food.quantity}
-                                  min={0}
-                                  onChange={(e) => {
-                                    const newQuantity = parseFloat(e.target.value) || 0
-                                    const updatedFoods = selectedFoods.map((f, i) => (i === index ? { ...f, quantity: newQuantity } : f))
-                                    setSelectedFoods(updatedFoods)
-                                    field.onChange(updatedFoods)
-                                    setValue('caloriesBreakfast', calculateTotalCalories(updatedFoods))
-                                  }}
-                                />
-                              </div>
-                            ))}
+                            {selectedFoods.map((food, index) => {
+                              // Tìm thông tin food option để lấy calories
+                              const foodOption = optionFood.find(opt => opt.value === food.foodId)
+                              const foodCalories = foodOption ? foodOption.calories : 0
+                              const totalFoodCalories = foodCalories * food.quantity
+
+                              return (
+                                <div key={food.foodId} className="d-flex align-items-center gap-2 mb-2">
+                                  <span className="flex-grow-1">{food.foodName}</span>
+                                  <div className="d-flex flex-column me-2">
+                                    {selectedFoods.length > 0 && (
+                                      <Label
+                                        className={`form-label ${food.quantity > 0 ? 'visible' : 'd-none'}`}
+                                        for={`breakfast-quantity-${food.foodId}`}
+                                      >
+                                        Số lượng
+                                      </Label>
+                                    )}
+                                    <Input
+                                      id={`breakfast-quantity-${food.foodId}`}
+                                      type="number"
+                                      className="w-100"
+                                      placeholder="Số lượng"
+                                      value={food.quantity}
+                                      min={0}
+                                      onChange={(e) => {
+                                        const newQuantity = parseFloat(e.target.value) || 0
+                                        const updatedFoods = selectedFoods.map((f, i) => (i === index ? { ...f, quantity: newQuantity } : f))
+                                        setSelectedFoods(updatedFoods)
+                                        field.onChange(updatedFoods)
+                                        setValue('caloriesBreakfast', calculateTotalCalories(updatedFoods))
+                                      }}
+                                    />
+                                  </div>
+                                  <div className="d-flex flex-column">
+                                    {selectedFoods.length > 0 && (
+                                      <Label
+                                        className={`form-label ${food.quantity > 0 ? 'visible' : 'd-none'}`}
+                                        for={`breakfast-calories-${food.foodId}`}
+                                      >
+                                        Calories
+                                      </Label>
+                                    )}
+                                    <Input
+                                      id={`breakfast-calories-${food.foodId}`}
+                                      type="number"
+                                      className="w-100"
+                                      placeholder="Calories"
+                                      value={totalFoodCalories}
+                                      disabled
+                                    />
+                                  </div>
+                                </div>
+                              )
+                            })}
                           </div>
                         </div>
                       )}
@@ -371,7 +464,7 @@ const ModalComponent = () => {
                 <Col lg={3} md={3} xs={12}>
                   <div className='mb-1'>
                     <Label className='form-label' for='add-calories'>
-                      Calories
+                      Tổng Calories
                     </Label>
                     <Controller
                       id='caloriesBreakfast'
@@ -387,22 +480,6 @@ const ModalComponent = () => {
                       )}
                     />
                     {errors.calories && <FormFeedback>{errors.calories.message}</FormFeedback>}
-                  </div>
-                </Col>
-                <Col lg={12} md={12} xs={12}>
-                  <div className='mb-1'>
-                    <Label className='form-label' for='add-description'>
-                      Mô tả
-                    </Label>
-                    <Controller
-                      id='descriptionBreakFast'
-                      name='descriptionBreakFast'
-                      control={control}
-                      render={({ field }) => (
-                        <Input autoFocus placeholder='Nhập mô tả' invalid={errors.descriptionBreakFast && true} {...field} />
-                      )}
-                    />
-                    {errors.descriptionBreakFast ? <FormFeedback>{errors.descriptionBreakFast.message}</FormFeedback> : null}
                   </div>
                 </Col>
               </Row>
@@ -437,37 +514,79 @@ const ModalComponent = () => {
                             onChange={(selectedOptions) => {
                               const newFoods = selectedOptions ? selectedOptions.map(option => ({
                                 foodId: option.value,
-                                quantity: 0,
-                                foodName: option.label
+                                quantity: 1, // Mặc định số lượng là 1
+                                foodName: `${option.label} - ${option.portion}`
                               })) : []
-
+                            
+                              // Tính tổng calories ngay khi chọn
+                              const totalCalories = newFoods.reduce((total, food) => {
+                                const foodOption = optionFood.find(opt => opt.value === food.foodId)
+                                return total + (foodOption ? foodOption.calories * food.quantity : 0)
+                              }, 0)
+                            
                               setSelectedFoodLunch(newFoods)
                               field.onChange(newFoods)
-                              setValue('caloriesLunch', 0)
+                              setValue('caloriesLunch', totalCalories)
                             }}
                             value={optionFood.filter(option => field.value?.some(val => val.foodId === option.value))}
                           />
                           {/* Danh sách món ăn đã chọn với input số lượng */}
                           <div className="selected-foods">
-                            {selectedFoodLunch.map((food, index) => (
-                              <div key={food.foodId} className="d-flex align-items-center gap-2 mb-2">
-                                <span className="flex-grow-1">{food.foodName}</span>
-                                <Input
-                                  type="number"
-                                  className="w-25"
-                                  placeholder="Số lượng"
-                                  value={food.quantity}
-                                  min={0}
-                                  onChange={(e) => {
-                                    const newQuantity = parseFloat(e.target.value) || 0
-                                    const updatedFoods = selectedFoodLunch.map((f, i) => (i === index ? { ...f, quantity: newQuantity } : f))
-                                    setSelectedFoodLunch(updatedFoods)
-                                    field.onChange(updatedFoods)
-                                    setValue('caloriesLunch', calculateTotalCalories(updatedFoods))
-                                  }}
-                                />
-                              </div>
-                            ))}
+                            {selectedFoodLunch.map((food, index) => {
+                              // Tìm thông tin food option để lấy calories
+                              const foodOption = optionFood.find(opt => opt.value === food.foodId)
+                              const foodCalories = foodOption ? foodOption.calories : 0
+                              const totalFoodCalories = foodCalories * food.quantity
+
+                              return (
+                                <div key={food.foodId} className="d-flex align-items-center gap-2 mb-2">
+                                  <span className="flex-grow-1">{food.foodName}</span>
+                                  <div className="d-flex flex-column me-2">
+                                    {selectedFoodLunch.length > 0 && (
+                                      <Label
+                                        className={`form-label ${food.quantity > 0 ? 'visible' : 'd-none'}`}
+                                        for={`breakfast-quantity-${food.foodId}`}
+                                      >
+                                        Số lượng
+                                      </Label>
+                                    )}
+                                    <Input
+                                      id={`breakfast-quantity-${food.foodId}`}
+                                      type="number"
+                                      className="w-100"
+                                      placeholder="Số lượng"
+                                      value={food.quantity}
+                                      min={0}
+                                      onChange={(e) => {
+                                        const newQuantity = parseFloat(e.target.value) || 0
+                                        const updatedFoods = selectedFoodLunch.map((f, i) => (i === index ? { ...f, quantity: newQuantity } : f))
+                                        setSelectedFoodLunch(updatedFoods)
+                                        field.onChange(updatedFoods)
+                                        setValue('caloriesLunch', calculateTotalCalories(updatedFoods))
+                                      }}
+                                    />
+                                  </div>
+                                  <div className="d-flex flex-column">
+                                    {selectedFoodLunch.length > 0 && (
+                                      <Label
+                                        className={`form-label ${food.quantity > 0 ? 'visible' : 'd-none'}`}
+                                        for={`breakfast-calories-${food.foodId}`}
+                                      >
+                                        Calories
+                                      </Label>
+                                    )}
+                                    <Input
+                                      id={`breakfast-calories-${food.foodId}`}
+                                      type="number"
+                                      className="w-100"
+                                      placeholder="Calories"
+                                      value={totalFoodCalories}
+                                      disabled
+                                    />
+                                  </div>
+                                </div>
+                              )
+                            })}
                           </div>
                         </div>
                       )}
@@ -477,10 +596,11 @@ const ModalComponent = () => {
                     )}
                   </div>
                 </Col>
+
                 <Col lg={3} md={3} xs={12}>
                   <div className='mb-1'>
                     <Label className='form-label' for='add-calories'>
-                      Calories
+                      Tổng Calories
                     </Label>
                     <Controller
                       id='caloriesLunch'
@@ -496,22 +616,6 @@ const ModalComponent = () => {
                       )}
                     />
                     {errors.calories && <FormFeedback>{errors.calories.message}</FormFeedback>}
-                  </div>
-                </Col>
-                <Col lg={12} md={12} xs={12}>
-                  <div className='mb-1'>
-                    <Label className='form-label' for='add-description'>
-                      Mô tả
-                    </Label>
-                    <Controller
-                      id='descriptionLunch'
-                      name='descriptionLunch'
-                      control={control}
-                      render={({ field }) => (
-                        <Input autoFocus placeholder='Nhập mô tả' invalid={errors.descriptionLunch && true} {...field} />
-                      )}
-                    />
-                    {errors.descriptionLunch ? <FormFeedback>{errors.descriptionLunch.message}</FormFeedback> : null}
                   </div>
                 </Col>
               </Row>
@@ -546,37 +650,79 @@ const ModalComponent = () => {
                             onChange={(selectedOptions) => {
                               const newFoods = selectedOptions ? selectedOptions.map(option => ({
                                 foodId: option.value,
-                                quantity: 0,
-                                foodName: option.label
+                                quantity: 1, // Mặc định số lượng là 1
+                                foodName: `${option.label} - ${option.portion}`
                               })) : []
-
+                            
+                              // Tính tổng calories ngay khi chọn
+                              const totalCalories = newFoods.reduce((total, food) => {
+                                const foodOption = optionFood.find(opt => opt.value === food.foodId)
+                                return total + (foodOption ? foodOption.calories * food.quantity : 0)
+                              }, 0)
+                            
                               setSelectedFoodDinner(newFoods)
                               field.onChange(newFoods)
-                              setValue('caloriesDinner', 0)
+                              setValue('caloriesDinner', totalCalories)
                             }}
                             value={optionFood.filter(option => field.value?.some(val => val.foodId === option.value))}
                           />
                           {/* Danh sách món ăn đã chọn với input số lượng */}
                           <div className="selected-foods">
-                            {selectedFoodDinner.map((food, index) => (
-                              <div key={food.foodId} className="d-flex align-items-center gap-2 mb-2">
-                                <span className="flex-grow-1">{food.foodName}</span>
-                                <Input
-                                  type="number"
-                                  className="w-25"
-                                  placeholder="Số lượng"
-                                  value={food.quantity}
-                                  min={0}
-                                  onChange={(e) => {
-                                    const newQuantity = parseFloat(e.target.value) || 0
-                                    const updatedFoods = selectedFoodDinner.map((f, i) => (i === index ? { ...f, quantity: newQuantity } : f))
-                                    setSelectedFoodDinner(updatedFoods)
-                                    field.onChange(updatedFoods)
-                                    setValue('caloriesDinner', calculateTotalCalories(updatedFoods))
-                                  }}
-                                />
-                              </div>
-                            ))}
+                            {selectedFoodDinner.map((food, index) => {
+                              // Tìm thông tin food option để lấy calories
+                              const foodOption = optionFood.find(opt => opt.value === food.foodId)
+                              const foodCalories = foodOption ? foodOption.calories : 0
+                              const totalFoodCalories = foodCalories * food.quantity
+
+                              return (
+                                <div key={food.foodId} className="d-flex align-items-center gap-2 mb-2">
+                                  <span className="flex-grow-1">{food.foodName}</span>
+                                  <div className="d-flex flex-column me-2">
+                                    {selectedFoodDinner.length > 0 && (
+                                      <Label
+                                        className={`form-label ${food.quantity > 0 ? 'visible' : 'd-none'}`}
+                                        for={`dinner-quantity-${food.foodId}`}
+                                      >
+                                        Số lượng
+                                      </Label>
+                                    )}
+                                    <Input
+                                      id={`dinner-quantity-${food.foodId}`}
+                                      type="number"
+                                      className="w-100"
+                                      placeholder="Số lượng"
+                                      value={food.quantity}
+                                      min={0}
+                                      onChange={(e) => {
+                                        const newQuantity = parseFloat(e.target.value) || 0
+                                        const updatedFoods = selectedFoodDinner.map((f, i) => (i === index ? { ...f, quantity: newQuantity } : f))
+                                        setSelectedFoodDinner(updatedFoods)
+                                        field.onChange(updatedFoods)
+                                        setValue('caloriesDinner', calculateTotalCalories(updatedFoods))
+                                      }}
+                                    />
+                                  </div>
+                                  <div className="d-flex flex-column">
+                                    {selectedFoodDinner.length > 0 && (
+                                      <Label
+                                        className={`form-label ${food.quantity > 0 ? 'visible' : 'd-none'}`}
+                                        for={`dinner-calories-${food.foodId}`}
+                                      >
+                                        Calories
+                                      </Label>
+                                    )}
+                                    <Input
+                                      id={`dinner-calories-${food.foodId}`}
+                                      type="number"
+                                      className="w-100"
+                                      placeholder="Calories"
+                                      value={totalFoodCalories}
+                                      disabled
+                                    />
+                                  </div>
+                                </div>
+                              )
+                            })}
                           </div>
                         </div>
                       )}
@@ -586,10 +732,11 @@ const ModalComponent = () => {
                     )}
                   </div>
                 </Col>
+
                 <Col lg={3} md={3} xs={12}>
                   <div className='mb-1'>
-                    <Label className='form-label' for='add-caloriesDinner'>
-                      Calories
+                    <Label className='form-label' for='add-calories'>
+                      Tổng Calories
                     </Label>
                     <Controller
                       id='caloriesDinner'
@@ -605,22 +752,6 @@ const ModalComponent = () => {
                       )}
                     />
                     {errors.calories && <FormFeedback>{errors.calories.message}</FormFeedback>}
-                  </div>
-                </Col>
-                <Col lg={12} md={12} xs={12}>
-                  <div className='mb-1'>
-                    <Label className='form-label' for='add-description'>
-                      Mô tả
-                    </Label>
-                    <Controller
-                      id='descriptionLunch'
-                      name='descriptionLunch'
-                      control={control}
-                      render={({ field }) => (
-                        <Input autoFocus placeholder='Nhập mô tả' invalid={errors.descriptionLunch && true} {...field} />
-                      )}
-                    />
-                    {errors.descriptionLunch ? <FormFeedback>{errors.descriptionLunch.message}</FormFeedback> : null}
                   </div>
                 </Col>
               </Row>
@@ -655,37 +786,79 @@ const ModalComponent = () => {
                             onChange={(selectedOptions) => {
                               const newFoods = selectedOptions ? selectedOptions.map(option => ({
                                 foodId: option.value,
-                                quantity: 0,
-                                foodName: option.label
+                                quantity: 1, // Mặc định số lượng là 1
+                                foodName: `${option.label} - ${option.portion}`
                               })) : []
-
+                            
+                              // Tính tổng calories ngay khi chọn
+                              const totalCalories = newFoods.reduce((total, food) => {
+                                const foodOption = optionFood.find(opt => opt.value === food.foodId)
+                                return total + (foodOption ? foodOption.calories * food.quantity : 0)
+                              }, 0)
+                            
                               setSelectedFoodSnack(newFoods)
                               field.onChange(newFoods)
-                              setValue('caloriesSnack', 0)
+                              setValue('caloriesSnack', totalCalories)
                             }}
                             value={optionFood.filter(option => field.value?.some(val => val.foodId === option.value))}
                           />
                           {/* Danh sách món ăn đã chọn với input số lượng */}
                           <div className="selected-foods">
-                            {selectedFoodSnack.map((food, index) => (
-                              <div key={food.foodId} className="d-flex align-items-center gap-2 mb-2">
-                                <span className="flex-grow-1">{food.foodName}</span>
-                                <Input
-                                  type="number"
-                                  className="w-25"
-                                  placeholder="Số lượng"
-                                  value={food.quantity}
-                                  min={0}
-                                  onChange={(e) => {
-                                    const newQuantity = parseFloat(e.target.value) || 0
-                                    const updatedFoods = selectedFoodSnack.map((f, i) => (i === index ? { ...f, quantity: newQuantity } : f))
-                                    setSelectedFoodSnack(updatedFoods)
-                                    field.onChange(updatedFoods)
-                                    setValue('caloriesSnack', calculateTotalCalories(updatedFoods))
-                                  }}
-                                />
-                              </div>
-                            ))}
+                            {selectedFoodSnack.map((food, index) => {
+                              // Tìm thông tin food option để lấy calories
+                              const foodOption = optionFood.find(opt => opt.value === food.foodId)
+                              const foodCalories = foodOption ? foodOption.calories : 0
+                              const totalFoodCalories = foodCalories * food.quantity
+
+                              return (
+                                <div key={food.foodId} className="d-flex align-items-center gap-2 mb-2">
+                                  <span className="flex-grow-1">{food.foodName}</span>
+                                  <div className="d-flex flex-column me-2">
+                                    {selectedFoodSnack.length > 0 && (
+                                      <Label
+                                        className={`form-label ${food.quantity > 0 ? 'visible' : 'd-none'}`}
+                                        for={`snack-quantity-${food.foodId}`}
+                                      >
+                                        Số lượng
+                                      </Label>
+                                    )}
+                                    <Input
+                                      id={`snack-quantity-${food.foodId}`}
+                                      type="number"
+                                      className="w-100"
+                                      placeholder="Số lượng"
+                                      value={food.quantity}
+                                      min={0}
+                                      onChange={(e) => {
+                                        const newQuantity = parseFloat(e.target.value) || 0
+                                        const updatedFoods = selectedFoodSnack.map((f, i) => (i === index ? { ...f, quantity: newQuantity } : f))
+                                        setSelectedFoodSnack(updatedFoods)
+                                        field.onChange(updatedFoods)
+                                        setValue('caloriesSnack', calculateTotalCalories(updatedFoods))
+                                      }}
+                                    />
+                                  </div>
+                                  <div className="d-flex flex-column">
+                                    {selectedFoodSnack.length > 0 && (
+                                      <Label
+                                        className={`form-label ${food.quantity > 0 ? 'visible' : 'd-none'}`}
+                                        for={`snack-calories-${food.foodId}`}
+                                      >
+                                        Calories
+                                      </Label>
+                                    )}
+                                    <Input
+                                      id={`snack-calories-${food.foodId}`}
+                                      type="number"
+                                      className="w-100"
+                                      placeholder="Calories"
+                                      value={totalFoodCalories}
+                                      disabled
+                                    />
+                                  </div>
+                                </div>
+                              )
+                            })}
                           </div>
                         </div>
                       )}
@@ -695,10 +868,11 @@ const ModalComponent = () => {
                     )}
                   </div>
                 </Col>
+
                 <Col lg={3} md={3} xs={12}>
                   <div className='mb-1'>
-                    <Label className='form-label' for='add-caloriesSnack'>
-                      Calories
+                    <Label className='form-label' for='add-calories'>
+                      Tổng Calories
                     </Label>
                     <Controller
                       id='caloriesSnack'
@@ -714,22 +888,6 @@ const ModalComponent = () => {
                       )}
                     />
                     {errors.calories && <FormFeedback>{errors.calories.message}</FormFeedback>}
-                  </div>
-                </Col>
-                <Col lg={12} md={12} xs={12}>
-                  <div className='mb-1'>
-                    <Label className='form-label' for='add-description'>
-                      Mô tả
-                    </Label>
-                    <Controller
-                      id='descriptionSnack'
-                      name='descriptionSnack'
-                      control={control}
-                      render={({ field }) => (
-                        <Input autoFocus placeholder='Nhập mô tả' invalid={errors.descriptionSnack && true} {...field} />
-                      )}
-                    />
-                    {errors.descriptionSnack ? <FormFeedback>{errors.descriptionSnack.message}</FormFeedback> : null}
                   </div>
                 </Col>
               </Row>
