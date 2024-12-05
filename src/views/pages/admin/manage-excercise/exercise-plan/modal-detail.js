@@ -130,12 +130,9 @@ const ModalComponent = () => {
   }
 
   const renderData = () => {
-    api.exerciseApi.getAllExerciseApi(1).then((rs) => {
-      const mappedOptions = rs.data.map((exercise) => ({
-        value: exercise.exerciseId, 
-        label: exercise.exerciseName 
-      }))
-      setOptionExercise(mappedOptions)
+    api.exerciseApi.getListboxExerciseApi().then((rs) => {
+      console.log('rs', rs)
+      setOptionExercise(rs)
     }).catch(() => {
 
     })

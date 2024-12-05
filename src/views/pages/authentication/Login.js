@@ -47,7 +47,7 @@ const Login = () => {
         setIsLoading(true)
         // Chuyển đổi dữ liệu để phù hợp với API
         const loginPayload = {
-          email: data.phoneNumber, // API đang expect email nhưng chúng ta gửi số điện thoại
+          phoneNumber: data.phoneNumber, // API đang expect email nhưng chúng ta gửi số điện thoại
           password: data.password
         }
 

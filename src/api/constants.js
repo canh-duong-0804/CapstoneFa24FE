@@ -21,6 +21,7 @@ export const AUTH = {
     CREATE_EXERCISE_API: `${BASE_URL}/api/ExerciseTrainer/create-exercise`,
     UPLOAD_IMAGE_EXERCISE_API: `${BASE_URL}/api/ExerciseTrainer/upload-image-exercise`,
     GET_ALL_EXERCISE_API: `${BASE_URL}/api/ExerciseTrainer/get-all-exercises-trainer`,
+    GET_LIST_BOX_EXERCISE_API: `${BASE_URL}/api/ExecriseDiaryDetail/get-list-box-exercise`,
     GET_EXERCISE_BY_ID_API: `${BASE_URL}/api/ExerciseTrainer/get-exercise-detail`,
     UPDATE_EXERCISE_API: `${BASE_URL}/api/ExerciseTrainer/update-exercise`,
     DELETE_EXERCISE_BY_ID_API: `${BASE_URL}/api/ExerciseTrainer/delete-exercise`,
