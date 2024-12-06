@@ -30,6 +30,7 @@ const Calendar = props => {
     toggleSidebar,
     selectEvent,
     updateEvent
+    // fetchEvents
   } = props
 
   const [events, setEvents] = useState([])
@@ -41,12 +42,6 @@ const Calendar = props => {
     }
   }, [calendarApi])
 
-  const date = new Date()
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0') 
-
-  const formattedDate = `${year}-${month}-${day}`
 
   const transformFoodDiaryToEvents = (foodDiaryData) => {
     return foodDiaryData.reduce((acc, diary) => {
@@ -60,7 +55,7 @@ const Calendar = props => {
           start: diary.date, // Chuyển đổi định dạng ngày
           allDay: true,
           extendedProps: {
-            calendar: 'danger'
+            calendar: 1
           }
         })
       }
@@ -73,7 +68,7 @@ const Calendar = props => {
           start: diary.date,
           allDay: true,
           extendedProps: {
-            calendar: 'warning'
+            calendar: 2
           }
         })
       }
@@ -86,7 +81,7 @@ const Calendar = props => {
           start: diary.date,
           allDay: true,
           extendedProps: {
-            calendar: 'success'
+            calendar: 3
           }
         })
       }
@@ -99,7 +94,7 @@ const Calendar = props => {
           start: diary.date,
           allDay: true,
           extendedProps: {
-            calendar: 'info'
+            calendar: 4
           }
         })
       }
@@ -107,6 +102,13 @@ const Calendar = props => {
       return [...acc, ...events]
     }, [])
   }
+
+  const date = new Date()
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0') 
+
+  const formattedDate = `${year}-${month}-${day}`
 
   useEffect(() => {
     api.foodDairyApi.getAllFoodDairyApi(formattedDate).then((rs) => {
@@ -120,6 +122,28 @@ const Calendar = props => {
       toast.error('Không thể tải dữ liệu')
     })
   }, [dispatch, formattedDate])
+
+  const fetchCalendarEvents = () => {
+    const date = new Date()
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    const formattedDate = `${year}-${month}-${day}`
+
+    api.foodDairyApi.getAllFoodDairyApi(formattedDate).then((rs) => {
+      const transformedEvents = transformFoodDiaryToEvents(rs)
+      setEvents(transformedEvents)
+    }).catch(() => {
+      toast.error('Không thể tải dữ liệu')
+    })
+  }
+
+  // Expose fetchCalendarEvents to parent through ref
+  useEffect(() => {
+    if (calendarApi !== null) {
+      calendarApi.fetchEvents = fetchCalendarEvents
+    }
+  }, [calendarApi])
 
   // ** calendarOptions(Props)
   const calendarOptions = {
@@ -223,7 +247,8 @@ const Calendar = props => {
     ref: calendarRef,
 
     // Get direction from app state (store)
-    direction: isRtl ? 'rtl' : 'ltr'
+    direction: isRtl ? 'rtl' : 'ltr',
+    refetchEvents: fetchCalendarEvents
   }
 
   return (

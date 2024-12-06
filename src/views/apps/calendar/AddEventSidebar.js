@@ -87,10 +87,12 @@ const AddEventSidebar = props => {
         default: return 1
       }
     }
+    const adjustedDate = new Date(startPicker)
+    adjustedDate.setMinutes(adjustedDate.getMinutes() - adjustedDate.getTimezoneOffset())
    
     const obj = {
       mealType: getMealType(calendarLabel),
-      selectDate: startPicker, 
+      selectDate: adjustedDate, 
       listFoodIdToAdd: selectedFoods.map(food => ({
         foodId: food.foodId,
         quantity: food.quantity
@@ -98,10 +100,10 @@ const AddEventSidebar = props => {
     }
   
     api.foodDairyApi.createFoodDairyApi(obj)
-    .then(async () => {
-      // Ensure refetchEvents is called
+    .then(() => {
+      // Gọi refetchEvents để load lại dữ liệu
       if (refetchEvents) {
-        await refetchEvents()
+        refetchEvents()
       }
       toast.success('Thêm món ăn thành công')
 

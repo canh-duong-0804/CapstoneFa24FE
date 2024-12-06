@@ -52,8 +52,8 @@ const ExerciseMember = () => {
   }
   // ** refetchEvents
   const refetchEvents = () => {
-    if (calendarApi !== null) {
-      calendarApi.refetchEvents()
+    if (calendarApi && calendarApi.fetchEvents) {
+      calendarApi.fetchEvents()
     }
   }
   // **   
@@ -92,6 +92,7 @@ const ExerciseMember = () => {
               calendarsColor={calendarsColor}
               setCalendarApi={setCalendarApi}
               handleAddEventSidebar={handleAddEventSidebar}
+              fetchEvents={fetchEvents}
             />
           </Col>
           <div
