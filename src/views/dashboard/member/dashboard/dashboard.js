@@ -52,7 +52,7 @@ const Dashboard = () => {
               <Row>
                 <Col md='4'>
                   <div className='d-flex flex-column align-items-center mb-2'>
-                    <h6 className='mb-1'>Tập thể dục</h6>
+                    <h6 className='mb-1'>Tiêu thụ</h6>
                     <h4 className='text-primary mb-0'>{dashboardData?.caloriesBurn || 0}</h4>
                   </div>
                   <div className='d-flex flex-column align-items-center mb-2'>
@@ -66,35 +66,34 @@ const Dashboard = () => {
                 </Col>
 
                 <Col md='4'>
-                    <div className='d-flex justify-content-center align-items-center' style={{ height: '100%' }}>
-                      <div style={{ width: 200, height: 200 }}>
-                        <CircularProgressbar 
-                          value={dashboardData?.totalCalories > 0 ? Math.min(100, (dashboardData?.caloriesIntake / dashboardData?.totalCalories) * 100) : 0}
-                          text={`${dashboardData?.caloriesIntake || 0}`}
-                          textChildren={
-                            <div className='text-center mt-2'>
-                              <small className='d-block'>ĐÃ TIÊU THỤ</small>
-                              <h4 className='text-muted'>
-                                {Math.max(0, (dashboardData?.totalCalories || 0) - (dashboardData?.caloriesIntake || 0))} cals còn lại
-                              </h4>
-                            </div>
-                          }
-                          styles={buildStyles({
-                            pathColor: '#28c76f', 
-                            textColor: '#28c76f',
-                            trailColor: '#e9ecef',
-                            pathTransitionDuration: 0.5
-                          })}
-                        />
+                  <div className='d-flex justify-content-center align-items-center' style={{ height: '100%' }}>
+                    <div style={{ width: 200, height: 200 }}>
+                      <CircularProgressbar
+                        value={dashboardData?.totalCalories > 0 ? Math.min(100, (dashboardData?.caloriesIntake / dashboardData?.totalCalories) * 100) : 0}
+                        text={`${dashboardData?.caloriesIntake || 0}`}
+                        styles={buildStyles({
+                          pathColor: '#28c76f',
+                          textColor: '#28c76f',
+                          trailColor: '#e9ecef',
+                          pathTransitionDuration: 0.5
+                        })}
+                      >
                         <div className='text-center mt-2'>
                           <small className='d-block'>ĐÃ TIÊU THỤ</small>
                           <h4 className='text-muted'>
                             {Math.max(0, (dashboardData?.totalCalories || 0) - (dashboardData?.caloriesIntake || 0))} cals còn lại
                           </h4>
                         </div>
+                      </CircularProgressbar>
+                      <div className='text-center mt-2'>
+                        <small className='d-block'>ĐÃ TIÊU THỤ</small>
+                        <h4 className='text-muted'>
+                          {Math.max(0, (dashboardData?.totalCalories || 0) - (dashboardData?.caloriesIntake || 0))} cals còn lại
+                        </h4>
                       </div>
                     </div>
-                  </Col>
+                  </div>
+                </Col>
 
                 <Col md='4'>
                   <div className='d-flex flex-column align-items-center mb-2'>

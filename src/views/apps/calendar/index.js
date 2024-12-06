@@ -17,10 +17,10 @@ import { fetchEvents, selectEvent, updateEvent, updateFilter, updateAllFilters, 
 import '@styles/react/apps/app-calendar.scss'
 // ** CalendarColors
 const calendarsColor = {
-  danger: 'danger',    // Màu cho bữa sáng
-  warning: 'warning',  // Màu cho bữa trưa 
-  success: 'success',  // Màu cho bữa tối
-  info: 'info'         // Màu cho bữa phụ
+  1: 'danger',    // Màu cho bữa sáng
+  2: 'warning',  // Màu cho bữa trưa 
+  3: 'success',  // Màu cho bữa tối
+  4: 'info'         // Màu cho bữa phụ
 }
 const ExerciseMember = () => {
   // ** Variables
