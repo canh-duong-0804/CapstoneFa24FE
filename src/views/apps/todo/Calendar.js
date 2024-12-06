@@ -1,6 +1,5 @@
-
 // ** React Import
-import { useEffect, useRef, memo, Fragment } from 'react'
+import { useEffect, useRef, memo, Fragment, useState } from 'react'
 
 // ** Full Calendar & it's Plugins
 import FullCalendar from '@fullcalendar/react'
@@ -8,21 +7,19 @@ import listPlugin from '@fullcalendar/list'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
-
+import viLocale from '@fullcalendar/core/locales/vi' // Import tiếng Việt
+import api from '../../../api'
 // ** Third Party Components
 import toast from 'react-hot-toast'
 import { Menu } from 'react-feather'
 import { Card, CardBody } from 'reactstrap'
-import api from '../../../api/index'
 
 const Calendar = props => {
   // ** Refs
   const calendarRef = useRef(null)
-  const [data, setData] = useState([])
 
   // ** Props
   const {
-    store,
     isRtl,
     dispatch,
     calendarsColor,
@@ -33,7 +30,10 @@ const Calendar = props => {
     toggleSidebar,
     selectEvent,
     updateEvent
+    // fetchEvents
   } = props
+
+  const [events, setEvents] = useState([])
 
   // ** UseEffect checks for CalendarAPI Update
   useEffect(() => {
@@ -42,26 +42,114 @@ const Calendar = props => {
     }
   }, [calendarApi])
 
+
+  const transformFoodDiaryToEvents = (foodDiaryData) => {
+    return foodDiaryData.reduce((acc, diary) => {
+      const events = []
+      
+      // Kiểm tra và thêm sự kiện cho bữa sáng
+      if (diary.hasBreakfast) {
+        events.push({
+          id: diary.diaryId,
+          title: 'Bữa sáng',
+          start: diary.date, // Chuyển đổi định dạng ngày
+          allDay: true,
+          extendedProps: {
+            calendar: 1
+          }
+        })
+      }
+  
+      // Kiểm tra và thêm sự kiện cho bữa trưa
+      if (diary.hasLunch) {
+        events.push({
+          id: diary.diaryId,
+          title: 'Bữa trưa',
+          start: diary.date,
+          allDay: true,
+          extendedProps: {
+            calendar: 2
+          }
+        })
+      }
+  
+      // Kiểm tra và thêm sự kiện cho bữa tối
+      if (diary.hasDinner) {
+        events.push({
+          id: diary.diaryId,
+          title: 'Bữa tối',
+          start: diary.date,
+          allDay: true,
+          extendedProps: {
+            calendar: 3
+          }
+        })
+      }
+  
+      // Kiểm tra và thêm sự kiện cho bữa phụ
+      if (diary.hasSnack) {
+        events.push({
+          id: diary.diaryId,
+          title: 'Bữa phụ',
+          start: diary.date,
+          allDay: true,
+          extendedProps: {
+            calendar: 4
+          }
+        })
+      }
+      
+      return [...acc, ...events]
+    }, [])
+  }
+
   const date = new Date()
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0') 
 
   const formattedDate = `${year}-${month}-${day}`
 
   useEffect(() => {
-    api.mealPlanTrainerApi.createMealPlanTrainerApi(formattedDate).then((rs) => {
-      setData(rs)
+    api.foodDairyApi.getAllFoodDairyApi(formattedDate).then((rs) => {
+      const transformedEvents = transformFoodDiaryToEvents(rs)
+      setEvents(transformedEvents) // Lưu events vào state
+      dispatch({
+        type: 'UPDATE_EVENTS',
+        events: transformedEvents
+      })
     }).catch(() => {
-    }
-    )
-  }, [])
+      toast.error('Không thể tải dữ liệu')
+    })
+  }, [dispatch, formattedDate])
 
-  console.log('data', data)
+  const fetchCalendarEvents = () => {
+    const date = new Date()
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    const formattedDate = `${year}-${month}-${day}`
+
+    api.foodDairyApi.getAllFoodDairyApi(formattedDate).then((rs) => {
+      const transformedEvents = transformFoodDiaryToEvents(rs)
+      setEvents(transformedEvents)
+    }).catch(() => {
+      toast.error('Không thể tải dữ liệu')
+    })
+  }
+
+  // Expose fetchCalendarEvents to parent through ref
+  useEffect(() => {
+    if (calendarApi !== null) {
+      calendarApi.fetchEvents = fetchCalendarEvents
+    }
+  }, [calendarApi])
 
   // ** calendarOptions(Props)
   const calendarOptions = {
-    events: store.events.length ? store.events : [],
+    locale: 'vi',
+    locales: [viLocale], // Cung cấp locale tiếng Việt cho FullCalendar
+    events,
     plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin],
     initialView: 'dayGridMonth',
     headerToolbar: {
@@ -159,10 +247,9 @@ const Calendar = props => {
     ref: calendarRef,
 
     // Get direction from app state (store)
-    direction: isRtl ? 'rtl' : 'ltr'
+    direction: isRtl ? 'rtl' : 'ltr',
+    refetchEvents: fetchCalendarEvents
   }
-
-  console.log('data', calendarOptions)
 
   return (
     <Card className='shadow-none border-0 mb-0 rounded-0'>

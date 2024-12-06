@@ -49,7 +49,7 @@ export const appCalendarSlice = createSlice({
   initialState: {
     events: [],
     selectedEvent: {},
-    selectedCalendars: ['Personal', 'Business', 'Family', 'Holiday', 'ETC']
+    selectedCalendars: [1, 2, 3, 4]
   },
   reducers: {
     selectEvent: (state, action) => {

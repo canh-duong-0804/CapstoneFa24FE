@@ -4,50 +4,38 @@ import { Fragment, useState, useEffect } from 'react'
 // ** Third Party Components
 import classnames from 'classnames'
 import { Row, Col } from 'reactstrap'
-
 // ** Calendar App Component Imports
-import Calendar from '../calendar/Calendar.js'
-import SidebarLeft from './SidebarLeft.js'
-import AddEventSidebar from './AddEventSidebar.js'
-
+import Calendar from './Calendar'
+import SidebarLeft from './SidebarLeft'
+import AddEventSidebar from './AddEventSidebar'
 // ** Custom Hooks
 import { useRTL } from '@hooks/useRTL'
-
 // ** Store & Actions
 import { useSelector, useDispatch } from 'react-redux'
 import { fetchEvents, selectEvent, updateEvent, updateFilter, updateAllFilters, addEvent, removeEvent } from './store'
-
 // ** Styles
 import '@styles/react/apps/app-calendar.scss'
-
 // ** CalendarColors
 const calendarsColor = {
-  Business: 'primary',
-  Holiday: 'success',
-  Personal: 'danger',
-  Family: 'warning',
-  ETC: 'info'
+  1: 'danger',    // Màu cho bữa sáng
+  2: 'warning',  // Màu cho bữa trưa 
+  3: 'success',  // Màu cho bữa tối
+  4: 'info'         // Màu cho bữa phụ
 }
-
-const CalendarComponent = () => {
+const ExerciseMember = () => {
   // ** Variables
   const dispatch = useDispatch()
   const store = useSelector(state => state.calendar)
-
   // ** states
   const [calendarApi, setCalendarApi] = useState(null)
   const [addSidebarOpen, setAddSidebarOpen] = useState(false)
   const [leftSidebarOpen, setLeftSidebarOpen] = useState(false)
-
   // ** Hooks
   const [isRtl] = useRTL()
-
   // ** AddEventSidebar Toggle Function
   const handleAddEventSidebar = () => setAddSidebarOpen(!addSidebarOpen)
-
   // ** LeftSidebar Toggle Function
   const toggleSidebar = val => setLeftSidebarOpen(val)
-
   // ** Blank Event Object
   const blankEvent = {
     title: '',
@@ -62,19 +50,16 @@ const CalendarComponent = () => {
       description: ''
     }
   }
-
   // ** refetchEvents
   const refetchEvents = () => {
-    if (calendarApi !== null) {
-      calendarApi.refetchEvents()
+    if (calendarApi && calendarApi.fetchEvents) {
+      calendarApi.fetchEvents()
     }
   }
-
-  // ** Fetch Events On Mount
+  // **   
   useEffect(() => {
     dispatch(fetchEvents(store.selectedCalendars))
   }, [])
-
   return (
     <Fragment>
       <div className='app-calendar overflow-hidden border'>
@@ -107,6 +92,7 @@ const CalendarComponent = () => {
               calendarsColor={calendarsColor}
               setCalendarApi={setCalendarApi}
               handleAddEventSidebar={handleAddEventSidebar}
+              fetchEvents={fetchEvents}
             />
           </Col>
           <div
@@ -134,4 +120,4 @@ const CalendarComponent = () => {
   )
 }
 
-export default CalendarComponent
+export default ExerciseMember
