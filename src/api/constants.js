@@ -97,12 +97,19 @@ export const AUTH = {
     GET_PLAN_EXERCISE_DETAIL_API: `${BASE_URL}/api/ExecrisePlanTrainer/get-exercise-plan-detail`,
     GET_PLAN_EXERCISE_TRAINER_BY_ID_API: `${BASE_URL}/api/MealPlanTrainner/Get-MealPlanTrainner-by-id`,
     UPDATE_PLAN_EXERCISE_TRAINER_API: `${BASE_URL}/api/ExecrisePlanTrainer/update-exercise-plan-detail`,
-    DELETE_PLAN_EXERCISE_TRAINER_BY_ID_API: `${BASE_URL}/api/MealPlanTrainner/delete-meal-plan-by-trainner`
+    DELETE_PLAN_EXERCISE_TRAINER_BY_ID_API: `${BASE_URL}/api/ExecrisePlanTrainer/delete-exercise-plan`
   },
   DASHBOARD_ADMIN_API: {
     GET_MAIN_DASHBOARD_ADMIN_API: `${BASE_URL}/api/MainDashboardForAdminManage/Get-main-dashboard-for-Admin`,
     GET_MAIN_DASHBOARD_Trainer_API: `${BASE_URL}/api/MainDashboardForTrainerManage/Get-main-dashboard-for-Main-Trainer`
     
+  },
+  EXERCISE_MEMBER_API: {
+    CREATE_EXERCISE_CATEGORY_API: `${BASE_URL}/api/CategoryExercise/Create-category-exercise`,
+    GET_ALL_EXERCISE_FOR_MEMBER_API: `${BASE_URL}/api/Exercise/Get-all-exercises-for-member`,
+    GET_EXERCISE_CARDIO_DETAIL_API: `${BASE_URL}/api/Exercise/Get-exercise-cardio-detail-for-member`,
+    GET_EXERCISE_RESISTANCE_DETAIL_API: `${BASE_URL}/api/Exercise/Get-exercise-resistance-detail-for-member`,
+    GET_EXERCISE_OTHER_API: `${BASE_URL}/api/Exercise/Get-exercise-other-detail-for-member`
   }
 
 }

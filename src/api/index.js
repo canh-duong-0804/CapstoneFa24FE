@@ -11,6 +11,7 @@ import foodDairyApi from './food-diary'
 import exercisePlanTrainerApi from './exercise-plan'
 import dashboardApi from './dashboard'
 import exerciseDairyApi from './exercise-diary'
+import exerciseMemberApi from './exercise-member'
 
 
 const api = {
@@ -26,7 +27,8 @@ const api = {
     ...foodDairyApi,
     ...exercisePlanTrainerApi,
     ...dashboardApi,
-    ...exerciseDairyApi
+    ...exerciseDairyApi,
+    ...exerciseMemberApi
 }
 
 export default api

@@ -216,7 +216,7 @@ const Position = () => {
       buttonsStyling: false
     }).then(async (result) => {
       if (result.value) {
-        api.mealPlanTrainerApi.deleteMealPlanTrainerByIdApi(item.mealPlanId)
+        api.exercisePlanTrainerApi.deleteExercisePlanTrainerByIdApi(item.exercisePlanId)
           .then(() => {
             handleLoadTable()
             notificationSuccess(t('Xóa kế hoạch thành công'))

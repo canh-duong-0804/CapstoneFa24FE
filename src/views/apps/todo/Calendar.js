@@ -8,7 +8,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import viLocale from '@fullcalendar/core/locales/vi' // Import tiếng Việt
-import api from '../../../api'
+// import api from '../../../api'
 // ** Third Party Components
 import toast from 'react-hot-toast'
 import { Menu } from 'react-feather'
@@ -43,66 +43,6 @@ const Calendar = props => {
   }, [calendarApi])
 
 
-  const transformFoodDiaryToEvents = (foodDiaryData) => {
-    return foodDiaryData.reduce((acc, diary) => {
-      const events = []
-      
-      // Kiểm tra và thêm sự kiện cho bữa sáng
-      if (diary.hasBreakfast) {
-        events.push({
-          id: diary.diaryId,
-          title: 'Bữa sáng',
-          start: diary.date, // Chuyển đổi định dạng ngày
-          allDay: true,
-          extendedProps: {
-            calendar: 1
-          }
-        })
-      }
-  
-      // Kiểm tra và thêm sự kiện cho bữa trưa
-      if (diary.hasLunch) {
-        events.push({
-          id: diary.diaryId,
-          title: 'Bữa trưa',
-          start: diary.date,
-          allDay: true,
-          extendedProps: {
-            calendar: 2
-          }
-        })
-      }
-  
-      // Kiểm tra và thêm sự kiện cho bữa tối
-      if (diary.hasDinner) {
-        events.push({
-          id: diary.diaryId,
-          title: 'Bữa tối',
-          start: diary.date,
-          allDay: true,
-          extendedProps: {
-            calendar: 3
-          }
-        })
-      }
-  
-      // Kiểm tra và thêm sự kiện cho bữa phụ
-      if (diary.hasSnack) {
-        events.push({
-          id: diary.diaryId,
-          title: 'Bữa phụ',
-          start: diary.date,
-          allDay: true,
-          extendedProps: {
-            calendar: 4
-          }
-        })
-      }
-      
-      return [...acc, ...events]
-    }, [])
-  }
-
   const date = new Date()
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
@@ -111,31 +51,32 @@ const Calendar = props => {
   const formattedDate = `${year}-${month}-${day}`
 
   useEffect(() => {
-    api.foodDairyApi.getAllFoodDairyApi(formattedDate).then((rs) => {
-      const transformedEvents = transformFoodDiaryToEvents(rs)
-      setEvents(transformedEvents) // Lưu events vào state
-      dispatch({
-        type: 'UPDATE_EVENTS',
-        events: transformedEvents
-      })
-    }).catch(() => {
-      toast.error('Không thể tải dữ liệu')
-    })
+    // api.foodDairyApi.getAllFoodDairyApi(formattedDate).then((rs) => {
+    //   const transformedEvents = transformFoodDiaryToEvents(rs)
+    //   setEvents(transformedEvents) // Lưu events vào state
+    //   dispatch({
+    //     type: 'UPDATE_EVENTS',
+    //     events: transformedEvents
+    //   })
+    // }).catch(() => {
+    //   toast.error('Không thể tải dữ liệu')
+    // })
+    setEvents([])
   }, [dispatch, formattedDate])
 
   const fetchCalendarEvents = () => {
-    const date = new Date()
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    const formattedDate = `${year}-${month}-${day}`
+    // const date = new Date()
+    // const year = date.getFullYear()
+    // const month = String(date.getMonth() + 1).padStart(2, '0')
+    // const day = String(date.getDate()).padStart(2, '0')
+    // const formattedDate = `${year}-${month}-${day}`
 
-    api.foodDairyApi.getAllFoodDairyApi(formattedDate).then((rs) => {
-      const transformedEvents = transformFoodDiaryToEvents(rs)
-      setEvents(transformedEvents)
-    }).catch(() => {
-      toast.error('Không thể tải dữ liệu')
-    })
+    // api.foodDairyApi.getAllFoodDairyApi(formattedDate).then((rs) => {
+    //   const transformedEvents = transformFoodDiaryToEvents(rs)
+    //   setEvents(transformedEvents)
+    // }).catch(() => {
+    //   toast.error('Không thể tải dữ liệu')
+    // })
   }
 
   // Expose fetchCalendarEvents to parent through ref

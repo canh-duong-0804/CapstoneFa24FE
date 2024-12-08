@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useEffect } from 'react'
 import { X } from 'react-feather'
 import toast from 'react-hot-toast'
 import Flatpickr from 'react-flatpickr'
@@ -7,7 +7,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar'
 import { useForm, Controller } from 'react-hook-form'
 
 // ** Reactstrap Imports
-import { Button, Modal, ModalHeader, ModalBody, Label, Input, Form } from 'reactstrap'
+import { Button, Modal, ModalHeader, ModalBody, Label, Input, Form, Col, Row } from 'reactstrap'
 
 // ** Utils
 import { selectThemeColors, isObjEmpty } from '@utils'
@@ -41,16 +41,69 @@ const AddEventSidebar = props => {
       control,
       // setValue,
       reset,
+      watch,
       handleSubmit,
       formState: { errors }
     } = useForm({
-      defaultValues: { listFoodIdBreakfasts: [] }
+      defaultValues: {
+        listFoodIdBreakfasts: [], category: 1
+      }
     })
 
   // ** States
   const [startPicker, setStartPicker] = useState(new Date())
   const [calendarLabel, setCalendarLabel] = useState([{ value: 1, label: 'Bữa sáng', color: 'danger' }])
   const [optionFood, setOptionFood] = useState([])
+  const [calories2Value, setCalories2Value] = useState('')
+  const [selectedFoods, setSelectedFoods] = useState([])
+
+  const optionCategory = [
+    { value: 1, label: 'Cardio' },
+    { value: 2, label: 'Kháng lực' },
+    { value: 3, label: 'Khác' }
+
+  ]
+
+  const optionIntensity = [
+    { value: 1, label: 'Cường độ nhẹ' },
+    { value: 2, label: 'Cường độ vừa' },
+    { value: 3, label: 'Cường độ cao' }
+
+  ]
+
+  useEffect(() => {
+    if (open) {
+      api.exerciseMemberApi.getAllExerciseByCategoryApi(1).then((rs) => {
+        const formattedOptions = rs.map(exercise => ({
+          value: exercise.exerciseId,
+          label: exercise.exerciseName,
+          image: exercise.exerciseImage
+        }))
+        setOptionFood(formattedOptions)
+      }).catch(() => {
+        toast.error('Không thể tải dữ liệu bài tập')
+      })
+    }
+  }, [open])
+
+  useEffect(() => {
+    if (watch('category') !== 1) {
+      api.exerciseMemberApi.getAllExerciseByCategoryApi(watch('category')).then((rs) => {
+        const formattedOptions = rs.map(exercise => ({
+          value: exercise.exerciseId,
+          label: exercise.exerciseName,
+          image: exercise.exerciseImage
+        }))
+        setOptionFood(formattedOptions)
+      }).catch(() => {
+        toast.error('Không thể tải dữ liệu bài tập')
+      })
+    }
+  }, [watch('category')])
+
+  const handleChangeCalories2 = (e) => {
+    setCalories2Value(e.target.value)
+  }
 
   const formatDateToYYYYMMDD = (date) => {
     const year = date.getFullYear()
@@ -61,7 +114,7 @@ const AddEventSidebar = props => {
 
   const calculateTotalCalories = (foods) => {
     return foods.reduce((total, food) => {
-      const foodOption = optionFood.find(opt => opt.value === food.foodId)
+      const foodOption = optionFood.find(opt => opt.value === food.exerciseId)
       return total + ((foodOption?.calories || 0) * food.quantity)
     }, 0)
   }
@@ -84,7 +137,7 @@ const AddEventSidebar = props => {
     const obj = {
       selectDate: adjustedDate,
       listFoodIdToAdd: optionFood.map(rs => ({
-        exerciseId: rs.foodId,
+        exerciseId: rs.exerciseId,
         quantity: rs.quantity
       }))
     }
@@ -123,14 +176,13 @@ const AddEventSidebar = props => {
     setStartPicker(new Date())
   }
   const renderData = () => {
-    api.exerciseApi.getListboxExerciseApi().then((rs) => {
-      setOptionFood(rs)
-    }).catch(() => {
+    // api.exerciseApi.getListboxExerciseApi().then((rs) => {
+    //   setOptionFood(rs)
+    // }).catch(() => {
 
-    })
+    // })
   }
 
-  console.log('optionFood', optionFood)
   // ** Set sidebar fields
   const handleSelectedEvent = () => {
     renderData()
@@ -148,11 +200,11 @@ const AddEventSidebar = props => {
               if (rs && rs.listFoodIdToAdd) {
                 // Transform foods bằng cách kết hợp data từ API với optionFood
                 const transformedFoods = rs.listFoodIdToAdd.map(food => {
-                  const foodOption = foodOptions.find(opt => opt.value === food.foodId)
+                  const foodOption = foodOptions.find(opt => opt.value === food.exerciseId)
                   return {
-                    foodId: food.foodId,
+                    exerciseId: food.exerciseId,
                     quantity: food.quantity,
-                    foodName: foodOption ? foodOption.label : `Food ${food.foodId}` // Fallback nếu không tìm thấy
+                    foodName: foodOption ? foodOption.label : `Food ${food.exerciseId}` // Fallback nếu không tìm thấy
                   }
                 })
                 // Set giá trị vào form
@@ -182,12 +234,12 @@ const AddEventSidebar = props => {
 
   // ** Updates Event in Store
   const handleUpdateEvent = () => {
-   
+
     const obj = {
       mealType: getMealType(calendarLabel),
       selectDate: adjustedDate,
       listFoodIdToAdd: selectedFoods.map(food => ({
-        foodId: food.foodId,
+        exerciseId: food.exerciseId,
         quantity: food.quantity
       }))
     }
@@ -216,6 +268,21 @@ const AddEventSidebar = props => {
       })
   }
 
+  const listFoodIdBreakfasts = watch('listFoodIdToAdd')
+
+  useEffect(() => {
+    const newSelectedFoods = listFoodIdBreakfasts?.map(food => ({
+      foodId: food.foodId,
+      quantity: food.quantity || 1,
+      foodName: food.foodName || ''
+    }))
+    if (JSON.stringify(newSelectedFoods) !== JSON.stringify(selectedFoods)) {
+      setSelectedFoods(newSelectedFoods)
+    }
+  }, [listFoodIdBreakfasts])
+
+  console.log('list', selectedFoods)
+
   // ** Event Action buttons
   const EventActions = () => {
     if (isObjEmpty(selectedEvent) || (!isObjEmpty(selectedEvent) && !selectedEvent.title.length)) {
@@ -243,15 +310,43 @@ const AddEventSidebar = props => {
   // ** Close BTN
   const CloseBtn = <X className='cursor-pointer' size={15} onClick={handleAddEventSidebar} />
 
+  const CustomOption = ({ children, ...props }) => {
+    return (
+      <components.Option {...props}>
+        <div className='d-flex align-items-center'>
+          {props.data.image && (
+            <img
+              src={props.data.image}
+              alt={props.data.label}
+              style={{ width: '30px', height: '30px', marginRight: '10px', objectFit: 'cover' }}
+            />
+          )}
+          {children}
+        </div>
+      </components.Option>
+    )
+  }
+
+  // Thêm useEffect để theo dõi thay đổi category
+  useEffect(() => {
+    // Reset selectedFoods và form values khi category thay đổi
+    setSelectedFoods([])
+    reset({
+      ...watch(),
+      listFoodIdToAdd: []
+    })
+  }, [watch('category')])
+
   return (
     <Modal
       isOpen={open}
-      className='sidebar-lg'
+      className='modal-xl'
       toggle={handleAddEventSidebar}
       onOpened={handleSelectedEvent}
       onClosed={handleResetInputValues}
       contentClassName='p-0 overflow-hidden'
       modalClassName='modal-slide-in event-sidebar'
+      style={{ maxWidth: '800px', width: '100%' }}
     >
       <ModalHeader className='mb-1' toggle={handleAddEventSidebar} close={CloseBtn} tag='div'>
         <h5 className='modal-title'>
@@ -272,6 +367,34 @@ const AddEventSidebar = props => {
             })}
           >
             <div className='mb-1'>
+              <Label className='form-label' for='add-category'>
+                Thể loại bài tập
+              </Label>
+              <Controller
+                id='category'
+                name='category'
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    theme={selectThemeColors}
+                    className='react-select'
+                    classNamePrefix='select'
+                    placeholder='Chọn...'
+                    options={optionCategory}
+                    isClearable={false}
+                    onChange={(option) => {
+                      field.onChange(option ? option.value : '')
+                      // Reset selectedFoods khi thay đổi category
+                      setSelectedFoods([])
+                    }}
+                    value={optionCategory.find(option => option.value === field.value)}
+                  />
+                )}
+              />
+              {errors.category ? <FormFeedback>{errors.category.message}</FormFeedback> : null}
+            </div>
+            <div className='mb-1'>
               <Label className='form-label' for='add-listFoodIdToAdd'>
                 Bài tập
               </Label>
@@ -288,19 +411,22 @@ const AddEventSidebar = props => {
                       className='react-select mb-2'
                       classNamePrefix='select'
                       isMulti
-                      components={animatedComponents}
+                      components={{
+                        ...animatedComponents,
+                        Option: CustomOption
+                      }}
                       placeholder='Chọn bài tập...'
                       options={optionFood}
                       isClearable={false}
                       onChange={(selectedOptions) => {
                         const newFoods = selectedOptions ? selectedOptions.map(option => ({
-                          foodId: option.value,
+                          exerciseId: option.value,
                           quantity: 0,
                           foodName: option.label
                         })) : []
                         field.onChange(newFoods)
                       }}
-                      value={optionFood.filter(option => field.value?.some(val => val.foodId === option.value))}
+                      value={optionFood.filter(option => field.value?.some(val => val.exerciseId === option.value))}
                     />
                   </div>
                 )}
@@ -309,7 +435,177 @@ const AddEventSidebar = props => {
                 <FormFeedback>{errors.listFoodIdBreakfasts.message}</FormFeedback>
               )}
             </div>
-            
+            {watch('category') !== 3 && (
+              <div className='mb-1'>
+                <Label className='form-label' for='add-intensity'>
+                  Cường độ
+                </Label>
+                <Controller
+                  id='intensity'
+                  name='intensity'
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      theme={selectThemeColors}
+                      className='react-select'
+                      classNamePrefix='select'
+                      placeholder='Chọn...'
+                      options={optionIntensity}
+                      isClearable={false}
+                      onChange={(option) => {
+                        field.onChange(option ? option.value : '')
+                      }}
+                      value={optionIntensity.find(option => option.value === field.value)}
+                    />
+                  )}
+                />
+                {errors.intensity ? <FormFeedback>{errors.intensity.message}</FormFeedback> : null}
+              </div>
+            )}
+            <div className="selected-foods">
+              {selectedFoods?.map((food) => {
+                return (
+                  <div key={food.exerciseId} className="d-flex align-items-center gap-2 mb-2">
+                    <span className="flex-grow-1">{food.foodName}</span>
+                    {watch('category') === 1 && (
+                      <><div className="d-flex flex-column me-2">
+                        {selectedFoods.length > 0 && (
+                          <Label
+                            className={`form-label ${food.quantity > 0 ? 'visible' : 'd-none'}`}
+                            for={`breakfast-quantity-${food.exerciseId}`}
+                          >
+                            Phút
+                          </Label>
+                        )}
+                        <Controller
+                          id='minutes2'
+                          name='minutes2'
+                          control={control}
+                          render={({ field }) => (
+                            <Input
+                              autoFocus
+                              invalid={errors.minutes2 && true}
+                              {...field}
+                            />
+                          )}
+                        />
+                      </div>
+                        <div className="d-flex flex-column">
+                          {selectedFoods.length > 0 && (
+                            <Label
+                              className={`form-label ${food.quantity > 0 ? 'visible' : 'd-none'}`}
+                              for={`breakfast-calories-${food.exerciseId}`}
+                            >
+                              Calo
+                            </Label>
+                          )}
+                          <Controller
+                            id='calories2'
+                            name='calories2'
+                            control={control}
+                            render={({ field }) => (
+                              <Input
+                                autoFocus
+                                type='number'
+                                invalid={errors.calories2 && true}
+                                value={calories2Value}
+                                disabled
+                                onChange={(e) => {
+                                  handleChangeCalories2(e)
+                                  field.onChange(e)
+                                }}
+                              />
+                            )}
+                          />
+                        </div></>
+
+                    )}
+                     {watch('category') === 2 && (
+                      <><div className="d-flex flex-column me-2">
+                        {selectedFoods.length > 0 && (
+                          <Label
+                            className={`form-label ${food.quantity > 0 ? 'visible' : 'd-none'}`}
+                            for={`breakfast-quantity-${food.exerciseId}`}
+                          >
+                            Reps
+                          </Label>
+                        )}
+                        <Controller
+                          id='reps'
+                          name='minutes2'
+                          control={control}
+                          render={({ field }) => (
+                            <Input
+                              autoFocus
+                              invalid={errors.minutes2 && true}
+                              {...field}
+                            />
+                          )}
+                        />
+                      </div>
+                        <div className="d-flex flex-column">
+                          {selectedFoods.length > 0 && (
+                            <Label
+                              className={`form-label ${food.quantity > 0 ? 'visible' : 'd-none'}`}
+                              for={`breakfast-calories-${food.exerciseId}`}
+                            >
+                              Sets
+                            </Label>
+                          )}
+                          <Controller
+                            id='sets'
+                            name='sets'
+                            control={control}
+                            render={({ field }) => (
+                              <Input
+                                autoFocus
+                                type='number'
+                                invalid={errors.calories2 && true}
+                                value={calories2Value}
+                                disabled
+                                onChange={(e) => {
+                                  handleChangeCalories2(e)
+                                  field.onChange(e)
+                                }}
+                              />
+                            )}
+                          />
+                        </div>
+                        <div className="d-flex flex-column">
+                          {selectedFoods.length > 0 && (
+                            <Label
+                              className={`form-label ${food.quantity > 0 ? 'visible' : 'd-none'}`}
+                              for={`breakfast-calories-${food.exerciseId}`}
+                            >
+                              Phút
+                            </Label>
+                          )}
+                          <Controller
+                            id='minutes'
+                            name='minutes'
+                            control={control}
+                            render={({ field }) => (
+                              <Input
+                                autoFocus
+                                type='number'
+                                invalid={errors.calories2 && true}
+                                value={calories2Value}
+                                disabled
+                                onChange={(e) => {
+                                  handleChangeCalories2(e)
+                                  field.onChange(e)
+                                }}
+                              />
+                            )}
+                          />
+                        </div></>
+
+                    )}
+                  </div>
+                )
+              })}
+            </div>
             <div className='mb-1'>
               <Label className='form-label' for='selectDate'>
                 Ngày

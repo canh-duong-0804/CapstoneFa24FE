@@ -156,7 +156,7 @@ const AddEventSidebar = props => {
       selectedDate.setMinutes(selectedDate.getMinutes() - selectedDate.getTimezoneOffset())
       const formattedDate = formatDateToYYYYMMDD(selectedDate)
 
-      setStartPicker(selectedDate)  
+      setStartPicker(selectedDate)
 
       if (mealType) {
         api.foodApi.getListBoxFoodApi().then((foodOptions) => {
@@ -208,7 +208,6 @@ const AddEventSidebar = props => {
 
   // ** Updates Event in Store
   const handleUpdateEvent = () => {
-   
     const obj = {
       mealType: getMealType(calendarLabel),
       selectDate: adjustedDate,

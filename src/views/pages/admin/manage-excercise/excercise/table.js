@@ -110,7 +110,7 @@ const Position = () => {
     setLoading(true)
     api.exerciseApi.getAllExerciseApi(currentPage)
       .then((rs) => {
-        setData(rs.data)
+        setData(rs.exercisePlans.data)
         setTotalItems(rs.totalPages)
         setLoading(false)
         setTableParams({
@@ -249,11 +249,11 @@ const Position = () => {
       align: 'center',
       render: (typeExercise) => {
         switch (typeExercise) {
-          case "Cardio":
+          case 1:
             return 'Cardio'
-          case "Strength":
+          case 2:
             return 'Kháng lực'
-          case "Unknown":
+          case 3:
             return 'Khác'
           default:
             return ''
