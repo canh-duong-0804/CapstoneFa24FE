@@ -89,18 +89,20 @@ const AddEventSidebar = props => {
   }, [open])
 
   useEffect(() => {
-    api.exerciseMemberApi.getAllExerciseFilterByCategoryApi(watch('category')).then((rs) => {
-      const formattedOptions = rs.map(exercise => ({
-        ...exercise,
-        value: exercise.exerciseId,
-        label: exercise.exerciseName,
-        image: exercise.exerciseImage
-      }))
-      setOptionFood(formattedOptions)
-    }).catch(() => {
-      toast.error('Không thể tải dữ liệu bài tập cc')
-    })
-  }, [watch('category')])
+    if (open) {
+      api.exerciseMemberApi.getAllExerciseFilterByCategoryApi(watch('category')).then((rs) => {
+        const formattedOptions = rs.map(exercise => ({
+          ...exercise,
+          value: exercise.exerciseId,
+          label: exercise.exerciseName,
+          image: exercise.exerciseImage
+        }))
+        setOptionFood(formattedOptions)
+      }).catch(() => {
+        toast.error('Không thể tải dữ liệu bài tập')
+      })
+    }
+  }, [watch('category'), open])
 
   const formatDateToYYYYMMDD = (date) => {
     const year = date.getFullYear()
@@ -180,17 +182,47 @@ const AddEventSidebar = props => {
     dispatch(selectEvent({}))
     reset({
       listExerciseIdToAdd: [],
-      caloriesBreakfast: 0
+      category: 1,
+      intensity: 1
     })
+    setSelectedFoods([])
+    setStartPicker(new Date())
   }
   
   // ** Set sidebar fields
   const handleSelectedEvent = () => {
+    // Reset form trước khi xử lý event mới
+    reset({
+      listExerciseIdToAdd: [],
+      category: 1,
+      intensity: 1
+    })
+    setSelectedFoods([])
+
     if (!isObjEmpty(selectedEvent)) {
       const selectedDate = new Date(selectedEvent.start)
       selectedDate.setMinutes(selectedDate.getMinutes() - selectedDate.getTimezoneOffset())
       const formattedDate = formatDateToYYYYMMDD(selectedDate)
       setStartPicker(selectedDate)
+
+      // Kiểm tra xem có phải là sự kiện mới không
+      if (!selectedEvent.title) {
+        // Load danh sách bài tập cho category mặc định
+        api.exerciseMemberApi.getAllExerciseFilterByCategoryApi(1)
+          .then((exercises) => {
+            const formattedOptions = exercises.map(exercise => ({
+              ...exercise,
+              value: exercise.exerciseId,
+              label: exercise.exerciseName,
+              image: exercise.exerciseImage
+            }))
+            setOptionFood(formattedOptions)
+          })
+          .catch(() => {
+            toast.error('Không thể tải danh sách bài tập')
+          })
+        return
+      }
 
       // Lấy chi tiết nhật ký tập luyện trước
       api.exerciseDairyApi.getExerciseDairyDetailApi(formattedDate)
@@ -249,6 +281,13 @@ const AddEventSidebar = props => {
         })
     }
   }
+
+  // Thêm useEffect để cleanup khi component unmount
+  useEffect(() => {
+    return () => {
+      handleResetInputValues()
+    }
+  }, [])
 
   // ** Updates Event in Store
   const handleUpdateEvent = () => {
@@ -389,8 +428,6 @@ const AddEventSidebar = props => {
       setStartPicker(new Date(selectedEvent.selectedDate))
     }
   }, [selectedEvent])
-
-  console.log('selectFood', selectedFoods)
 
   return (
     <Modal
@@ -541,7 +578,8 @@ const AddEventSidebar = props => {
                                     min={0}
                                     onChange={(e) => {
                                       const newQuantity = parseFloat(e.target.value) || 0
-                                      const foodOption = optionFood.find(opt => opt.value === food.foodId)
+                                      const foodOption = optionFood.find(opt => opt.value === food.exerciseId)
+                                      console.log(foodOption)
                                       const newCalories = calculateCalories(newQuantity, foodOption.metValue, foodOption.weight)
                                       
                                       const updatedFoods = selectedFoods.map((f, i) => {
