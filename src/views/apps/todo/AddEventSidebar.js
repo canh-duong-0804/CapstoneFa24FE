@@ -46,13 +46,15 @@ const AddEventSidebar = props => {
       formState: { errors }
     } = useForm({
       defaultValues: {
-        listFoodIdToAdd: [], category: 1, intensity: 1
+        listExerciseIdToAdd: [], category: 1, intensity: 1
       }
     })
 
   // ** States
-  const [startPicker, setStartPicker] = useState(new Date())
-  const [calendarLabel, setCalendarLabel] = useState([{ value: 1, label: 'Bữa sáng', color: 'danger' }])
+  const [startPicker, setStartPicker] = useState(
+    selectedEvent && selectedEvent.selectedDate ? new Date(selectedEvent.selectedDate) : new Date()
+  )
+  
   const [optionFood, setOptionFood] = useState([])
   const [selectedFoods, setSelectedFoods] = useState([])
 
@@ -96,174 +98,221 @@ const AddEventSidebar = props => {
       }))
       setOptionFood(formattedOptions)
     }).catch(() => {
-      toast.error('Không thể tải dữ liệu bài tập')
+      toast.error('Không thể tải dữ liệu bài tập cc')
     })
   }, [watch('category')])
 
-  console.log('optionFood', optionFood)
-
-
-  // const formatDateToYYYYMMDD = (date) => {
-  //   const year = date.getFullYear()
-  //   const month = String(date.getMonth() + 1).padStart(2, '0') // Tháng bắt đầu từ 0
-  //   const day = String(date.getDate()).padStart(2, '0')
-  //   return `${year}-${month}-${day}`
-  // }
+  const formatDateToYYYYMMDD = (date) => {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0') // Tháng bắt đầu từ 0
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
 
 
   const adjustedDate = new Date(startPicker)
   adjustedDate.setMinutes(adjustedDate.getMinutes() - adjustedDate.getTimezoneOffset())
 
-  const getMealType = (label) => {
-    switch (label[0].value) {
-      case 1: return 1
-      case 2: return 2
-      case 3: return 3
-      case 4: return 4
-      default: return 1
-    }
-  }
-
   // ** Adds New Event
   const handleAddEvent = () => {
     const obj = {
       selectDate: adjustedDate,
-      listFoodIdToAdd: selectedFoods.map(rs => ({
-        exerciseId: rs.exerciseId,
-        isPractice: true
-      }))
+      listExerciseIdToAdd: selectedFoods.map(exercise => {
+        let durationInMinutes = 0
+        let caloriesBurned = 0
+        if (watch('category') === 1) { // Cardio
+          switch (watch('intensity')) {
+            case 1: // Cường độ nhẹ
+              durationInMinutes = exercise.minutesCadior1 || 0
+              caloriesBurned = exercise.caloriesCadior1 || 0
+              break
+            case 2: // Cường độ vừa  
+              durationInMinutes = exercise.minutesCadior2 || 0
+              caloriesBurned = exercise.caloriesCadior2 || 0
+              break
+            case 3: // Cường độ cao
+              durationInMinutes = exercise.minutesCadior3 || 0
+              caloriesBurned = exercise.caloriesCadior3 || 0
+              break
+            default:
+              break
+          }
+        } else { // Kháng lực hoặc khác
+          durationInMinutes = exercise.quantity || 0
+          const exerciseOption = optionFood.find(opt => opt.value === exercise.exerciseId)
+          caloriesBurned = (exerciseOption?.calories || 0) * (exercise.quantity || 0)
+        }
+
+        return {
+          exerciseId: exercise.exerciseId,
+          durationInMinutes,
+          isPractice: true,
+          caloriesBurned
+        }
+      })
     }
-    console.log('obj', obj)
-    return
 
     api.exerciseDairyApi.createExerciseDairyApi(obj)
       .then(() => {
-        // Gọi refetchEvents để load lại dữ liệu
         if (refetchEvents) {
           refetchEvents()
         }
-        toast.success('Thêm món ăn thành công')
+        toast.success('Thêm bài tập thành công')
 
         // Reset form
         reset({
-          listFoodIdToAdd: [],
-          caloriesBreakfast: 0
+          listExerciseIdToAdd: [],
+          category: 1,
+          intensity: 1
         })
-        setCalendarLabel([{ value: 1, label: 'Bữa sáng', color: 'danger' }])
+        setSelectedFoods([])
         setStartPicker(new Date())
         handleAddEventSidebar()
       })
       .catch((error) => {
-        toast.error('Thêm món ăn thất bại')
-        console.error('Error adding food:', error)
+        toast.error('Thêm bài tập thất bại')
+        console.error('Error adding exercise:', error)
       })
   }
 
   // ** Reset Input Values on Close
   const handleResetInputValues = () => {
     dispatch(selectEvent({}))
-    setCalendarLabel([{ value: 1, label: 'Bữa sáng', color: 'danger' }])
     reset({
-      listFoodIdToAdd: [],
+      listExerciseIdToAdd: [],
       caloriesBreakfast: 0
     })
-    setStartPicker(new Date())
   }
-  const renderData = () => {
-    // api.exerciseApi.getListboxExerciseApi().then((rs) => {
-    //   setOptionFood(rs)
-    // }).catch(() => {
-
-    // })
-  }
-
+  
   // ** Set sidebar fields
   const handleSelectedEvent = () => {
-    renderData()
-    // if (!isObjEmpty(selectedEvent)) {
-    //   const mealType = selectedEvent.extendedProps.calendar
-    //   const selectedDate = new Date(selectedEvent.start)
-    //   selectedDate.setMinutes(selectedDate.getMinutes() - selectedDate.getTimezoneOffset())
-    //   const formattedDate = formatDateToYYYYMMDD(selectedDate)
-    //   setStartPicker(selectedDate)
-    //   if (mealType) {
-    //     api.foodApi.getListBoxFoodApi().then((foodOptions) => {
-    //       setOptionFood(foodOptions)
-    //       // Sau khi có optionFood, gọi API lấy chi tiết bữa ăn
-    //       api.foodDairyApi.getFoodDairyDetailApi(formattedDate, mealType)
-    //         .then((rs) => {
-    //           if (rs && rs.listFoodIdToAdd) {
-    //             // Transform foods bằng cách kết hợp data từ API với optionFood
-    //             const transformedFoods = rs.listFoodIdToAdd.map(food => {
-    //               const foodOption = foodOptions.find(opt => opt.value === food.exerciseId)
-    //               return {
-    //                 exerciseId: food.exerciseId,
-    //                 quantity: food.quantity,
-    //                 foodName: foodOption ? foodOption.label : `Food ${food.exerciseId}` // Fallback nếu không tìm thấy
-    //               }
-    //             })
-    //             // Set giá trị vào form
-    //             reset({
-    //               listFoodIdToAdd: transformedFoods,
-    //               caloriesBreakfast: calculateTotalCalories(transformedFoods)
-    //             })
-    //             // Set ngày được chọn
-    //             setStartPicker(new Date(selectedEvent.start))
-    //           }
-    //         })
-    //         .catch((error) => {
-    //           toast.error('Không thể tải chi tiết bữa ăn')
-    //           console.error('Error fetching food diary details:', error)
-    //         })
-    //     }).catch(() => {
-    //       toast.error('Không thể tải danh sách món ăn')
-    //     })
-    //   } else {
-    //     setCalendarLabel([{ value: 1, label: 'Bữa sáng', color: 'danger' }])
-    //     setStartPicker(new Date())
-    //   }
-    //   // Đảm bảo optionFood đã được load
+    if (!isObjEmpty(selectedEvent)) {
+      const selectedDate = new Date(selectedEvent.start)
+      selectedDate.setMinutes(selectedDate.getMinutes() - selectedDate.getTimezoneOffset())
+      const formattedDate = formatDateToYYYYMMDD(selectedDate)
+      setStartPicker(selectedDate)
 
-    // }
+      // Lấy chi tiết nhật ký tập luyện trước
+      api.exerciseDairyApi.getExerciseDairyDetailApi(formattedDate)
+        .then((diaryDetail) => {
+          if (diaryDetail && diaryDetail.listExerciseIdToAdd) {
+            // Lấy danh sách bài tập theo category hiện tại
+            api.exerciseMemberApi.getAllExerciseFilterByCategoryApi(watch('category'))
+              .then((exercises) => {
+                const formattedOptions = exercises.map(exercise => ({
+                  ...exercise,
+                  value: exercise.exerciseId,
+                  label: exercise.exerciseName,
+                  image: exercise.exerciseImage
+                }))
+                setOptionFood(formattedOptions)
+
+                // Kết hợp thông tin từ API với danh sách bài tập
+                const transformedExercises = diaryDetail.listExerciseIdToAdd.map(exercise => {
+                  const exerciseDetail = formattedOptions.find(opt => opt.value === exercise.exerciseId)
+                  if (exerciseDetail) {
+                    return {
+                      ...exerciseDetail,
+                      exerciseId: exercise.exerciseId,
+                      value: exercise.exerciseId,
+                      label: exerciseDetail.exerciseName,
+                      exerciseName: exerciseDetail.exerciseName,
+                      // Nếu là bài tập Cardio
+                      minutesCadior1: watch('category') === 1 && watch('intensity') === 1 ? exercise.durationInMinutes : undefined,
+                      minutesCadior2: watch('category') === 1 && watch('intensity') === 2 ? exercise.durationInMinutes : undefined,
+                      minutesCadior3: watch('category') === 1 && watch('intensity') === 3 ? exercise.durationInMinutes : undefined,
+                      caloriesCadior1: watch('category') === 1 && watch('intensity') === 1 ? exercise.caloriesBurned : undefined,
+                      caloriesCadior2: watch('category') === 1 && watch('intensity') === 2 ? exercise.caloriesBurned : undefined,
+                      caloriesCadior3: watch('category') === 1 && watch('intensity') === 3 ? exercise.caloriesBurned : undefined,
+                      // Nếu là bài tập khác
+                      quantity: watch('category') !== 1 ? exercise.durationInMinutes : undefined
+                    }
+                  }
+                  return null
+                }).filter(Boolean)
+
+                // Cập nhật form và state
+                setSelectedFoods(transformedExercises)
+                reset({
+                  category: watch('category'),
+                  intensity: watch('intensity'),
+                  listExerciseIdToAdd: transformedExercises
+                })
+              })
+              .catch(() => {
+                toast.error('Không thể tải danh sách bài tập')
+              })
+          }
+        })
+        .catch(() => {
+          toast.error('Không thể tải chi tiết bài tập')
+        })
+    }
   }
 
   // ** Updates Event in Store
   const handleUpdateEvent = () => {
 
     const obj = {
-      mealType: getMealType(calendarLabel),
       selectDate: adjustedDate,
-      listFoodIdToAdd: selectedFoods.map(food => ({
-        exerciseId: food.exerciseId,
-        quantity: food.quantity
-      }))
+      listExerciseIdToAdd: selectedFoods.map(exercise => {
+        let durationInMinutes = 0
+        let caloriesBurned = 0
+        if (watch('category') === 1) { // Cardio
+          switch (watch('intensity')) {
+            case 1: // Cường độ nhẹ
+              durationInMinutes = exercise.minutesCadior1 || 0
+              caloriesBurned = exercise.caloriesCadior1 || 0
+              break
+            case 2: // Cường độ vừa  
+              durationInMinutes = exercise.minutesCadior2 || 0
+              caloriesBurned = exercise.caloriesCadior2 || 0
+              break
+            case 3: // Cường độ cao
+              durationInMinutes = exercise.minutesCadior3 || 0
+              caloriesBurned = exercise.caloriesCadior3 || 0
+              break
+            default:
+              break
+          }
+        } else { // Kháng lực hoặc khác
+          durationInMinutes = exercise.quantity || 0
+          const exerciseOption = optionFood.find(opt => opt.value === exercise.exerciseId)
+          caloriesBurned = (exerciseOption?.calories || 0) * (exercise.quantity || 0)
+        }
+
+        return {
+          exerciseId: exercise.exerciseId,
+          durationInMinutes,
+          isPractice: true,
+          caloriesBurned
+        }
+      })
     }
 
-    api.foodDairyApi.createFoodDairyApi(obj)
+    api.exerciseDairyApi.createExerciseDairyApi(obj)
       .then(() => {
-        // Gọi refetchEvents để load lại dữ liệu
         if (refetchEvents) {
           refetchEvents()
         }
-        toast.success('Sửa món ăn thành công')
+        toast.success('Sửa bài tập thành công')
 
         // Reset form
         reset({
-          listFoodIdToAdd: [],
-          caloriesBreakfast: 0
+          listExerciseIdToAdd: [],
+          category: 1,
+          intensity: 1
         })
         setSelectedFoods([])
-        setCalendarLabel([{ value: 1, label: 'Bữa sáng', color: 'danger' }])
         setStartPicker(new Date())
         handleAddEventSidebar()
       })
-      .catch((error) => {
-        toast.error('Thêm món ăn thất bại')
-        console.error('Error adding food:', error)
+      .catch(() => {
+        toast.error('Sửa bài tập thất bại')
       })
   }
 
-  const listFoodIdBreakfasts = watch('listFoodIdToAdd')
+  const listFoodIdBreakfasts = watch('listExerciseIdToAdd')
 
   useEffect(() => {
     const newSelectedFoods = listFoodIdBreakfasts?.map(food => ({
@@ -275,8 +324,6 @@ const AddEventSidebar = props => {
       setSelectedFoods(newSelectedFoods)
     }
   }, [listFoodIdBreakfasts])
-
-  console.log('list', selectedFoods)
 
   // ** Event Action buttons
   const EventActions = () => {
@@ -328,7 +375,7 @@ const AddEventSidebar = props => {
     setSelectedFoods([])
     reset({
       ...watch(),
-      listFoodIdToAdd: []
+      listExerciseIdToAdd: []
     })
   }, [watch('category')])
 
@@ -336,6 +383,14 @@ const AddEventSidebar = props => {
   const calculateCalories = (minutes, metValue, weight) => {
     return Math.round((minutes * metValue * weight) / 200)
   }
+
+  useEffect(() => {
+    if (selectedEvent && selectedEvent.selectedDate) {
+      setStartPicker(new Date(selectedEvent.selectedDate))
+    }
+  }, [selectedEvent])
+
+  console.log('selectFood', selectedFoods)
 
   return (
     <Modal
@@ -422,12 +477,12 @@ const AddEventSidebar = props => {
             </div>
             
             <div className='mb-1'>
-              <Label className='form-label' for='add-listFoodIdToAdd'>
+              <Label className='form-label' for='add-listExerciseIdToAdd'>
                 Bài tập
               </Label>
               <Controller
-                id='listFoodIdToAdd'
-                name='listFoodIdToAdd'
+                id='listExerciseIdToAdd'
+                name='listExerciseIdToAdd'
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -438,21 +493,26 @@ const AddEventSidebar = props => {
                       className='react-select mb-2'
                       classNamePrefix='select'
                       isMulti
-                      components={animatedComponents}
+                      components={{ Option: CustomOption, ...animatedComponents }}
                       placeholder='Chọn bài tập...'
                       options={optionFood}
                       isClearable={false}
                       onChange={(selectedOptions) => {
                         const newFoods = selectedOptions ? selectedOptions.map(option => ({
                           ...option,
-                          foodId: option.value,
-                          foodName: option.label
+                          exerciseId: option.value,
+                          exerciseName: option.label,
+                          // Giữ lại các giá trị hiện có nếu bài tập đã tồn tại trong selectedFoods
+                          ...selectedFoods.find(food => food.exerciseId === option.value)
                         })) : []
                         setSelectedFoods(newFoods)
                         field.onChange(newFoods)
-                        
                       }}
-                      value={optionFood.filter(option => field.value?.some(val => val.foodId === option.value))}
+                      value={selectedFoods.map(food => ({
+                        value: food.exerciseId,
+                        label: food.exerciseName || food.label,
+                        image: food.image
+                      }))}
                     />
                     {/* Danh sách bài tập đã chọn với input số lượng */}
                     <div className="selected-foods">
@@ -463,7 +523,7 @@ const AddEventSidebar = props => {
 
                         return (
                           <div key={food.foodId} className="d-flex align-items-center gap-2 mb-2">
-                            <span className="flex-grow-1">{`${food.foodName}`}</span>
+                            <span className="flex-grow-1">{`${food.exerciseName}`}</span>
                             {watch('category') === 1 && watch('intensity') === 1 && (
                               <>
                                 <div className="d-flex flex-column me-2">

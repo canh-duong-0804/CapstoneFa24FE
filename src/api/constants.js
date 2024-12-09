@@ -88,7 +88,8 @@ export const AUTH = {
   },
   EXERCISE_DAIRY_API: {
     CREATE_EXERCISE_DAIRY_API: `${BASE_URL}/api/ExecriseDiaryDetail/addExerciseListToDiaryForWebsite`,
-    GET_ALL_EXERCISE_DAIRY_API: `${BASE_URL}api/ExecriseDiaryDetail/get-all-diaries-for-month-of-exercise`
+    GET_ALL_EXERCISE_DAIRY_API: `${BASE_URL}/api/ExecriseDiaryDetail/get-all-diaries-for-month-of-exercise`,
+    GET_EXERCISE_DAIRY_DETAIL_API: `${BASE_URL}/api/ExecriseDiaryDetail/Get-Exercise-dairy-detail-website`
   },
   MEAL_PLAN_EXERCISE_TRAINER_API: {
     CREATE_PLAN_EXERCISE_TRAINER_API: `${BASE_URL}/api/ExecrisePlanTrainer/create-exercise-plan`,

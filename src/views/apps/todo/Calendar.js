@@ -13,6 +13,7 @@ import viLocale from '@fullcalendar/core/locales/vi' // Import tiếng Việt
 import toast from 'react-hot-toast'
 import { Menu } from 'react-feather'
 import { Card, CardBody } from 'reactstrap'
+import api from '../../../api/index'
 
 const Calendar = props => {
   // ** Refs
@@ -50,34 +51,55 @@ const Calendar = props => {
 
   const formattedDate = `${year}-${month}-${day}`
 
-  useEffect(() => {
-    // api.foodDairyApi.getAllFoodDairyApi(formattedDate).then((rs) => {
-    //   const transformedEvents = transformFoodDiaryToEvents(rs)
-    //   setEvents(transformedEvents) // Lưu events vào state
-    //   dispatch({
-    //     type: 'UPDATE_EVENTS',
-    //     events: transformedEvents
-    //   })
-    // }).catch(() => {
-    //   toast.error('Không thể tải dữ liệu')
-    // })
-    setEvents([])
-  }, [dispatch, formattedDate])
-
-  const fetchCalendarEvents = () => {
-    // const date = new Date()
-    // const year = date.getFullYear()
-    // const month = String(date.getMonth() + 1).padStart(2, '0')
-    // const day = String(date.getDate()).padStart(2, '0')
-    // const formattedDate = `${year}-${month}-${day}`
-
-    // api.foodDairyApi.getAllFoodDairyApi(formattedDate).then((rs) => {
-    //   const transformedEvents = transformFoodDiaryToEvents(rs)
-    //   setEvents(transformedEvents)
-    // }).catch(() => {
-    //   toast.error('Không thể tải dữ liệu')
-    // })
+  const transformFoodDiaryToEvents = (foodDiaryData) => {
+    return foodDiaryData.reduce((acc, diary) => {
+      const events = []
+      
+      if (diary.hasExercise) {
+        events.push({
+          id: diary.exerciseDiaryId,
+          title: 'Bài tập',
+          start: diary.date, // Chuyển đổi định dạng ngày
+          allDay: true
+        })
+      }
+      return [...acc, ...events]
+    }, [])
   }
+
+  // Hàm fetch events từ API
+  const fetchCalendarEvents = () => {
+    const date = new Date() 
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    const formattedDate = `${year}-${month}-${day}`
+
+    api.exerciseDairyApi.getAllExerciseDairyApi(formattedDate)
+      .then((rs) => {
+        const transformedEvents = transformFoodDiaryToEvents(rs)
+        setEvents(transformedEvents)
+      })
+      .catch(() => {
+        toast.error('Không thể tải dữ liệu bài tập')
+      })
+  }
+
+  // Gọi API khi component mount
+  useEffect(() => {
+    api.exerciseDairyApi.getAllExerciseDairyApi(formattedDate)
+      .then((rs) => {
+        const transformedEvents = transformFoodDiaryToEvents(rs)
+        setEvents(transformedEvents)
+        dispatch({
+          type: 'UPDATE_EVENTS',
+          events: transformedEvents
+        })
+      })
+      .catch(() => {
+        toast.error('Không thể tải dữ liệu bài tập') 
+      })
+  }, [dispatch, formattedDate])
 
   // Expose fetchCalendarEvents to parent through ref
   useEffect(() => {
@@ -162,6 +184,7 @@ const Calendar = props => {
       const ev = blankEvent
       ev.start = info.date
       ev.end = info.date
+      ev.selectedDate = info.date
       dispatch(selectEvent(ev))
       handleAddEventSidebar()
     },

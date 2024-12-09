@@ -8,7 +8,8 @@ import { AUTH } from '../constants'
 
 const exerciseDairyApi = {
   createExerciseDairyApi: (params) => requester.post(AUTH.EXERCISE_DAIRY_API.CREATE_EXERCISE_DAIRY_API, params),
-  getAllExerciseDairyApi: (date) => requester.get(`${AUTH.EXERCISE_DAIRY_API.GET_ALL_EXERCISE_DAIRY_API}?date=${date}`)
+  getAllExerciseDairyApi: (date) => requester.get(`${AUTH.EXERCISE_DAIRY_API.GET_ALL_EXERCISE_DAIRY_API}?date=${date}`),
+  getExerciseDairyDetailApi: (date) => requester.get(`${AUTH.EXERCISE_DAIRY_API.GET_EXERCISE_DAIRY_DETAIL_API}?selectDate=${date}`)
 }
 
 export default { exerciseDairyApi }
