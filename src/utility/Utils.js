@@ -56,7 +56,6 @@ export const getHomeRouteForLoggedInUser = userRole => {
   if (userRole === 1) return '/trainer/dashboard'
   if (userRole === 2) return '/food-trainer/dashboard'
   if (userRole === 3) return '/exercise-trainer/dashboard'
-  if (userRole === 2) return '/access-control'
   return '/home'
 }
 

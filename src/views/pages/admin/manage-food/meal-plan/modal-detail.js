@@ -11,6 +11,7 @@ import makeAnimated from 'react-select/animated'
 import ModalHeader from '../../../../../@core/components/modal-header'
 import { notificationError, notificationSuccess } from '../../../../../utility/notification'
 import { Tabs } from 'antd'
+import food from '../../../../../api/food'
 
 const initialItems = [
   {
@@ -134,7 +135,8 @@ const ModalComponent = () => {
     const newSelectedFoods = listFoodIdBreakfasts.map(food => ({
       foodId: food.foodId,
       quantity: food.quantity || 1, 
-      foodName: food.foodName || ''
+      foodName: food.foodName || '',
+      portion: food.portion || ''
     }))
 
     if (JSON.stringify(newSelectedFoods) !== JSON.stringify(selectedFoods)) {
@@ -147,7 +149,8 @@ const ModalComponent = () => {
     const newSelectedFoods = listFoodIdLunches.map(food => ({
       foodId: food.foodId,
       quantity: food.quantity || 1,
-      foodName: food.foodName || ''
+      foodName: food.foodName || '',
+      portion: food.portion || ''
     }))
     if (JSON.stringify(newSelectedFoods) !== JSON.stringify(selectedFoodLunch)) {
       setSelectedFoodLunch(newSelectedFoods)
@@ -159,7 +162,8 @@ const ModalComponent = () => {
     const newSelectedFoods = listFoodIdDinners.map(food => ({
       foodId: food.foodId,
       quantity: food.quantity || 1,
-      foodName: food.foodName || ''
+      foodName: food.foodName || '',
+      portion: food.portion || ''
     }))
     if (JSON.stringify(newSelectedFoods) !== JSON.stringify(selectedFoodDinner)) {
       setSelectedFoodDinner(newSelectedFoods)
@@ -171,7 +175,8 @@ const ModalComponent = () => {
     const newSelectedFoods = listFoodIdSnacks.map(food => ({
       foodId: food.foodId,
       quantity: food.quantity || 1,
-      foodName: food.foodName || ''
+      foodName: food.foodName || '',
+      portion: food.portion || ''
     }))
     if (JSON.stringify(newSelectedFoods) !== JSON.stringify(selectedFoodSnack)) {
       setSelectedFoodSnack(newSelectedFoods)
@@ -225,6 +230,8 @@ const ModalComponent = () => {
 
     })
   }
+
+  console.log('food', optionFood)
 
   const handleFormOpened = () => {
     renderData()
@@ -379,7 +386,8 @@ const ModalComponent = () => {
                               const newFoods = selectedOptions ? selectedOptions.map(option => ({
                                 foodId: option.value,
                                 quantity: 1, // Mặc định số lượng là 1
-                                foodName: `${option.label} - ${option.portion}`
+                                foodName: `${option.label} - ${option.portion}`,
+                                portion: option.portion
                               })) : []
                             
                               // Tính tổng calories ngay khi chọn
@@ -404,7 +412,7 @@ const ModalComponent = () => {
 
                               return (
                                 <div key={food.foodId} className="d-flex align-items-center gap-2 mb-2">
-                                  <span className="flex-grow-1">{food.foodName}</span>
+                                  <span className="flex-grow-1">{`${food.foodName} - ${food.portion}`}</span>
                                   <div className="d-flex flex-column me-2">
                                     {selectedFoods.length > 0 && (
                                       <Label
@@ -515,7 +523,8 @@ const ModalComponent = () => {
                               const newFoods = selectedOptions ? selectedOptions.map(option => ({
                                 foodId: option.value,
                                 quantity: 1, // Mặc định số lượng là 1
-                                foodName: `${option.label} - ${option.portion}`
+                                foodName: `${option.label} - ${option.portion}`,
+                                portion: food.portion
                               })) : []
                             
                               // Tính tổng calories ngay khi chọn
@@ -540,7 +549,7 @@ const ModalComponent = () => {
 
                               return (
                                 <div key={food.foodId} className="d-flex align-items-center gap-2 mb-2">
-                                  <span className="flex-grow-1">{food.foodName}</span>
+                                  <span className="flex-grow-1">{`${food.foodName} - ${food.portion}`}</span>
                                   <div className="d-flex flex-column me-2">
                                     {selectedFoodLunch.length > 0 && (
                                       <Label
@@ -676,7 +685,7 @@ const ModalComponent = () => {
 
                               return (
                                 <div key={food.foodId} className="d-flex align-items-center gap-2 mb-2">
-                                  <span className="flex-grow-1">{food.foodName}</span>
+                                  <span className="flex-grow-1">{`${food.foodName} - ${food.portion}`}</span>
                                   <div className="d-flex flex-column me-2">
                                     {selectedFoodDinner.length > 0 && (
                                       <Label
@@ -812,7 +821,7 @@ const ModalComponent = () => {
 
                               return (
                                 <div key={food.foodId} className="d-flex align-items-center gap-2 mb-2">
-                                  <span className="flex-grow-1">{food.foodName}</span>
+                                  <span className="flex-grow-1">{`${food.foodName} - ${food.portion}`}</span>
                                   <div className="d-flex flex-column me-2">
                                     {selectedFoodSnack.length > 0 && (
                                       <Label

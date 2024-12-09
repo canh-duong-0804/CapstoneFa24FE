@@ -28,7 +28,7 @@ export default [
         id: 'chat',
         title: 'Chat',
         icon: <MessageSquare />,
-        navLink: '/apps/chat'
+        navLink: '/chat/member'
       },
       {
         id: 'todo',

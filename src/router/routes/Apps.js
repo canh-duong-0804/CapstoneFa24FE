@@ -65,7 +65,7 @@ const AppRoutes = [
     path: '/apps/email/:filter'
   },
   {
-    path: '/apps/chat',
+    path: '/chat/member',
     element: <Chat />,
     meta: {
       action: 'read',

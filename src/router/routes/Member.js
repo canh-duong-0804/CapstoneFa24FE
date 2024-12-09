@@ -33,7 +33,7 @@ const MemberRoutes = [
     }
   },
   {
-    path: '/apps/chat',
+    path: '/chat/member',
     element: <Chat />,
     meta: {
       action: 'read',

@@ -107,6 +107,7 @@ export const AUTH = {
   EXERCISE_MEMBER_API: {
     CREATE_EXERCISE_CATEGORY_API: `${BASE_URL}/api/CategoryExercise/Create-category-exercise`,
     GET_ALL_EXERCISE_FOR_MEMBER_API: `${BASE_URL}/api/Exercise/Get-all-exercises-for-member`,
+    GET_ALL_EXERCISE_FILTER_MEMBER_API: `${BASE_URL}/api/Exercise/Get-all-exercises-filter`,
     GET_EXERCISE_CARDIO_DETAIL_API: `${BASE_URL}/api/Exercise/Get-exercise-cardio-detail-for-member`,
     GET_EXERCISE_RESISTANCE_DETAIL_API: `${BASE_URL}/api/Exercise/Get-exercise-resistance-detail-for-member`,
     GET_EXERCISE_OTHER_API: `${BASE_URL}/api/Exercise/Get-exercise-other-detail-for-member`
