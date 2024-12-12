@@ -83,7 +83,7 @@ export const AUTH = {
     GET_FOOD_DAIRY_DETAIL_API: `${BASE_URL}/api/FoodDiary/Get-Food-dairy-detail-website`,
     GET_FOOD_DAIRY_DETAIL_BY_DATE_API: `${BASE_URL}/api/FoodDiary/Get-Food-dairy-detail`,
     UPDATE_FOOD_DAIRY_API: `${BASE_URL}/api/Ingredient/update-ingredient-status`,
-    DELETE_FOOD_DAIRY_BY_ID_API: `${BASE_URL}/api/Ingredient/Delete-Ingredient`,
+    DELETE_FOOD_DAIRY_BY_ID_API: `${BASE_URL}/api/FoodDiary/Delete-food-diary-website`,
     GET_LIST_BOX_FOOD_DAIRY_API: `${BASE_URL}/api/Ingredient/get-list-box-ingredient-for-staff`
   },
   EXERCISE_DAIRY_API: {

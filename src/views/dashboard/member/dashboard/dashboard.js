@@ -36,6 +36,7 @@ const Dashboard = () => {
                 onChange={handleDateChange}
                 format="DD/MM/YYYY"
                 allowClear={false}
+                picker="date"  // Thêm thuộc tính này để chắc chắn chỉ chọn một ngày
                 style={{
                   width: 150,
                   marginRight: 10
@@ -55,14 +56,6 @@ const Dashboard = () => {
                     <h6 className='mb-1'>Tiêu thụ</h6>
                     <h4 className='text-primary mb-0'>{dashboardData?.caloriesBurn || 0}</h4>
                   </div>
-                  <div className='d-flex flex-column align-items-center mb-2'>
-                    <h6 className='mb-1'>Bước chân</h6>
-                    <h4 className='text-primary mb-0'>0</h4>
-                  </div>
-                  <div className='d-flex flex-column align-items-center mb-2'>
-                    <h6 className='mb-1'>Nước</h6>
-                    <h4 className='text-primary mb-0'>{dashboardData?.amountWater || 0}</h4>
-                  </div>
                 </Col>
 
                 <Col md='4'>
@@ -80,9 +73,17 @@ const Dashboard = () => {
                           })}
                         />
                       </div>
-                      <div className='text-center mt-2'>
+                      <div
+                        style={{
+                          position: 'absolute',
+                          bottom: 70,  // Điều chỉnh giá trị này để di chuyển phần text lên/xuống
+                          left: 0,
+                          right: 0,
+                          textAlign: 'center'
+                        }}
+                      >
                         <small className='d-block'>ĐÃ TIÊU THỤ</small>
-                        <h4 className='text-muted'>
+                        <h4 className='text-muted mb-0'>
                           {Math.max(0, (dashboardData?.totalCalories || 0) - (dashboardData?.caloriesIntake || 0))} cals còn lại
                         </h4>
                       </div>
@@ -128,11 +129,6 @@ const Dashboard = () => {
               </div>
               <div className='mb-2'>
                 <p>Cân nặng hiện tại: {dashboardData?.weight}kg</p>
-              </div>
-              <div className='d-flex justify-content-end'>
-                <Button color='flat-primary' className='me-1'>CÂN NẶNG</Button>
-                <Button color='flat-primary' className='me-1'>KẾ HOẠCH</Button>
-                <Button color='flat-primary'>BIỂU ĐỒ</Button>
               </div>
             </CardBody>
           </Card>

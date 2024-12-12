@@ -231,8 +231,6 @@ const ModalComponent = () => {
     })
   }
 
-  console.log('food', optionFood)
-
   const handleFormOpened = () => {
     renderData()
     api.mealPlanTrainerApi.getMealPlanDetailApi(dataItem.mealPlanId, 1)

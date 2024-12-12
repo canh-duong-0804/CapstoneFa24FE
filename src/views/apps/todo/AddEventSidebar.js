@@ -65,13 +65,6 @@ const AddEventSidebar = props => {
 
   ]
 
-  const optionIntensity = [
-    { value: 1, label: 'Cường độ nhẹ' },
-    { value: 2, label: 'Cường độ vừa' },
-    { value: 3, label: 'Cường độ cao' }
-
-  ]
-
   useEffect(() => {
     if (open) {
       api.exerciseMemberApi.getAllExerciseFilterByCategoryApi(1).then((rs) => {
@@ -420,7 +413,7 @@ const AddEventSidebar = props => {
 
   // Thêm hàm tính calories
   const calculateCalories = (minutes, metValue, weight) => {
-    return Math.round((minutes * metValue * weight) / 200)
+    return Math.round((minutes * metValue * weight * 3.5) / 200)
   }
 
   useEffect(() => {
@@ -428,6 +421,8 @@ const AddEventSidebar = props => {
       setStartPicker(new Date(selectedEvent.selectedDate))
     }
   }, [selectedEvent])
+
+  console.log('exc', selectedFoods)
 
   return (
     <Modal
@@ -485,32 +480,6 @@ const AddEventSidebar = props => {
                 )}
               />
               {errors.category ? <FormFeedback>{errors.category.message}</FormFeedback> : null}
-            </div>
-            <div className='mb-1'>
-              <Label className='form-label' for='add-intensity'>
-                Cường độ luyện tập
-              </Label>
-              <Controller
-                id='intensity'
-                name='intensity'
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    {...field}
-                    theme={selectThemeColors}
-                    className='react-select'
-                    classNamePrefix='select'
-                    placeholder='Chọn...'
-                    options={optionIntensity}
-                    isClearable={false}
-                    onChange={(option) => {
-                      field.onChange(option ? option.value : '')
-                    }}
-                    value={optionIntensity.find(option => option.value === field.value)}
-                  />
-                )}
-              />
-              {errors.intensity ? <FormFeedback>{errors.intensity.message}</FormFeedback> : null}
             </div>
             
             <div className='mb-1'>
@@ -578,6 +547,7 @@ const AddEventSidebar = props => {
                                     min={0}
                                     onChange={(e) => {
                                       const newQuantity = parseFloat(e.target.value) || 0
+                                      console.log(newQuantity)
                                       const foodOption = optionFood.find(opt => opt.value === food.exerciseId)
                                       console.log(foodOption)
                                       const newCalories = calculateCalories(newQuantity, foodOption.metValue, foodOption.weight)
