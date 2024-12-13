@@ -1,272 +1,17 @@
-// Thêm các biến màu
+// Variables
 $primary: #28a745;
 $text-muted: #6c757d;
+$bg-light: #f4f0ed;
 
-// Reset một số styles mặc định
+// Thêm biến typography
+$font-heading: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+$font-body: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+// Base styles
 body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-}
-
-// Styles cho landing page
-.landing-wrapper {
-  overflow-x: hidden; // Prevent horizontal scrollbar during animations
-
-  .hero-section {
-    min-height: 80vh;
-    padding-top: 80px;
-    padding-bottom: 120px;
-    position: relative;
-    background: linear-gradient(135deg, #28c76f 0%, #1f9d55 100%);
-    color: white;
-
-    .hero-content {
-      h1, p {
-        color: white;
-      }
-
-      .hero-highlights {
-        .d-flex {
-          color: white;
-          i {
-            color: rgba(255, 255, 255, 0.9) !important;
-          }
-        }
-      }
-
-      .hero-btns {
-        button {
-          &.btn-success {
-            background: white;
-            color: #28c76f;
-            border-color: white;
-            
-            &:hover {
-              background: rgba(255, 255, 255, 0.9);
-            }
-          }
-
-          &.btn-outline-success {
-            color: white;
-            border-color: white;
-            
-            &:hover {
-              background: rgba(255, 255, 255, 0.1);
-            }
-          }
-        }
-      }
-    }
-
-    .wave-container {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 120px;
-      overflow: hidden;
-      line-height: 0;
-      transform: translateY(1px);
-
-      .wave {
-        position: relative;
-        display: block;
-        width: 100%;
-        height: 100%;
-      }
-    }
-  }
-
-  .platform-comparison {
-    position: relative;
-    z-index: 1;
-    background: #fff;
-    padding: 4rem 0;
-
-    .platform-card {
-      position: relative;
-      overflow: hidden;
-      transition: all 0.3s ease;
-      
-      &:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-      }
-
-      .ribbon {
-        width: 150px;
-        height: 150px;
-        position: absolute;
-        top: -10px;
-        left: -10px;
-        overflow: hidden;
-
-        &-top-left {
-          position: absolute;
-          display: block;
-          width: 225px;
-          padding: 15px 0;
-          background-color: #28c76f;
-          box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-          color: #fff;
-          text-shadow: 0 1px 1px rgba(0,0,0,0.2);
-          text-align: center;
-          transform: rotate(-45deg) translateY(-20px);
-          transform-origin: center;
-          
-          span {
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-          }
-        }
-      }
-
-      .platform-header {
-        .platform-icon {
-          width: 60px;
-          height: 60px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 50%;
-          background: rgba(40, 199, 111, 0.1);
-          
-          i {
-            font-size: 2rem;
-            color: #28c76f;
-          }
-        }
-      }
-
-      &.premium {
-        border: 2px solid #28c76f;
-        
-        .ribbon-top-left {
-          background-color: #ff9f43;
-        }
-
-        .platform-icon {
-          background: rgba(255, 159, 67, 0.1);
-          
-          i {
-            color: #ff9f43;
-          }
-        }
-      }
-
-      .feature-list {
-        .feature-item {
-          padding: 1rem;
-          border-radius: 8px;
-          transition: all 0.3s ease;
-          
-          &:hover {
-            background: rgba(40, 199, 111, 0.05);
-            transform: translateX(5px);
-          }
-
-          h5 {
-            color: #2c2c2c;
-            font-weight: 600;
-          }
-
-          p {
-            font-size: 0.9rem;
-            margin-bottom: 0;
-          }
-
-          i {
-            font-size: 1.2rem;
-          }
-        }
-      }
-    }
-  }
-
-  .core-features {
-    position: relative;
-    z-index: 1;
-    margin-top: -2px;
-    background: #f8f9fa;
-    padding: 4rem 0;
-
-    .feature-box {
-      background: white;
-      border-radius: 1rem;
-      padding: 2rem;
-      transition: all 0.3s ease;
-      
-      &:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-      }
-
-      .feature-icon-wrapper {
-        width: 80px;
-        height: 80px;
-        margin: 0 auto;
-        border-radius: 50%;
-        background: rgba(40, 199, 111, 0.1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 1.5rem;
-
-        .feature-icon {
-          font-size: 2rem;
-          color: #28c76f;
-          transition: transform 0.3s ease;
-        }
-      }
-    }
-  }
-
-  .detailed-features {
-    .feature-image {
-      img {
-        transition: transform 0.3s ease;
-        &:hover {
-          transform: scale(1.05);
-        }
-      }
-    }
-
-    .feature-tag {
-      display: inline-block;
-      padding: 0.5rem 1rem;
-      background: rgba(40, 199, 111, 0.1);
-      color: #28c76f;
-      border-radius: 2rem;
-      font-weight: 600;
-    }
-  }
-
-  .testimonials {
-    .testimonial-card {
-      transition: all 0.3s ease;
-      
-      &:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-      }
-    }
-  }
-
-  .cta-section {
-    background: linear-gradient(135deg, #28c76f 0%, #1f9d55 100%);
-    color: white;
-    padding: 5rem 0;
-    
-    button {
-      transition: all 0.3s ease;
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(255,255,255,0.2);
-      }
-    }
-  }
 }
 
 // Navbar styles
@@ -382,285 +127,557 @@ body {
   }
 }
 
-// Core Features Section
-.core-features {
-  .feature-box {
-    padding: 2rem;
-    height: 100%;
-    background: white;
-    border-radius: 1rem;
-    transition: all 0.3s ease;
-    
-    &:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-      
-      .feature-icon {
-        background: var(--bs-primary);
-        color: white;
-      }
-    }
-    
-    .feature-icon-wrapper {
-      position: relative;
-      display: inline-block;
-      
-      &::after {
-        content: '';
-        position: absolute;
-        width: 50px;
-        height: 50px;
-        background: rgba(var(--bs-primary-rgb), 0.1);
-        border-radius: 50%;
-        top: -10px;
-        right: -10px;
-        z-index: 0;
-      }
-    }
-    
-    .feature-icon {
-      width: 70px;
-      height: 70px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(var(--bs-primary-rgb), 0.1);
-      border-radius: 50%;
-      margin: 0 auto;
-      transition: all 0.3s ease;
-      position: relative;
-      z-index: 1;
-      
-      i {
-        font-size: 1.5rem;
-        color: var(--bs-primary);
-      }
-    }
-    
-    h4 {
-      margin: 1.5rem 0 1rem;
-      font-size: 1.25rem;
-    }
-    
-    p {
-      color: $text-muted;
-      margin-bottom: 0;
-      font-size: 0.9rem;
-    }
-  }
-}
+// Landing wrapper styles
+.landing-wrapper {
+  section {
+    position: relative;
+    padding: 6rem 0;
 
-// Detailed Features Section
-.detailed-features {
-  .feature-item {
-    padding: 3rem 0;
-    
-    &:not(:last-child) {
-      border-bottom: 1px solid rgba(0,0,0,0.1);
-    }
-    
-    .feature-tag {
-      display: inline-block;
-      padding: 0.5rem 1rem;
-      background: rgba(var(--bs-primary-rgb), 0.1);
-      color: var(--bs-primary);
-      border-radius: 2rem;
-      font-weight: 500;
-      font-size: 0.9rem;
-    }
-    
-    h3 {
-      font-size: 2rem;
-      font-weight: 700;
-    }
-    
-    p {
-      font-size: 1.1rem;
-      color: $text-muted;
-    }
-    
-    .feature-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      
-      li {
-        margin-bottom: 1rem;
-        font-size: 1.1rem;
-        display: flex;
-        align-items: center;
-        
-        i {
-          color: var(--bs-success);
-          font-size: 1.25rem;
+    &.hero-section {
+      min-height: 80vh;
+      padding-top: 80px;
+      padding-bottom: 120px;
+      position: relative;
+      background: linear-gradient(135deg, #28c76f 0%, #1f9d55 100%);
+      color: white;
+
+      .hero-content {
+        h1, p {
+          color: white;
+        }
+
+        h1 {
+          font-size: 4rem;
+          font-weight: 900;
+          line-height: 1.2;
+          text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+          
+          @media (max-width: 768px) {
+            font-size: 2.8rem;
+          }
+        }
+
+        .hero-highlights {
+          .d-flex {
+            color: white;
+            padding: 0.5rem 0;
+            transition: transform 0.3s ease;
+            
+            &:hover {
+              transform: translateX(10px);
+            }
+
+            i {
+              color: rgba(255, 255, 255, 0.9) !important;
+              font-size: 1.25rem;
+              margin-right: 1rem;
+            }
+          }
+        }
+
+        .hero-btns {
+          button {
+            padding: 1rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            
+            &:hover {
+              transform: translateY(-3px);
+              box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            }
+
+            &.btn-light {
+              background: white;
+              color: #28c76f !important;
+              border-color: white;
+              
+              &:hover {
+                background: rgba(255, 255, 255, 0.9);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(255,255,255,0.3);
+              }
+            }
+
+            &.btn-outline-success {
+              background: transparent;
+              color: white !important;
+              border: 2px solid white;
+              
+              &:hover {
+                background: rgba(255, 255, 255, 0.1);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(255,255,255,0.3);
+              }
+            }
+          }
+        }
+      }
+
+      .wave-container {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 120px;
+        overflow: hidden;
+        line-height: 0;
+        transform: translateY(1px);
+
+        .wave {
+          position: relative;
+          display: block;
+          width: 100%;
+          height: 100%;
         }
       }
     }
-    
-    .feature-image {
-      img {
-        width: 100%;
-        border-radius: 1rem;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+
+    &.core-features {
+      background: white;
+      padding: 6rem 0;
+
+      .feature-box {
+        background: white;
+        border-radius: 1.5rem;
+        padding: 2.5rem 2rem;
+        height: 100%;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        position: relative;
+        z-index: 1;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        
+        // Thêm gradient background khi hover
+        &::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          border-radius: 1.5rem;
+          background: linear-gradient(135deg, #28c76f 0%, #1f9d55 100%);
+          opacity: 0;
+          z-index: -1;
+          transition: all 0.4s ease;
+        }
+
+        .feature-icon-wrapper {
+          width: 90px;
+          height: 90px;
+          margin: 0 auto 2rem;
+          border-radius: 50%;
+          background: rgba(40, 199, 111, 0.1);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.4s ease;
+
+          .feature-icon {
+            font-size: 2.5rem;
+            color: $primary;
+            transition: all 0.4s ease;
+          }
+        }
+
+        h4 {
+          font-size: 1.5rem;
+          font-weight: 700;
+          margin: 1.5rem 0 1rem;
+          transition: all 0.3s ease;
+        }
+
+        p {
+          font-size: 1.1rem;
+          line-height: 1.7;
+          color: $text-muted;
+          transition: all 0.3s ease;
+          margin-bottom: 0;
+        }
+
+        &:hover {
+          transform: translateY(-15px);
+          box-shadow: 0 20px 40px rgba(40, 199, 111, 0.2);
+          border-color: transparent;
+
+          &::after {
+            opacity: 1;
+          }
+
+          .feature-icon-wrapper {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1) rotate(10deg);
+          }
+
+          .feature-icon {
+            color: white;
+            transform: rotate(-10deg);
+          }
+
+          h4, p {
+            color: white;
+          }
+        }
+      }
+
+      // Thêm animation delay cho từng feature box
+      .col-lg-3:nth-child(1) .feature-box {
+        transition-delay: 0.1s;
+      }
+      .col-lg-3:nth-child(2) .feature-box {
+        transition-delay: 0.2s;
+      }
+      .col-lg-3:nth-child(3) .feature-box {
+        transition-delay: 0.3s;
+      }
+      .col-lg-3:nth-child(4) .feature-box {
+        transition-delay: 0.4s;
+      }
+    }
+
+    &.platform-comparison {
+      background: $bg-light !important;
+      
+      .section-header {
+        h2, p {
+          color: #2c2c2c !important;
+        }
+      }
+      
+      .platform-card {
+        background: white;
+        border-radius: 1.5rem;
+        padding: 2rem;
+        transition: all 0.4s ease;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        
+        .platform-header {
+          text-align: center;
+          padding-bottom: 2rem;
+          margin-bottom: 2rem;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+          .platform-icon-wrapper {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            border-radius: 50%;
+            background: rgba(40, 199, 111, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            i {
+              font-size: 2.5rem;
+              color: $primary;
+            }
+          }
+
+          h3 {
+            color: #2c2c2c;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+          }
+
+          p {
+            color: $text-muted;
+            font-size: 1.1rem;
+          }
+        }
+
+        .feature-list {
+          .feature-item {
+            padding: 1.25rem;
+            border-radius: 1rem;
+            background: rgba(40, 199, 111, 0.05);
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            
+            &:last-child {
+              margin-bottom: 0;
+            }
+
+            .feature-title {
+              display: flex;
+              align-items: center;
+              margin-bottom: 0.5rem;
+
+              i {
+                font-size: 1.25rem;
+                color: $primary;
+                margin-right: 1rem;
+                width: 24px;
+                text-align: center;
+              }
+
+              h5 {
+                margin: 0;
+                color: #2c2c2c;
+                font-weight: 600;
+              }
+            }
+
+            p {
+              margin: 0;
+              padding-left: calc(24px + 1rem);
+              color: $text-muted;
+              font-size: 0.95rem;
+              line-height: 1.6;
+            }
+
+            &:hover {
+              transform: translateX(5px);
+              background: rgba(40, 199, 111, 0.1);
+            }
+          }
+        }
+
+        &:hover {
+          transform: translateY(-10px);
+          box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+      }
+    }
+
+    &.top-trainers {
+      background: $bg-light;
+      
+      .trainer-card {
+        background: white;
+        border: 1px solid rgba(0,0,0,0.08);
+        
+        &:hover {
+          background: $primary;
+          border-color: transparent;
+          
+          *, .text-primary {
+            color: white !important;
+          }
+          
+          .badge {
+            background: rgba(255,255,255,0.2);
+            color: white;
+          }
+        }
+      }
+    }
+
+    &.testimonials {
+      background: $bg-light;
+      
+      .testimonial-container {
+        position: relative;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 60px;
+        
+        .testimonial-btn {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 40px;
+          height: 40px;
+          padding: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          transition: all 0.3s ease;
+          
+          &:hover {
+            transform: translateY(-50%) scale(1.1);
+          }
+          
+          &.testimonial-btn-prev {
+            left: 0;
+          }
+          
+          &.testimonial-btn-next {
+            right: 0;
+          }
+        }
+      }
+    }
+
+    &.app-preview {
+      background: linear-gradient(135deg, #28c76f 0%, #1f9d55 100%) !important;
+      position: relative;
+      overflow: hidden;
+      
+      // Giảm độ đậm của overlay để phù hợp với gradient mới
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.1) 100%);
+        z-index: 0;
+      }
+      
+      .container {
+        position: relative;
+        z-index: 1;
+      }
+
+      h2 {
+        color: white !important;
+        font-size: 2.8rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .lead {
+        color: rgba(255, 255, 255, 0.9) !important;
+        font-size: 1.3rem;
+        line-height: 1.6;
+        margin-bottom: 2.5rem;
+        font-weight: 400;
+      }
+
+      .app-badges {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        margin-bottom: 3rem;
+        
+        a {
+          display: inline-block;
+          transition: all 0.3s ease;
+          
+          &:hover {
+            transform: translateY(-5px);
+          }
+          
+          img {
+            height: 52px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+          }
+        }
+      }
+
+      .app-screenshots {
+        .main-screenshot {
+          max-width: 200px;
+          height: auto;
+          margin: 0 auto;
+          filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.15));
+          transition: all 0.3s ease;
+          
+          &:hover {
+            transform: translateY(-10px);
+          }
+        }
       }
     }
   }
 }
 
-// Platform comparison styles
-.platform-comparison {
-  background-color: #f8f9fa;
-  position: relative;
-  margin-top: -2px;
-  padding: 4rem 0;
-
-  .section-header {
-    text-align: center;
-    margin-bottom: 3rem;
-
-    h2 {
-      color: #2c2c2c;
-      font-weight: 700;
-    }
-
-    .lead {
-      color: $text-muted;
-    }
+// Component styles
+.card {
+  border: none;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
   }
+}
 
-  .platform-card {
+.btn {
+  padding: 0.8rem 2rem;
+  border-radius: 2rem;
+  font-weight: 600;
+  
+  &-primary {
+    background: $primary;
     border: none;
-    transition: transform 0.3s ease;
-    background: white;
-    border-radius: 1rem;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    height: 100%;
-    padding: 2rem;
     position: relative;
     overflow: hidden;
     
     &:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-    }
-
-    &.premium {
-      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-      border: 2px solid $primary;
-    }
-
-    .platform-header {
-      padding-bottom: 1.5rem;
-      margin-bottom: 1.5rem;
-      border-bottom: 1px solid rgba(0,0,0,0.1);
-      text-align: center;
-
-      h3 {
-        color: #2c2c2c;
-        margin: 1rem 0 0.5rem;
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
       }
-
-      p {
-        color: $text-muted;
-        margin-bottom: 0;
-      }
-
-      i {
-        color: $primary;
-        font-size: 2.5rem;
-      }
-    }
-
-    .feature-list {
-      .feature-item {
-        display: flex;
-        align-items: flex-start;
-        padding: 1rem 0;
-        border-bottom: 1px solid rgba(0,0,0,0.05);
-
-        &:last-child {
-          border-bottom: none;
-          padding-bottom: 0;
-        }
-
-        i {
-          font-size: 1.25rem;
-          margin-right: 1rem;
-          margin-top: 0.25rem;
-          
-          &.text-success {
-            color: #28c76f !important;
-          }
-          
-          &.text-warning {
-            color: #ff9f43 !important;
-          }
-        }
-
-        div {
-          flex: 1;
-        }
-
-        h5 {
-          font-size: 1.1rem;
-          margin-bottom: 0.5rem;
-          color: #2c2c2c;
-        }
-
-        p {
-          font-size: 0.9rem;
-          color: $text-muted;
-          margin-bottom: 0;
-        }
-      }
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(40, 199, 111, 0.3);
     }
   }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.testimonial-content .testimonial-card {
+  animation: fadeIn 0.5s ease;
+}
+
+// Utilities
+.fade-up, .fade-right, .fade-left {
+  opacity: 1;
+  transform: none;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 // Responsive styles
 @media (max-width: 991.98px) {
   .landing-wrapper {
     .hero-section {
-      padding: 100px 0 60px;
-      
       .hero-content {
-        padding-right: 0;
         text-align: center;
-        margin-bottom: 40px;
+        padding-bottom: 2rem;
 
         h1 {
-          font-size: 2.5rem;
-        }
-      }
-
-      .mockup-container {
-        max-width: 400px;
-        
-        .mockup-main {
-          width: 70%;
-          max-width: 250px;
-        }
-        
-        .mockup-secondary {
-          width: 55%;
-          max-width: 180px;
+          font-size: 2.8rem;
         }
       }
     }
   }
 
-  .detailed-features {
-    .feature-item {
-      padding: 2rem 0;
+  .landing-navbar {
+    .container {
+      padding: 0 1rem;
+    }
+  }
+
+  .app-preview {
+    .app-screenshots {
+      .main-screenshot {
+        max-width: 180px;
+      }
+    }
+  }
+
+  .core-features {
+    .feature-box {
+      margin-bottom: 2rem;
       
-      .feature-content {
-        text-align: center;
-        margin-bottom: 2rem;
-        
-        .feature-list {
-          display: inline-block;
-          text-align: left;
-        }
+      &:last-child {
+        margin-bottom: 0;
       }
     }
   }
@@ -668,7 +685,7 @@ body {
   .platform-comparison {
     .platform-card {
       margin-bottom: 2rem;
-
+      
       &:last-child {
         margin-bottom: 0;
       }
@@ -677,739 +694,352 @@ body {
 }
 
 @media (max-width: 767.98px) {
-  .core-features {
-    .feature-box {
-      margin-bottom: 1.5rem;
-    }
-  }
-
   .landing-wrapper {
     .hero-section {
-      .mockup-container {
-        max-width: 300px;
-        
-        .mockup-main {
-          width: 80%;
-          max-width: 200px;
-        }
-        
-        .mockup-secondary {
-          width: 60%;
-          max-width: 150px;
+      .hero-content {
+        h1 {
+          font-size: 2.2rem;
         }
       }
     }
   }
 }
 
-.ribbon {
-  width: 150px;
-  height: 150px;
-  overflow: hidden;
-  position: absolute;
-  
-  &-top-left {
-    top: -10px;
-    left: -10px;
-    
-    span {
-      position: absolute;
-      display: block;
-      width: 225px;
-      padding: 8px 0;
-      background-color: var(--bs-success);
-      box-shadow: 0 5px 10px rgba(0,0,0,.1);
-      color: #fff;
-      text-shadow: 0 1px 1px rgba(0,0,0,.2);
-      text-transform: uppercase;
-      text-align: center;
-      left: -25px;
-      top: 30px;
-      transform: rotate(-45deg);
+@media (max-width: 576px) {
+  .app-preview {
+    .app-badges {
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .app-screenshots {
+      .main-screenshot {
+        max-width: 150px;
+      }
     }
   }
 }
 
-.platform-card {
-  transition: transform 0.3s ease;
+// Typography base styles
+.landing-wrapper {
+  font-family: $font-body;
   
-  &:hover {
-    transform: translateY(-5px);
+  h1, h2, h3, h4, h5, h6 {
+    font-family: $font-heading;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #2c2c2c;
   }
-  
-  &.premium {
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+
+  // Hero section typography
+  .hero-section {
+    .hero-content {
+      h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        
+        @media (max-width: 768px) {
+          font-size: 2.5rem;
+        }
+      }
+
+      .lead {
+        font-size: 1.25rem;
+        line-height: 1.6;
+        font-weight: 400;
+      }
+
+      .hero-highlights {
+        font-size: 1.1rem;
+        line-height: 1.5;
+      }
+    }
   }
-  
-  .platform-icon {
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: rgba(var(--bs-primary-rgb), 0.1);
+
+  // Section headers
+  section {
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      letter-spacing: -0.01em;
+      
+      @media (max-width: 768px) {
+        font-size: 2rem;
+      }
+    }
+
+    .lead {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      color: $text-muted;
+      margin-bottom: 2rem;
+    }
   }
+
+  // Feature boxes
+  .feature-box {
+    h4 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin: 1.5rem 0 1rem;
+    }
+
+    p {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: $text-muted;
+    }
+  }
+
+  // Platform comparison
+  .platform-card {
+    h3 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-item {
+      h5 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+    }
+  }
+
+  // Testimonials
+  .testimonial-card {
+    h5 {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    p {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      font-style: italic;
+    }
+
+    small {
+      font-size: 0.9rem;
+    }
+  }
+
+  // App preview
+  .app-preview {
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .lead {
+      font-size: 1.2rem;
+      line-height: 1.6;
+    }
+  }
+
+  // CTA section
+  .cta-section {
+    h2 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+  }
+}
+
+// Navbar typography
+.landing-navbar {
+  .brand-text {
+    font-family: $font-heading;
+    font-size: 1.75rem !important;
+    font-weight: 700;
+  }
+
+  .auth-buttons {
+    button {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+  }
+}
+
+// Button typography
+.btn {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   
-  .feature-item {
-    padding: 15px;
-    border-radius: 8px;
-    background: rgba(var(--bs-light-rgb), 0.5);
-    margin-bottom: 15px;
+  &.btn-lg {
+    font-size: 1.1rem;
+  }
+}
+
+.features-grid {
+  .feature-row {
+    margin-bottom: 4rem;
     
     &:last-child {
       margin-bottom: 0;
     }
   }
-}
 
-// Smooth scrolling
-html {
-  scroll-behavior: smooth;
-}
-
-// Wave animation
-.wave {
-  animation: wave 3s ease-in-out infinite alternate;
-}
-
-@keyframes wave {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(10px);
-  }
-}
-
-// Responsive adjustments
-@media (max-width: 768px) {
-  .landing-wrapper {
-    .hero-section {
-      .hero-content {
-        text-align: center;
-        
-        .hero-btns {
-          justify-content: center;
-        }
-      }
-    }
-  }
-}
-
-// Base styles
-.landing-wrapper {
-  overflow-x: hidden;
-}
-
-// Animation classes
-.fade-in {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.6s ease-out;
-  
-  &.animate-in {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.slide-in {
-  opacity: 0;
-  transform: translateX(-50px);
-  transition: all 0.6s ease-out;
-  
-  &.animate-in {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.slide-in-left {
-  opacity: 0;
-  transform: translateX(-50px);
-  transition: all 0.6s ease-out;
-  
-  &.animate-in {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.slide-in-right {
-  opacity: 0;
-  transform: translateX(50px);
-  transition: all 0.6s ease-out;
-  
-  &.animate-in {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.scale-in {
-  opacity: 0;
-  transform: scale(0.8);
-  transition: all 0.6s ease-out;
-  
-  &.animate-in {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-// Hover effects
-.hover-scale {
-  transition: transform 0.3s ease;
-  &:hover {
-    transform: scale(1.05);
-  }
-}
-
-.hover-lift {
-  transition: all 0.3s ease;
-  &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-  }
-}
-
-// Delay classes
-@for $i from 1 through 10 {
-  .delay-#{$i} {
-    transition-delay: #{$i * 0.1}s;
-  }
-}
-
-// Hero section styles
-.hero-section {
-  min-height: 100vh;
-  padding-top: 80px;
-  position: relative;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-
-  .hero-content {
-    .hero-highlights {
-      .d-flex {
-        transition: transform 0.3s ease;
-        &:hover {
-          transform: translateX(10px);
-        }
-      }
-    }
-
-    .hero-btns {
-      display: flex;
-      gap: 1rem;
-      
-      button {
-        transition: all 0.3s ease;
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-      }
-    }
-  }
-
-  // Thêm hiệu ứng parallax cho background
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    //background: url('../../../assets/images/landing/pattern.svg');
-    opacity: 0.1;
-    animation: moveBackground 20s linear infinite;
-  }
-}
-
-// Wave animation
-.wave {
-  animation: wave 3s ease-in-out infinite alternate;
-}
-
-@keyframes wave {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(10px);
-  }
-}
-
-// Platform comparison section
-.platform-comparison {
-  .platform-card {
-    transition: all 0.3s ease;
-    
-    &:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-    }
-
-    .feature-item {
-      transition: transform 0.3s ease;
-      &:hover {
-        transform: translateX(5px);
-      }
-    }
-  }
-}
-
-// Core features section
-.core-features {
-  .feature-box {
-    padding: 2rem;
-    border-radius: 1rem;
-    background: white;
-    transition: all 0.3s ease;
-    
-    .feature-icon-wrapper {
-      width: 80px;
-      height: 80px;
-      margin: 0 auto;
-      border-radius: 50%;
-      background: rgba(40, 199, 111, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 1.5rem;
-
-      .feature-icon {
-        font-size: 2rem;
-        color: #28c76f;
-        transition: transform 0.3s ease;
-      }
-    }
-
-    &:hover {
-      .feature-icon {
-        transform: scale(1.1);
-      }
-    }
-  }
-}
-
-// Testimonials section
-.testimonials {
-  .testimonial-card {
-    transition: all 0.3s ease;
+  .feature-card {
+    background: #fff;
+    transition: transform 0.3s ease;
     
     &:hover {
       transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
     }
-  }
-}
 
-// CTA section
-.cta-section {
-  background: linear-gradient(135deg, #28c76f 0%, #1f9d55 100%);
-  color: white;
-  padding: 5rem 0;
-  
-  button {
-    transition: all 0.3s ease;
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(255,255,255,0.2);
-    }
-  }
-}
-
-// Responsive styles
-@media (max-width: 768px) {
-  .landing-wrapper {
-    .hero-section {
-      .hero-content {
-        text-align: center;
-        
-        .hero-btns {
-          justify-content: center;
-        }
-      }
-    }
-  }
-}
-
-// Animation styles
-.fade-up {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: all 0.8s ease;
-  
-  &.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.fade-right {
-  opacity: 0;
-  transform: translateX(-30px);
-  transition: all 0.8s ease;
-  
-  &.visible {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.fade-left {
-  opacity: 0;
-  transform: translateX(30px);
-  transition: all 0.8s ease;
-  
-  &.visible {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-// Delay classes
-@for $i from 1 through 5 {
-  .delay-#{$i} {
-    transition-delay: #{$i * 0.2}s;
-  }
-}
-
-.landing-wrapper {
-  .hero-section {
-    .hero-content {
-      h1 {
-        font-size: 4rem;
-        font-weight: 900;
-        line-height: 1.2;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-        
-        @media (max-width: 768px) {
-          font-size: 2.8rem; // Tăng cả font size cho mobile
-        }
-      }
-    }
-  }
-}
-
-.landing-wrapper {
-  .hero-section {
-    .hero-content {
-      .hero-btns {
-        button {
-          &.btn-light {
-            background: white;
-            color: #28c76f !important;
-            border-color: white;
-            
-            &:hover {
-              background: rgba(255, 255, 255, 0.9);
-              transform: translateY(-2px);
-              box-shadow: 0 4px 15px rgba(255,255,255,0.3);
-            }
-          }
-          // ... existing styles
-        }
-      }
-    }
-  }
-}
-
-// Cải thiện core features section
-.core-features {
-  .feature-box {
-    border: 1px solid rgba(0,0,0,0.08);
-    
-    .feature-icon-wrapper {
-      width: 90px;
-      height: 90px;
+    .feature-image-wrapper {
+      height: 100%;
+      min-height: 350px;
+      overflow: hidden;
       
-      .feature-icon {
-        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      .feature-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
     }
-    
-    &:hover {
-      transform: translateY(-15px);
-      
-      .feature-icon {
-        transform: scale(1.1) rotate(10deg);
-      }
-    }
-  }
-}
 
-// Cải thiện platform comparison section
-.platform-comparison {
-  .platform-card {
-    border: 1px solid rgba(0,0,0,0.08);
-    
-    .feature-item {
+    .feature-content {
       position: relative;
-      padding-left: 2rem;
-      
-      i {
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        transition: all 0.3s ease;
-      }
-      
-      &:hover {
-        i {
-          transform: translateY(-50%) scale(1.2);
-        }
-        
-        h5 {
-          color: var(--bs-primary);
-        }
-      }
+      padding: 1rem;
     }
-    
-    &.premium {
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 150px;
-        height: 150px;
-        background: linear-gradient(135deg, transparent 50%, rgba(255,159,67,0.1));
-      }
+
+    .feature-badge {
+      position: absolute;
+      top: -15px;
+      right: 30px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1rem;
     }
-  }
-}
 
-// Thêm hiệu ứng loading skeleton
-@keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
-  100% {
-    background-position: 1000px 0;
-  }
-}
-
-.skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 1000px 100%;
-  animation: shimmer 2s infinite;
-}
-
-// Thêm hiệu ứng smooth scroll
-html {
-  scroll-behavior: smooth;
-}
-
-// Thêm hiệu ứng cho navbar khi scroll
-.landing-navbar {
-  &.scrolled {
-    padding: 0.75rem 1.5rem;
-    
-    .navbar-brand {
-      transform: scale(0.9);
-    }
-    
-    .auth-buttons {
-      button {
-        padding: 0.6rem 1.5rem;
-      }
-    }
-  }
-}
-
-// Thêm hiệu ứng cho background pattern
-@keyframes moveBackground {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 100px 100px;
-  }
-}
-
-// Thêm hiệu ứng gradient text cho heading
-.hero-content {
-  h1 {
-    font-size: 3.5rem;
-    font-weight: 800;
-    color: white;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-    margin-bottom: 1.5rem;
-    
-    @media (max-width: 768px) {
-      font-size: 2.5rem;
-    }
-  }
-
-  .hero-highlights {
-    .d-flex {
-      padding: 0.5rem 0;
-      transition: transform 0.3s ease;
-      
-      &:hover {
-        transform: translateX(10px);
-      }
+    .feature-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
       i {
-        font-size: 1.25rem;
-        margin-right: 1rem;
-        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.5rem;
       }
     }
-  }
 
-  .hero-btns {
-    button {
-      padding: 1rem 2rem;
+    h3 {
+      font-size: 1.75rem;
       font-weight: 600;
+      color: #2c2c2c;
+    }
+
+    .feature-description {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #666;
+      margin: 1rem 0;
+    }
+
+    .feature-details {
+      margin-top: 1.5rem;
+
+      .feature-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.75rem;
+
+        i {
+          margin-right: 0.75rem;
+          font-size: 1.1rem;
+        }
+
+        span {
+          color: #666;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 767.98px) {
+    .feature-row {
+      margin-bottom: 2rem;
+    }
+
+    .feature-card {
+      .feature-image-wrapper {
+        min-height: 250px;
+      }
+
+      .feature-content {
+        padding: 1.5rem;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+      }
+    }
+  }
+}
+
+// Thêm style cho nút dùng thử miễn phí
+.btn-try-free {
+  background: #ff9f43 !important; // Màu cam
+  border-color: #ff9f43 !important;
+  color: white !important;
+  padding: 0.8rem 2rem;
+  font-weight: 600;
+  
+  &:hover {
+    background: #ff8f1f !important; // Màu cam đậm hơn khi hover
+    box-shadow: 0 8px 25px -8px #ff9f43;
+    transform: translateY(-1px);
+  }
+}
+
+// Thêm style cho phần store badges
+.hero-cta {
+  .store-badges {
+    display: flex;
+    align-items: center;
+    
+    a {
       transition: all 0.3s ease;
       
       &:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-      }
-    }
-  }
-}
-
-// Cải thiện hiệu ứng loading
-.skeleton {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.1) 25%,
-    rgba(255, 255, 255, 0.2) 50%,
-    rgba(255, 255, 255, 0.1) 75%
-  );
-  background-size: 1000px 100%;
-  animation: shimmer 2s infinite linear;
-}
-
-@keyframes shimmer {
-  from {
-    background-position: -1000px 0;
-  }
-  to {
-    background-position: 1000px 0;
-  }
-}
-
-// Cải thiện hiệu ứng scroll cho navbar
-.landing-navbar {
-  &.scrolled {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    padding: 0.75rem 1.5rem;
-    
-    .navbar-brand {
-      transform: scale(0.9);
-      transition: transform 0.3s ease;
-    }
-    
-    .auth-buttons {
-      button {
-        padding: 0.6rem 1.5rem;
-        transition: all 0.3s ease;
-      }
-    }
-  }
-}
-
-// Thêm hiệu ứng hover cho feature boxes
-.feature-box {
-  &:hover {
-    .feature-icon-wrapper {
-      transform: translateY(-5px) rotate(8deg);
-      
-      .feature-icon {
-        transform: scale(1.1);
-        color: #fff;
+        transform: translateY(-2px);
+        opacity: 0.9;
       }
       
-      &::after {
-        transform: scale(1.2);
-        opacity: 0.8;
+      img {
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
       }
     }
-  }
-}
-
-// Cải thiện hiệu ứng cho platform cards
-.platform-card {
-  &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    
-    .platform-header {
-      .platform-icon {
-        transform: scale(1.1) rotate(10deg);
-      }
-    }
-  }
-  
-  &.premium {
-    &::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(
-        circle at top right,
-        rgba(255, 159, 67, 0.1),
-        transparent 70%
-      );
-      transform: rotate(-45deg);
-      z-index: 0;
-    }
-  }
-}
-
-// Thêm hiệu ứng smooth scroll với easing
-html {
-  scroll-behavior: smooth;
-  
-  @media (prefers-reduced-motion: reduce) {
-    scroll-behavior: auto;
-  }
-}
-
-// Cải thiện animation cho các elements
-.fade-up, .fade-right, .fade-left {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  &.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-// Thêm hiệu ứng hover cho buttons
-.btn {
-  position: relative;
-  overflow: hidden;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.6s ease, height 0.6s ease;
-  }
-  
-  &:hover::after {
-    width: 300%;
-    height: 300%;
   }
 }

@@ -1,12 +1,41 @@
 import { Fragment, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Button, Row, Col, Card, CardBody, Navbar, NavbarBrand, Nav } from 'reactstrap'
+import { Button, Row, Col, Card, CardBody, Navbar, NavbarBrand, Nav, Badge } from 'reactstrap'
 import { CSSTransition } from 'react-transition-group'
 import '@src/assets/scss/pages/landing.scss'
 import Logo from '@src/assets/images/logo/logo.png'
 
+const testimonials = [
+  {
+    name: 'Nguyễn Văn B',
+    role: 'Nam, 34 tuổi, Nhân viên văn phòng',
+    image: require('@src/assets/images/portrait/small/avatar-s-1.jpg').default,
+    content: 'Là một nhân viên văn phòng ngồi nhiều, tôi cần một ứng dụng giúp kiểm soát ăn uống và duy trì cân nặng mà không tốn quá nhiều thời gian. Health Tracking giúp tôi theo dõi các chỉ số dễ dàng, có gợi ý bài tập phù hợp và nhắc nhở tôi uống đủ nước.'
+  },
+  {
+    name: 'Trần Thị C',
+    role: 'Nữ, 28 tuổi, Giáo viên',
+    image: require('@src/assets/images/portrait/small/avatar-s-2.jpg').default,
+    content: 'Ứng dụng rất trực quan và dễ sử dụng. Tôi đặc biệt thích tính năng theo dõi dinh dưỡng và lịch tập luyện. Sau 3 tháng sử dụng, tôi đã giảm được 5kg và cảm thấy khỏe mạnh hơn rất nhiều.'
+  },
+  {
+    name: 'Lê Văn D',
+    role: 'Nam, 42 tuổi, Doanh nhân',
+    image: require('@src/assets/images/portrait/small/avatar-s-6.jpg').default,
+    content: 'Health Tracking giúp tôi cân bằng giữa công việc bận rộn và việc chăm sóc sức khỏe. Các bài tập ngắn nhưng hiệu quả, phù hợp với lịch trình của người đi làm.'
+  },
+  {
+    name: 'Phạm Thị E',
+    role: 'Nữ, 31 tuổi, Y tá',
+    image: require('@src/assets/images/portrait/small/avatar-s-7.jpg').default,
+    content: 'Là người làm trong ngành y tế, tôi đánh giá cao tính chính xác và khoa học của ứng dụng. Các chỉ số được theo dõi chi tiết và có cả lời khuyên từ chuyên gia dinh dưỡng.'
+  }
+]
+
 const Landing = () => {
   const [isScrolled, setIsScrolled] = useState(false)
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [currentTestimonial, setCurrentTestimonial] = useState(0)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -47,6 +76,31 @@ const Landing = () => {
 
     return () => observer.disconnect()
   }, [])
+
+  const handleTestimonialSlide = (direction) => {
+    const testimonialCount = 4 // Số lượng testimonial
+    if (direction === 'next') {
+      setCurrentSlide(prev => (prev + 2 >= testimonialCount) ? 0 : prev + 2)
+    } else {
+      setCurrentSlide(prev => (prev - 2 < 0) ? testimonialCount - 2 : prev - 2)
+    }
+  }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      handleTestimonialSlide('next')
+    }, 5000)
+    
+    return () => clearInterval(interval)
+  }, [])
+
+  const handleTestimonialChange = (direction) => {
+    if (direction === 'next') {
+      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length)
+    } else {
+      setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length)
+    }
+  }
 
   return (
     <Fragment>
@@ -168,25 +222,23 @@ const Landing = () => {
                 {
                   icon: 'fa-utensils',
                   title: 'Nhật ký dinh dưỡng',
-                  description: 'Ghi chép và tính toán lượng calo, chất dinh dưỡng hàng ngày'
+                  description: 'Ghi chép và tính toán lượng calo, chất dinh dưỡng hàng ngày một cách chính xác'
                 },
                 {
                   icon: 'fa-dumbbell',
                   title: 'Lịch tập luyện',
-                  description: 'Lập kế hoạch và theo dõi các hoạt động thể chất của bạn'
+                  description: 'Lập kế hoạch và theo dõi các hoạt động thể chất với hướng dẫn chi tiết từ chuyên gia'
                 },
                 {
                   icon: 'fa-bullseye',
                   title: 'Mục tiêu cá nhân',
-                  description: 'Đặt và theo dõi các mục tiêu sức khỏe của riêng bạn'
+                  description: 'Đặt và theo dõi các mục tiêu sức khỏe với lộ trình được cá nhân hóa cho riêng bạn'
                 }
               ].map((feature, index) => (
                 <Col lg='3' md='6' key={index}>
-                  <div className={`feature-box text-center fade-up delay-${index + 1}`}>
-                    <div className='feature-icon-wrapper mb-4'>
-                      <div className='feature-icon'>
-                        <i className={`fas ${feature.icon}`}></i>
-                      </div>
+                  <div className='feature-box text-center fade-up'>
+                    <div className='feature-icon-wrapper'>
+                      <i className={`fas ${feature.icon} feature-icon`}></i>
                     </div>
                     <h4>{feature.title}</h4>
                     <p>{feature.description}</p>
@@ -209,44 +261,36 @@ const Landing = () => {
               <Col lg='6' className='mb-4 mb-lg-0'>
                 <Card className='platform-card h-100 border-0 shadow-sm fade-right'>
                   <CardBody>
-                    <div className='platform-header text-center mb-4'>
-                      <div className='platform-icon-wrapper mb-3'>
-                        <i className='fas fa-laptop text-primary'></i>
+                    <div className='platform-header'>
+                      <div className='platform-icon-wrapper'>
+                        <i className='fas fa-laptop'></i>
                       </div>
-                      <h3 className='mb-2'>Phiên bản Web</h3>
-                      <p className='text-muted'>Truy cập mọi tính năng từ trình duyệt web</p>
+                      <h3>Phiên bản Web</h3>
+                      <p>Quản lý dinh dưỡng và luyện tập hàng ngày</p>
                     </div>
                     <div className='feature-list'>
                       <div className='feature-item'>
                         <div className='feature-title'>
-                          <i className='fas fa-check-circle text-success'></i>
-                          <h5>Theo dõi chỉ số</h5>
-                        </div>
-                        <p>Cân nặng, chỉ số BMI, lượng nước, calories...</p>
-                      </div>
-                      
-                      <div className='feature-item'>
-                        <div className='feature-title'>
-                          <i className='fas fa-check-circle text-success'></i>
+                          <i className='fas fa-utensils'></i>
                           <h5>Nhật ký dinh dưỡng</h5>
                         </div>
-                        <p>Ghi chép bữa ăn, tính toán dinh dưỡng tự động</p>
+                        <p>Ghi chép và tính toán lượng calories, protein, carbs, fat từ bữa ăn hàng ngày</p>
                       </div>
                       
                       <div className='feature-item'>
                         <div className='feature-title'>
-                          <i className='fas fa-check-circle text-success'></i>
-                          <h5>Lịch tập luyện</h5>
+                          <i className='fas fa-dumbbell'></i>
+                          <h5>Nhật ký luyện tập</h5>
                         </div>
-                        <p>Đặt lịch và theo dõi các bài tập</p>
+                        <p>Theo dõi các bài tập và thời gian luyện tập mỗi ngày</p>
                       </div>
                       
                       <div className='feature-item'>
                         <div className='feature-title'>
-                          <i className='fas fa-check-circle text-success'></i>
-                          <h5>Báo cáo & Thống kê</h5>
+                          <i className='fas fa-chart-pie'></i>
+                          <h5>Theo dõi mục tiêu</h5>
                         </div>
-                        <p>Xem tiến trình và phân tích chi tiết</p>
+                        <p>Hiển thị tiến độ calories và macros so với mục tiêu đề ra</p>
                       </div>
                     </div>
                   </CardBody>
@@ -254,46 +298,38 @@ const Landing = () => {
               </Col>
 
               <Col lg='6'>
-                <Card className='platform-card h-100 border-0 shadow fade-left'>
+                <Card className='platform-card h-100 border-0 shadow-sm fade-left'>
                   <CardBody>
-                    <div className='platform-header text-center mb-4'>
-                      <div className='platform-icon-wrapper mb-3'>
-                        <i className='fas fa-mobile-alt text-primary'></i>
+                    <div className='platform-header'>
+                      <div className='platform-icon-wrapper'>
+                        <i className='fas fa-mobile-alt'></i>
                       </div>
-                      <h3 className='mb-2'>Ứng dụng di động</h3>
-                      <p className='text-muted'>Theo dõi sức khỏe mọi lúc mọi nơi</p>
+                      <h3>Ứng dụng di động</h3>
+                      <p>Theo dõi sức khỏe mọi lúc mọi nơi</p>
                     </div>
                     <div className='feature-list'>
                       <div className='feature-item'>
                         <div className='feature-title'>
-                          <i className='fas fa-check-circle text-success'></i>
-                          <h5>Đồng bộ đa thiết bị</h5>
+                          <i className='fas fa-chart-line'></i>
+                          <h5>Báo cáo chuyên sâu</h5>
                         </div>
-                        <p>Dữ liệu được đồng bộ tức thì giữa các thiết bị</p>
+                        <p>Phân tích chi tiết các chỉ số sức khỏe với biểu đồ trực quan</p>
                       </div>
                       
                       <div className='feature-item'>
                         <div className='feature-title'>
-                          <i className='fas fa-check-circle text-success'></i>
+                          <i className='fas fa-bell'></i>
                           <h5>Thông báo thông minh</h5>
                         </div>
-                        <p>Nhắc nhở lịch tập, bữa ăn, uống nước...</p>
+                        <p>Nhắc nhở lịch tập, bữa ăn và uống nước</p>
                       </div>
                       
                       <div className='feature-item'>
                         <div className='feature-title'>
-                          <i className='fas fa-check-circle text-success'></i>
+                          <i className='fas fa-shoe-prints'></i>
                           <h5>Theo dõi hoạt động</h5>
                         </div>
-                        <p>Tự động đếm bước chân, quãng đường, calories</p>
-                      </div>
-                      
-                      <div className='feature-item'>
-                        <div className='feature-title'>
-                          <i className='fas fa-check-circle text-success'></i>
-                          <h5>Hỗ trợ ngoại tuyến</h5>
-                        </div>
-                        <p>Sử dụng được cả khi không có kết nối mạng</p>
+                        <p>Tự động đếm bước chân và tính calo tiêu thụ</p>
                       </div>
                     </div>
                   </CardBody>
@@ -303,134 +339,170 @@ const Landing = () => {
           </div>
         </section>
 
-        {/* Detailed Features Section */}
-        <section className='detailed-features py-5 bg-light'>
+        {/* Top Trainers Section */}
+        <section className='top-trainers py-5'>
           <div className='container'>
-            <Row className='feature-item align-items-center mb-5'>
-              <Col lg='6' className='order-lg-2'>
-                <div className='feature-content ps-lg-5'>
-                  <div className='feature-tag mb-3'>Theo dõi & Phân tích</div>
-                  <h3 className='mb-4'>Theo dõi sức khỏe thông minh</h3>
-                  <p className='mb-4'>Ghi lại mọi hoạt động hàng ngày của bạn một cách chi tiết. Từ bữa ăn, giấc ngủ đến các bài tập, tất cả đều được theo dõi và phân tích một cách khoa học.</p>
-                  <ul className='feature-list'>
-                    <li><i className='fas fa-check-circle me-2'></i>Theo dõi calo và dinh dưỡng</li>
-                    <li><i className='fas fa-check-circle me-2'></i>Đo lường các chỉ số cơ thể</li>
-                    <li><i className='fas fa-check-circle me-2'></i>Phân tích xu hướng sức khỏe</li>
-                  </ul>
-                </div>
-              </Col>
-              <Col lg='6' className='order-lg-1'>
-                <div className='feature-image'>
-                  <img 
-                    src={require('@src/assets/images/landing/progress.png').default}
-                    alt='tracking'
-                    className='img-fluid rounded-3 shadow'
-                  />
-                </div>
-              </Col>
+            <div className='section-header text-center fade-up'>
+              <h2 className='display-6 fw-bold mb-3'>Đội ngũ huấn luyện viên hàng đầu</h2>
+              <p className='lead mb-5'>Được đào tạo và chứng nhận bởi các tổ chức uy tín</p>
+            </div>
+            
+            <Row>
+              {[
+                {
+                  name: 'Nguyễn Văn A',
+                  role: 'HLV Thể hình & Dinh dưỡng',
+                  image: require('@src/assets/images/portrait/small/avatar-s-3.jpg').default,
+                  description: '10 năm kinh nghiệm, chứng chỉ ISSA',
+                  specialties: ['Thể hình', 'Giảm cân', 'Dinh dưỡng']
+                },
+                {
+                  name: 'Trần Thị B', 
+                  role: 'HLV Yoga & Thiền',
+                  image: require('@src/assets/images/portrait/small/avatar-s-4.jpg').default,
+                  description: '8 năm kinh nghiệm, chứng nhận Yoga Alliance',
+                  specialties: ['Yoga', 'Thiền', 'Thể dục']
+                },
+                {
+                  name: 'Lê Văn C',
+                  role: 'HLV Thể lực & Cardio',
+                  image: require('@src/assets/images/portrait/small/avatar-s-5.jpg').default,
+                  description: '12 năm kinh nghiệm, HLV thể lực FIFA',
+                  specialties: ['Cardio', 'HIIT', 'Thể lực']
+                }
+              ].map((trainer, index) => (
+                <Col lg='4' md='6' className='mb-4' key={index}>
+                  <Card className='trainer-card h-100 border-0 shadow-sm fade-up'>
+                    <CardBody className='text-center'>
+                      <div className='trainer-avatar mb-3'>
+                        <img 
+                          src={trainer.image} 
+                          alt={trainer.name}
+                          className='rounded-circle'
+                          width='120'
+                        />
+                      </div>
+                      <h4>{trainer.name}</h4>
+                      <p className='text-primary mb-2'>{trainer.role}</p>
+                      <p className='mb-3'>{trainer.description}</p>
+                      <div className='trainer-specialties'>
+                        {trainer.specialties.map((specialty, idx) => (
+                          <Badge 
+                            color='light-primary' 
+                            className='me-1 mb-1' 
+                            key={idx}
+                          >
+                            {specialty}
+                          </Badge>
+                        ))}
+                      </div>
+                    </CardBody>
+                  </Card>
+                </Col>
+              ))}
             </Row>
+          </div>
+        </section>
 
-            <Row className='feature-item align-items-center mb-5'>
-              <Col lg='6'>
-                <div className='feature-content pe-lg-5'>
-                  <div className='feature-tag mb-3'>Kế hoạch & Hướng dẫn</div>
-                  <h3 className='mb-4'>Kế hoạch tập luyện chuyên nghiệp</h3>
-                  <p className='mb-4'>Tiếp cận kho bài tập đa dạng với hướng dẫn chi tiết từ các chuyên gia. Tự động tựo lịch tập phù hợp với mục tiêu của bạn.</p>
-                  <ul className='feature-list'>
-                    <li><i className='fas fa-check-circle me-2'></i>Thư viện bài tập phong phú</li>
-                    <li><i className='fas fa-check-circle me-2'></i>Lịch tập được cá nhân hóa</li>
-                    <li><i className='fas fa-check-circle me-2'></i>Video hướng dẫn chất lượng cao</li>
-                  </ul>
-                </div>
-              </Col>
-              <Col lg='6'>
-                <div className='feature-image'>
-                  <img 
-                    src={require('@src/assets/images/landing/exercise.png').default}
-                    alt='workout'
-                    className='img-fluid rounded-3 shadow'
-                  />
-                </div>
-              </Col>
-            </Row>
+        {/* Testimonials Section */}
+        <section className='testimonials py-5 bg-light'>
+          <div className='container'>
+            <h2 className='text-center mb-5'>Đánh giá từ người dùng</h2>
+            <div className='testimonial-container'>
+              <Button 
+                color='primary' 
+                className='testimonial-btn testimonial-btn-prev'
+                onClick={() => handleTestimonialChange('prev')}
+              >
+                <i className='fas fa-chevron-left'></i>
+              </Button>
 
-            <Row className='feature-item align-items-center'>
-              <Col lg='6' className='order-lg-2'>
-                <div className='feature-content ps-lg-5'>
-                  <div className='feature-tag mb-3'>Tư vấn & Hỗ trợ</div>
-                  <h3 className='mb-4'>Tư vấn dinh dưỡng thông minh</h3>
-                  <p className='mb-4'>Nhận các gợi ý về chế độ ăn uống phù hợp và tư vấn từ các chuyên gia dinh dưỡng. AI Chatbot hỗ trợ 24/7 cho mọi thắc mắc của bạn.</p>
-                  <ul className='feature-list'>
-                    <li><i className='fas fa-check-circle me-2'></i>Tư vấn từ chuyên gia dinh dưỡng</li>
-                    <li><i className='fas fa-check-circle me-2'></i>Gợi ý thực đơn hàng ngày</li>
-                    <li><i className='fas fa-check-circle me-2'></i>AI Chatbot hỗ trợ 24/7</li>
-                  </ul>
-                </div>
-              </Col>
-              <Col lg='6' className='order-lg-1'>
-                <div className='feature-image'>
-                  <img 
-                    src={require('@src/assets/images/landing/nutrition.png').default}
-                    alt='nutrition'
-                    className='img-fluid rounded-3 shadow'
-                  />
-                </div>
-              </Col>
-            </Row>
+              <div className='testimonial-content'>
+                <Card className='testimonial-card border-0 shadow-sm mx-auto'>
+                  <CardBody>
+                    <div className='d-flex align-items-center mb-3'>
+                      <img 
+                        src={testimonials[currentTestimonial].image}
+                        alt={testimonials[currentTestimonial].name}
+                        className='rounded-circle me-3'
+                        width='60'
+                      />
+                      <div>
+                        <h5 className='mb-0'>{testimonials[currentTestimonial].name}</h5>
+                        <small className='text-muted'>{testimonials[currentTestimonial].role}</small>
+                      </div>
+                    </div>
+                    <p className='mb-0'>{testimonials[currentTestimonial].content}</p>
+                  </CardBody>
+                </Card>
+              </div>
+
+              <Button 
+                color='primary' 
+                className='testimonial-btn testimonial-btn-next'
+                onClick={() => handleTestimonialChange('next')}
+              >
+                <i className='fas fa-chevron-right'></i>
+              </Button>
+            </div>
           </div>
         </section>
 
         {/* App Preview Section */}
         <section className='app-preview py-5'>
-          <h2 className='text-center mb-5'>Chúng tôi có cả web và app</h2>
-          <Row className='justify-content-center'>
-            <Col md='8'>
-              <div className='app-screenshots'>
-                {/* Add your app screenshots here */}
-              </div>
-              <div className='text-center mt-4'>
-                <Button color='success' size='lg' className='me-2'>
-                  Bắt đầu ngay
-                </Button>
-                <img src={require('@src/assets/images/landing/google-play.png').default} alt='Google Play' height='52' />
-              </div>
-            </Col>
-          </Row>
-        </section>
-
-        {/* Testimonials Section */}
-        <section className='testimonials py-5'>
-          <h2 className='text-center mb-5'>Đánh giá khách hàng</h2>
-          <Row>
-            <Col md='6'>
-              <Card className='testimonial-card'>
-                <CardBody>
-                  <div className='d-flex align-items-center mb-3'>
-                    <img src={require('@src/assets/images/portrait/small/avatar-s-1.jpg').default} alt='avatar' className='rounded-circle me-2' width='50' />
-                    <div>
-                      <h5 className='mb-0'>Nguyễn Văn B</h5>
-                      <small>Nam, 34 tuổi, Nhân viên văn phòng</small>
-                    </div>
-                  </div>
-                  <p>Là một nhân viên văn phòng ngồi nhiều, tôi cần một ứng dụng giúp kiểm soát ăn uống và duy trì cân nặng mà không tốn quá nhiều thời gian. Health Tracking giúp tôi theo dõi các chỉ số dễ dàng, có gợi ý bài tập phù hợp và nhắc nhở tôi uống đủ nước.</p>
-                </CardBody>
-              </Card>
-            </Col>
-            <Col md='6'>
-              <Card className='testimonial-card'>
-                <CardBody>
-                  <div className='d-flex align-items-center mb-3'>
-                    <img src={require('@src/assets/images/portrait/small/avatar-s-2.jpg').default} alt='avatar' className='rounded-circle me-2' width='50' />
-                    <div>
-                      <h5 className='mb-0'>Bob</h5>
-                      <small>Highly Recommend</small>
-                    </div>
-                  </div>
-                  <p>Great app for tracking health and fitness goals. The interface is intuitive and the features are comprehensive.</p>
-                </CardBody>
-              </Card>
-            </Col>
-          </Row>
+          <div className='container'>
+            <Row className='align-items-center'>
+              <Col lg='6' className='mb-4 mb-lg-0'>
+                <h2 className='display-6 fw-bold mb-4'>
+                  Tải ứng dụng ngay hôm nay
+                </h2>
+                <p className='lead mb-4'>
+                  Theo dõi sức khỏe mọi lúc mọi nơi với ứng dụng Health Tracking trên điện thoại của bạn
+                </p>
+                <div className='app-badges'>
+                  <a 
+                    href="https://play.google.com/store/apps/details?id=com.fpt.edu.healthtracking"
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                  >
+                    <img 
+                      src={require('@src/assets/images/landing/google-play.png').default} 
+                      alt='Google Play'
+                      style={{
+                        height: '52px',
+                        width: 'auto',
+                        objectFit: 'contain'
+                      }}
+                    />
+                  </a>
+                  <a 
+                    href="https://appdistribution.firebase.dev/i/2a29d68c3106111b"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <img 
+                      src={require('@src/assets/images/landing/Firebase.png').default} 
+                      alt='FireBase'
+                      style={{
+                        height: '52px', 
+                        width: 'auto',
+                        objectFit: 'contain'
+                      }}
+                    />
+                  </a>
+                </div>
+              </Col>
+              <Col lg='6' className='text-center'>
+                <div className='app-screenshots'>
+                  <img 
+                    src={require('@src/assets/images/landing/Mockup.png').default}
+                    alt='App Screenshot'
+                    className='img-fluid main-screenshot'
+                  />
+                </div>
+              </Col>
+            </Row>
+          </div>
         </section>
 
         {/* CTA Section */}
