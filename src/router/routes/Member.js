@@ -37,8 +37,7 @@ const MemberRoutes = [
     element: <Chat />,
     meta: {
       action: 'read',
-      menuHidden: true,
-      resource: 'User'
+      resource: 'All'
     }
   }
 ]

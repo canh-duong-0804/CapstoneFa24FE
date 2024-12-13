@@ -69,7 +69,7 @@ const AppRoutes = [
     element: <Chat />,
     meta: {
       action: 'read',
-      resource: 'User'
+      resource: 'All'
     }
   },
   {

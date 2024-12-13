@@ -28,6 +28,10 @@ import {
   UncontrolledDropdown
 } from 'reactstrap'
 
+// ** CSS Imports
+import '../../../@core/scss/base/pages/app-chat.scss'
+import '../../../@core/scss/base/pages/app-chat-list.scss'
+
 const ChatLog = props => {
   // ** Props & Store
   const { handleUser, handleUserSidebarRight, handleSidebar, store, userSidebarLeft } = props
@@ -149,91 +153,93 @@ const ChatLog = props => {
   const ChatWrapper = Object.keys(selectedUser).length && selectedUser.chat ? PerfectScrollbar : 'div'
 
   return (
-    <div className='chat-app-window'>
-      <div className={classnames('start-chat-area', { 'd-none': Object.keys(selectedUser).length })}>
-        <div className='start-chat-icon mb-1'>
-          <MessageSquare />
-        </div>
-        <h4 className='sidebar-toggle start-chat-text' onClick={handleStartConversation}>
-          Start Conversation
-        </h4>
-      </div>
-      {Object.keys(selectedUser).length ? (
-        <div className={classnames('active-chat', { 'd-none': selectedUser === null })}>
-          <div className='chat-navbar'>
-            <header className='chat-header'>
-              <div className='d-flex align-items-center'>
-                <div className='sidebar-toggle d-block d-lg-none me-1' onClick={handleSidebar}>
-                  <Menu size={21} />
-                </div>
-                <Avatar
-                  imgHeight='36'
-                  imgWidth='36'
-                  img={selectedUser.contact.avatar}
-                  status={selectedUser.contact.status}
-                  className='avatar-border user-profile-toggle m-0 me-1'
-                  onClick={() => handleAvatarClick(selectedUser.contact)}
-                />
-                <h6 className='mb-0'>{selectedUser.contact.fullName}</h6>
-              </div>
-              <div className='d-flex align-items-center'>
-                <PhoneCall size={18} className='cursor-pointer d-sm-block d-none me-1' />
-                <Video size={18} className='cursor-pointer d-sm-block d-none me-1' />
-                <Search size={18} className='cursor-pointer d-sm-block d-none' />
-                <UncontrolledDropdown className='more-options-dropdown'>
-                  <DropdownToggle className='btn-icon' color='transparent' size='sm'>
-                    <MoreVertical size='18' />
-                  </DropdownToggle>
-                  <DropdownMenu end>
-                    <DropdownItem href='/' onClick={e => e.preventDefault()}>
-                      View Contact
-                    </DropdownItem>
-                    <DropdownItem href='/' onClick={e => e.preventDefault()}>
-                      Mute Notifications
-                    </DropdownItem>
-                    <DropdownItem href='/' onClick={e => e.preventDefault()}>
-                      Block Contact
-                    </DropdownItem>
-                    <DropdownItem href='/' onClick={e => e.preventDefault()}>
-                      Clear Chat
-                    </DropdownItem>
-                    <DropdownItem href='/' onClick={e => e.preventDefault()}>
-                      Report
-                    </DropdownItem>
-                  </DropdownMenu>
-                </UncontrolledDropdown>
-              </div>
-            </header>
+    <div className='chat-application'>
+      <div className='chat-app-window'>
+        <div className={classnames('start-chat-area', { 'd-none': Object.keys(selectedUser).length })}>
+          <div className='start-chat-icon mb-1'>
+            <MessageSquare />
           </div>
-
-          <ChatWrapper ref={chatArea} className='user-chats' options={{ wheelPropagation: false }}>
-            {selectedUser.chat ? <div className='chats'>{renderChats()}</div> : null}
-          </ChatWrapper>
-
-          <Form className='chat-app-form' onSubmit={e => handleSendMsg(e)}>
-            <InputGroup className='input-group-merge me-1 form-send-message'>
-              <InputGroupText>
-                <Mic className='cursor-pointer' size={14} />
-              </InputGroupText>
-              <Input
-                value={msg}
-                onChange={e => setMsg(e.target.value)}
-                placeholder='Type your message or use speech to text'
-              />
-              <InputGroupText>
-                <Label className='attachment-icon mb-0' for='attach-doc'>
-                  <Image className='cursor-pointer text-secondary' size={14} />
-                  <input type='file' id='attach-doc' hidden />
-                </Label>
-              </InputGroupText>
-            </InputGroup>
-            <Button className='send' color='primary'>
-              <Send size={14} className='d-lg-none' />
-              <span className='d-none d-lg-block'>Send</span>
-            </Button>
-          </Form>
+          <h4 className='sidebar-toggle start-chat-text' onClick={handleStartConversation}>
+            Start Conversation
+          </h4>
         </div>
-      ) : null}
+        {Object.keys(selectedUser).length ? (
+          <div className={classnames('active-chat', { 'd-none': selectedUser === null })}>
+            <div className='chat-navbar'>
+              <header className='chat-header'>
+                <div className='d-flex align-items-center'>
+                  <div className='sidebar-toggle d-block d-lg-none me-1' onClick={handleSidebar}>
+                    <Menu size={21} />
+                  </div>
+                  <Avatar
+                    imgHeight='36'
+                    imgWidth='36'
+                    img={selectedUser.contact.avatar}
+                    status={selectedUser.contact.status}
+                    className='avatar-border user-profile-toggle m-0 me-1'
+                    onClick={() => handleAvatarClick(selectedUser.contact)}
+                  />
+                  <h6 className='mb-0'>{selectedUser.contact.fullName}</h6>
+                </div>
+                <div className='d-flex align-items-center'>
+                  <PhoneCall size={18} className='cursor-pointer d-sm-block d-none me-1' />
+                  <Video size={18} className='cursor-pointer d-sm-block d-none me-1' />
+                  <Search size={18} className='cursor-pointer d-sm-block d-none' />
+                  <UncontrolledDropdown className='more-options-dropdown'>
+                    <DropdownToggle className='btn-icon' color='transparent' size='sm'>
+                      <MoreVertical size='18' />
+                    </DropdownToggle>
+                    <DropdownMenu end>
+                      <DropdownItem href='/' onClick={e => e.preventDefault()}>
+                        View Contact
+                      </DropdownItem>
+                      <DropdownItem href='/' onClick={e => e.preventDefault()}>
+                        Mute Notifications
+                      </DropdownItem>
+                      <DropdownItem href='/' onClick={e => e.preventDefault()}>
+                        Block Contact
+                      </DropdownItem>
+                      <DropdownItem href='/' onClick={e => e.preventDefault()}>
+                        Clear Chat
+                      </DropdownItem>
+                      <DropdownItem href='/' onClick={e => e.preventDefault()}>
+                        Report
+                      </DropdownItem>
+                    </DropdownMenu>
+                  </UncontrolledDropdown>
+                </div>
+              </header>
+            </div>
+
+            <ChatWrapper ref={chatArea} className='user-chats' options={{ wheelPropagation: false }}>
+              {selectedUser.chat ? <div className='chats'>{renderChats()}</div> : null}
+            </ChatWrapper>
+
+            <Form className='chat-app-form' onSubmit={e => handleSendMsg(e)}>
+              <InputGroup className='input-group-merge me-1 form-send-message'>
+                <InputGroupText>
+                  <Mic className='cursor-pointer' size={14} />
+                </InputGroupText>
+                <Input
+                  value={msg}
+                  onChange={e => setMsg(e.target.value)}
+                  placeholder='Type your message or use speech to text'
+                />
+                <InputGroupText>
+                  <Label className='attachment-icon mb-0' for='attach-doc'>
+                    <Image className='cursor-pointer text-secondary' size={14} />
+                    <input type='file' id='attach-doc' hidden />
+                  </Label>
+                </InputGroupText>
+              </InputGroup>
+              <Button className='send' color='primary'>
+                <Send size={14} className='d-lg-none' />
+                <span className='d-none d-lg-block'>Send</span>
+              </Button>
+            </Form>
+          </div>
+        ) : null}
+      </div>
     </div>
   )
 }

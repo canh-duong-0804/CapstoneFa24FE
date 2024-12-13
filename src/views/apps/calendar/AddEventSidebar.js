@@ -216,7 +216,8 @@ const AddEventSidebar = props => {
       selectDate: adjustedDate,
       listFoodIdToAdd: selectedFoods.map(food => ({
         foodId: food.foodId,
-        quantity: food.quantity
+        quantity: food.quantity,
+        portion: food.portion
       }))
     }
 
@@ -246,27 +247,27 @@ const AddEventSidebar = props => {
 
   const handleDeleteEvent = () => {
     const mealType = selectedEvent.extendedProps.calendar
-      const selectedDate = new Date(selectedEvent.start)
-      selectedDate.setMinutes(selectedDate.getMinutes() - selectedDate.getTimezoneOffset())
-      const formattedDate = formatDateToYYYYMMDD(selectedDate)
-      api.foodDairyApi.deleteFoodDairyByIdApi(formattedDate, mealType).then(() => {
-        if (refetchEvents) {
-          refetchEvents()
-        }
-        reset({
-          listFoodIdToAdd: [],
-          caloriesBreakfast: 0
-        })
-        setSelectedFoods([])
-        setCalendarLabel([{ value: 1, label: 'Bữa sáng', color: 'danger' }])
-        setStartPicker(new Date())
-        handleAddEventSidebar()
-        toast.success('Xóa bữa ăn thành công')
-      }).catch(() => {
-        toast.error('Xóa bữa ăn thất bại')
+    const selectedDate = new Date(selectedEvent.start)
+    selectedDate.setMinutes(selectedDate.getMinutes() - selectedDate.getTimezoneOffset())
+    const formattedDate = formatDateToYYYYMMDD(selectedDate)
+    api.foodDairyApi.deleteFoodDairyByIdApi(formattedDate, mealType).then(() => {
+      if (refetchEvents) {
+        refetchEvents()
+      }
+      reset({
+        listFoodIdToAdd: [],
+        caloriesBreakfast: 0
       })
-      
-    
+      setSelectedFoods([])
+      setCalendarLabel([{ value: 1, label: 'Bữa sáng', color: 'danger' }])
+      setStartPicker(new Date())
+      handleAddEventSidebar()
+      toast.success('Xóa bữa ăn thành công')
+    }).catch(() => {
+      toast.error('Xóa bữa ăn thất bại')
+    })
+
+
   }
 
   // ** Event Action buttons
@@ -292,11 +293,56 @@ const AddEventSidebar = props => {
             Xóa
           </Button>
         </Fragment>
-        
+
       )
     }
   }
-  
+
+  console.log('food', optionFood)
+
+  const getMaxQuantityForPortion = (portion) => {
+    switch (portion.toLowerCase()) {
+      case '1 bát':
+        return 5
+      case '1 tô':
+        return 5
+      case '1 đĩa':
+        return 5
+      case '1 phần':
+        return 4
+      case '1 khay':
+        return 4
+      case '1 chén':
+        return 5
+      case '1 ly':
+        return 4
+      case '1 cốc':
+        return 3
+      case '1 tách':
+        return 3
+      case '1 chai':
+        return 5
+      case '1 lon':
+        return 4
+      case '1 bình':
+        return 3
+      case '1 quả':
+        return 20
+      case '1 miếng':
+        return 7
+      case '1 múi':
+        return 20
+      case '1 nải':
+        return 2
+      case '1 chùm':
+        return 3
+      case '1 trái':
+        return 20
+      default:
+        return 10
+    }
+  }
+
   // ** Close BTN
   const CloseBtn = <X className='cursor-pointer' size={15} onClick={handleAddEventSidebar} />
 
@@ -353,7 +399,7 @@ const AddEventSidebar = props => {
                         const newFoods = selectedOptions ? selectedOptions.map(option => ({
                           foodId: option.value,
                           quantity: 1, // Mặc định số lượng là 1
-                          foodName: `${option.label}}`,
+                          foodName: `${option.label}`,
                           portion: option.portion
                         })) : []
 
@@ -372,7 +418,6 @@ const AddEventSidebar = props => {
                     {/* Danh sách món ăn đã chọn với input số lượng */}
                     <div className="selected-foods">
                       {selectedFoods.map((food, index) => {
-                        // Tìm thông tin food option để lấy calories
                         const foodOption = optionFood.find(opt => opt.value === food.foodId)
                         const foodCalories = foodOption ? foodOption.calories : 0
                         const totalFoodCalories = foodCalories * food.quantity
@@ -394,14 +439,25 @@ const AddEventSidebar = props => {
                                 type="number"
                                 className="w-100"
                                 placeholder="Số lượng"
+                                min="1"
                                 value={food.quantity}
-                                min={0}
                                 onChange={(e) => {
                                   const newQuantity = parseFloat(e.target.value) || 0
-                                  const updatedFoods = selectedFoods.map((f, i) => (i === index ? { ...f, quantity: newQuantity } : f))
-                                  setSelectedFoods(updatedFoods)
-                                  field.onChange(updatedFoods)
-                                  setValue('caloriesBreakfast', calculateTotalCalories(updatedFoods))
+                                  const foodOption = optionFood.find(opt => opt.value === food.foodId)
+                                  if (foodOption && foodOption.serving) {
+                                    const maxQuantityForPortion = getMaxQuantityForPortion(foodOption.serving)
+
+                                    if (newQuantity >= 1 && newQuantity <= maxQuantityForPortion) {
+                                      const updatedFoods = selectedFoods.map((f, i) => (i === index ? { ...f, quantity: newQuantity } : f))
+                                      setSelectedFoods(updatedFoods)
+                                      field.onChange(updatedFoods)
+                                      setValue('caloriesBreakfast', calculateTotalCalories(updatedFoods))
+                                    } else {
+                                      toast.error(`Số lượng cho ${food.foodName} phải từ 1 đến ${maxQuantityForPortion}`)
+                                    }
+                                  } else {
+                                    toast.error('Không tìm thấy thông tin phần ăn')
+                                  }
                                 }}
                               />
                             </div>

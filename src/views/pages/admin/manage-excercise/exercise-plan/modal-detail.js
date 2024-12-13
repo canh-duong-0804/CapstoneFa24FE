@@ -65,35 +65,46 @@ const ModalComponent = () => {
   const [items, setItems] = useState(initialItems)
   const [optionExercise, setOptionExercise] = useState([])
   const [selectedFoods, setSelectedFoods] = useState([])
+  const [isDataChanged, setIsDataChanged] = useState(false)
 
-  const onChange = (newActiveKey) => {
-    const index = items.findIndex(item => item.key === newActiveKey)
-    console.log('Tab index:', index + 1)
-    setActiveKey(newActiveKey)
-    const tabIndex = JSON.parse(newActiveKey)
 
+  const loadTabData = (tabKey) => {
+    const tabIndex = JSON.parse(tabKey)
     api.exercisePlanTrainerApi.getExercisePlanDetailApi(dataItem.exercisePlanId, tabIndex)
       .then((rs) => {
-        console.log('rs', rs)
         if (rs) {
           const transformedExercises = rs.execriseInPlans.map(exercise => ({
             value: exercise.exerciseId,
-            label: exercise.exerciseName,
-            duration: exercise.duration
+            label: exercise.exerciseName
           }))
 
-          // Set form values
           setValue('day', rs.day)
           setValue('execriseInPlans', transformedExercises)
 
-          // Update selectedFoods state
-          setSelectedFoods(rs.execriseInPlans.map(exercise => ({
-            foodId: exercise.exerciseId,
-            foodName: exercise.exerciseName,
-            duration: exercise.duration
-          })))
+          const fullExerciseDetails = rs.execriseInPlans.map(exercise => {
+            const exerciseInfo = optionExercise.find(ex => ex.value === exercise.exerciseId)
+            return {
+              foodId: exercise.exerciseId,
+              foodName: exercise.exerciseName,
+              duration: exercise.duration,
+              typeExercise: exerciseInfo?.typeExercise,
+              nameTypeExercise: exerciseInfo?.nameTypeExercise,
+              metValue: exerciseInfo?.metValue,
+              minutesCadior1: exerciseInfo?.minutesCadior1,
+              minutesCadior2: exerciseInfo?.minutesCadior2,
+              minutesCadior3: exerciseInfo?.minutesCadior3,
+              repsResitance1: exerciseInfo?.repsResitance1,
+              repsResitance2: exerciseInfo?.repsResitance2,
+              repsResitance3: exerciseInfo?.repsResitance3,
+              setsResitance1: exerciseInfo?.setsResitance1,
+              setsResitance2: exerciseInfo?.setsResitance2,
+              setsResitance3: exerciseInfo?.setsResitance3
+            }
+          })
+
+          setSelectedFoods(fullExerciseDetails)
+          setIsDataChanged(false)
         }
-        reset(rs)
       })
       .catch(() => {
         reset(defaultValues)
@@ -154,28 +165,41 @@ const ModalComponent = () => {
     api.exercisePlanTrainerApi.getExercisePlanDetailApi(dataItem.exercisePlanId, 1)
       .then((rs) => {
         if (rs) {
-          console.log('rss', rs)
-          // Transform execriseInPlans to match Select component format
           const transformedExercises = rs.execriseInPlans.map(exercise => ({
             value: exercise.exerciseId,
-            label: exercise.exerciseName,
-            duration: exercise.duration
+            label: exercise.exerciseName
           }))
 
-          // Set form values
           setValue('day', rs.day)
           setValue('execriseInPlans', transformedExercises)
 
-          // Update selectedFoods state
-          setSelectedFoods(rs.execriseInPlans.map(exercise => ({
-            foodId: exercise.exerciseId,
-            foodName: exercise.exerciseName,
-            duration: exercise.duration
-          })))
+          const fullExerciseDetails = rs.execriseInPlans.map(exercise => {
+            const exerciseInfo = optionExercise.find(ex => ex.value === exercise.exerciseId)
+            return {
+              foodId: exercise.exerciseId,
+              foodName: exercise.exerciseName,
+              duration: exercise.duration,
+              typeExercise: exerciseInfo?.typeExercise,
+              nameTypeExercise: exerciseInfo?.nameTypeExercise,
+              metValue: exerciseInfo?.metValue,
+              minutesCadior1: exerciseInfo?.minutesCadior1,
+              minutesCadior2: exerciseInfo?.minutesCadior2,
+              minutesCadior3: exerciseInfo?.minutesCadior3,
+              repsResitance1: exerciseInfo?.repsResitance1,
+              repsResitance2: exerciseInfo?.repsResitance2,
+              repsResitance3: exerciseInfo?.repsResitance3,
+              setsResitance1: exerciseInfo?.setsResitance1,
+              setsResitance2: exerciseInfo?.setsResitance2,
+              setsResitance3: exerciseInfo?.setsResitance3
+            }
+          })
+
+          setSelectedFoods(fullExerciseDetails)
         }
       })
       .catch(() => {
         reset(defaultValues)
+        setSelectedFoods([])
       })
   }
 
@@ -190,15 +214,37 @@ const ModalComponent = () => {
       exercisePlanId: dataItem.exercisePlanId,
       day: JSON.parse(activeKey)
     }
-    api.exercisePlanTrainerApi.createExercisePlanDetailApi(updatedData).then(() => {
-      handleLoadTable()
-      // handleModal()
-      notificationSuccess(t('Thêm kế hoạch thành công'))
-    }).catch(() => {
-      notificationError(t('Thêm kế hoạch thất bại'))
-    }
-    )
+    return api.exercisePlanTrainerApi.createExercisePlanDetailApi(updatedData)
+      .then(() => {
+        handleLoadTable()
+        setIsDataChanged(false)
+        notificationSuccess(t('Thêm kế hoạch thành công'))
+      })
+      .catch(() => {
+        notificationError(t('Thêm kế hoạch thất bại'))
+      })
+  }
 
+  const onChange = (newActiveKey) => {
+    if (isDataChanged) {
+      const confirmResult = window.confirm('Bạn có thay đổi chưa được lưu. Bạn có muốn lưu thay đổi không?')
+      
+      if (confirmResult) {
+        handleSubmit(onSubmit)()
+        .then(() => {
+          setActiveKey(newActiveKey)
+          loadTabData(newActiveKey) 
+        })
+        return
+      } else {
+        reset(defaultValues)
+        setIsDataChanged(false)
+        setSelectedFoods([])
+      }
+    }
+
+    setActiveKey(newActiveKey)
+    loadTabData(newActiveKey)
   }
 
   const handleModalClosed = () => {
@@ -225,6 +271,8 @@ const ModalComponent = () => {
       </Fragment>
     )
   }
+
+  console.log('selectex', selectedFoods)
 
   return (
     <Fragment>
@@ -270,14 +318,32 @@ const ModalComponent = () => {
                             options={optionExercise}
                             isClearable={false}
                             onChange={(selectedOptions) => {
-                              const newExercise = selectedOptions ? selectedOptions.map(option => ({
-                                exerciseId: option.value,
-                                foodName: option.label,
-                                duration: 0
-                              })) : []
-                              field.onChange(newExercise)
+                              field.onChange(selectedOptions)
+                              
+                              const newSelectedFoods = selectedOptions ? selectedOptions.map(option => {
+                                const exerciseInfo = optionExercise.find(ex => ex.value === option.value)
+                                return {
+                                  foodId: option.value,
+                                  foodName: option.label,
+                                  duration: 0,
+                                  typeExercise: exerciseInfo?.typeExercise,
+                                  nameTypeExercise: exerciseInfo?.nameTypeExercise,
+                                  metValue: exerciseInfo?.metValue,
+                                  minutesCadior1: exerciseInfo?.minutesCadior1,
+                                  minutesCadior2: exerciseInfo?.minutesCadior2,
+                                  minutesCadior3: exerciseInfo?.minutesCadior3,
+                                  repsResitance1: exerciseInfo?.repsResitance1,
+                                  repsResitance2: exerciseInfo?.repsResitance2,
+                                  repsResitance3: exerciseInfo?.repsResitance3,
+                                  setsResitance1: exerciseInfo?.setsResitance1,
+                                  setsResitance2: exerciseInfo?.setsResitance2,
+                                  setsResitance3: exerciseInfo?.setsResitance3
+                                }
+                              }) : []
+                              setSelectedFoods(newSelectedFoods)
+                              setIsDataChanged(true)
                             }}
-                            value={optionExercise.filter(option => field.value?.some(val => val.exerciseId === option.value))}
+                            value={field.value}
                           />
                           {/* Danh sách món ăn đã chọn với input số lượng */}
                           <div className="selected-foods">
@@ -302,9 +368,22 @@ const ModalComponent = () => {
                                       min={0}
                                       onChange={(e) => {
                                         const newQuantity = parseFloat(e.target.value) || 0
-                                        const updatedFoods = selectedFoods.map((f, i) => (i === index ? { ...f, duration: newQuantity } : f))
+                                        const updatedFoods = selectedFoods.map((f, i) => {
+                                          if (i === index) {
+                                            return { ...f, duration: newQuantity }
+                                          }
+                                          return f
+                                        })
                                         setSelectedFoods(updatedFoods)
-                                        field.onChange(updatedFoods)
+                                        
+                                        // Cập nhật giá trị cho form theo định dạng của Select  
+                                        const selectValue = updatedFoods.map(food => ({
+                                          value: food.foodId,
+                                          label: food.foodName
+                                        }))
+                                        field.onChange(selectValue)
+                                        
+                                        setIsDataChanged(true)
                                       }}
                                     />
                                   </div>

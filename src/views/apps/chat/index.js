@@ -13,6 +13,7 @@ import classnames from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUserProfile, getChatContacts } from './store'
 
+// ** Styles
 import '@styles/base/pages/app-chat.scss'
 import '@styles/base/pages/app-chat-list.scss'
 

@@ -28,6 +28,11 @@ const NavbarBookmarks = props => {
             Bài tập
           </NavLink>
         </NavItem>
+        <NavItem className='navbar-custom' >
+          <NavLink className='' to='/chat/member'>
+            Chat
+          </NavLink>
+        </NavItem>
       </ul>
     </Fragment>
   )

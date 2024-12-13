@@ -81,22 +81,20 @@ const ModalComponent = () => {
   const [selectedFoodLunch, setSelectedFoodLunch] = useState([])
   const [selectedFoodDinner, setSelectedFoodDinner] = useState([])
   const [selectedFoodSnack, setSelectedFoodSnack] = useState([])
+  const [isDataChanged, setIsDataChanged] = useState(false)
 
-  const onChange = (newActiveKey) => {
-    const index = items.findIndex(item => item.key === newActiveKey)
-    console.log('Tab index:', index + 1)
-    setActiveKey(newActiveKey)
-    const tabIndex = JSON.parse(newActiveKey)
 
+  const loadTabData = (tabKey) => {
+    const tabIndex = JSON.parse(tabKey)
     api.mealPlanTrainerApi.getMealPlanDetailApi(dataItem.mealPlanId, tabIndex)
       .then((rs) => {
-        console.log('rs', rs)
         if (rs) {
           setData(rs)
           setSelectedFoods(rs.listFoodIdBreakfasts)
-          setSelectedFoodLunch(rs.listFoodIdLunches)
+          setSelectedFoodLunch(rs.listFoodIdLunches) 
           setSelectedFoodDinner(rs.listFoodIdDinners)
           setSelectedFoodSnack(rs.listFoodIdSnacks)
+          
           const calculateCalories = (foodListName, caloriesField) => {
             const value = rs[foodListName]
             if (Array.isArray(value)) {
@@ -123,6 +121,7 @@ const ModalComponent = () => {
           })
         }
         reset(rs)
+        setIsDataChanged(false)
       })
       .catch(() => {
         reset(defaultValues)
@@ -302,15 +301,36 @@ const ModalComponent = () => {
       mealPlanId: dataItem.mealPlanId,
       day: JSON.parse(activeKey)
     }
-    api.mealPlanTrainerApi.createMealPlanDetailApi(updatedData).then(() => {
-      handleLoadTable()
-      // handleModal()
-      notificationSuccess(t('Thêm kế hoạch thành công'))
-    }).catch(() => {
-      notificationError(t('Thêm kế hoạch thất bại'))
-    }
-    )
+    return api.mealPlanTrainerApi.createMealPlanDetailApi(updatedData)
+      .then(() => {
+        handleLoadTable()
+        setIsDataChanged(false)
+        notificationSuccess(t('Thêm kế hoạch thành công'))
+      })
+      .catch(() => {
+        notificationError(t('Thêm kế hoạch thất bại'))
+      })
+  }
 
+  const onChange = (newActiveKey) => {
+    if (isDataChanged) {
+      const confirmResult = window.confirm('Bạn có thay đổi chưa được lưu. Bạn có muốn lưu thay đổi không?')
+      
+      if (confirmResult) {
+        handleSubmit(onSubmit)()
+        .then(() => {
+          setActiveKey(newActiveKey)
+          loadTabData(newActiveKey)
+        })
+        return
+      } else {
+        reset(defaultValues)
+        setIsDataChanged(false)
+      }
+    }
+    
+    setActiveKey(newActiveKey)
+    loadTabData(newActiveKey)
   }
 
   const handleModalClosed = () => {
@@ -397,6 +417,7 @@ const ModalComponent = () => {
                               setSelectedFoods(newFoods)
                               field.onChange(newFoods)
                               setValue('caloriesBreakfast', totalCalories)
+                              setIsDataChanged(true)
                             }}
                             value={optionFood.filter(option => field.value?.some(val => val.foodId === option.value))}
                           />
@@ -433,6 +454,7 @@ const ModalComponent = () => {
                                         setSelectedFoods(updatedFoods)
                                         field.onChange(updatedFoods)
                                         setValue('caloriesBreakfast', calculateTotalCalories(updatedFoods))
+                                        setIsDataChanged(true)
                                       }}
                                     />
                                   </div>
@@ -534,6 +556,7 @@ const ModalComponent = () => {
                               setSelectedFoodLunch(newFoods)
                               field.onChange(newFoods)
                               setValue('caloriesLunch', totalCalories)
+                              setIsDataChanged(true)
                             }}
                             value={optionFood.filter(option => field.value?.some(val => val.foodId === option.value))}
                           />
@@ -570,6 +593,7 @@ const ModalComponent = () => {
                                         setSelectedFoodLunch(updatedFoods)
                                         field.onChange(updatedFoods)
                                         setValue('caloriesLunch', calculateTotalCalories(updatedFoods))
+                                        setIsDataChanged(true)
                                       }}
                                     />
                                   </div>
@@ -670,6 +694,7 @@ const ModalComponent = () => {
                               setSelectedFoodDinner(newFoods)
                               field.onChange(newFoods)
                               setValue('caloriesDinner', totalCalories)
+                              setIsDataChanged(true)
                             }}
                             value={optionFood.filter(option => field.value?.some(val => val.foodId === option.value))}
                           />
@@ -706,6 +731,7 @@ const ModalComponent = () => {
                                         setSelectedFoodDinner(updatedFoods)
                                         field.onChange(updatedFoods)
                                         setValue('caloriesDinner', calculateTotalCalories(updatedFoods))
+                                        setIsDataChanged(true)
                                       }}
                                     />
                                   </div>
@@ -806,6 +832,7 @@ const ModalComponent = () => {
                               setSelectedFoodSnack(newFoods)
                               field.onChange(newFoods)
                               setValue('caloriesSnack', totalCalories)
+                              setIsDataChanged(true)
                             }}
                             value={optionFood.filter(option => field.value?.some(val => val.foodId === option.value))}
                           />
@@ -842,6 +869,7 @@ const ModalComponent = () => {
                                         setSelectedFoodSnack(updatedFoods)
                                         field.onChange(updatedFoods)
                                         setValue('caloriesSnack', calculateTotalCalories(updatedFoods))
+                                        setIsDataChanged(true)
                                       }}
                                     />
                                   </div>

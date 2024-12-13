@@ -39,7 +39,7 @@ const AddEventSidebar = props => {
   const selectedEvent = store.selectedEvent,
     {
       control,
-      setValue,
+      // setValue,
       reset,
       watch,
       handleSubmit,
@@ -54,7 +54,7 @@ const AddEventSidebar = props => {
   const [startPicker, setStartPicker] = useState(
     selectedEvent && selectedEvent.selectedDate ? new Date(selectedEvent.selectedDate) : new Date()
   )
-  
+
   const [optionFood, setOptionFood] = useState([])
   const [selectedFoods, setSelectedFoods] = useState([])
 
@@ -181,7 +181,7 @@ const AddEventSidebar = props => {
     setSelectedFoods([])
     setStartPicker(new Date())
   }
-  
+
   // ** Set sidebar fields
   const handleSelectedEvent = () => {
     // Reset form trước khi xử lý event mới
@@ -424,6 +424,16 @@ const AddEventSidebar = props => {
 
   console.log('exc', selectedFoods)
 
+  // Thêm hàm validate minutes
+  const validateMinutes = (value) => {
+    const minutes = parseFloat(value)
+    if (minutes < 0 || minutes > 90) {
+      toast.error('Số phút phải nằm trong khoảng 0-90')
+      return false
+    }
+    return true
+  }
+
   return (
     <Modal
       isOpen={open}
@@ -481,7 +491,7 @@ const AddEventSidebar = props => {
               />
               {errors.category ? <FormFeedback>{errors.category.message}</FormFeedback> : null}
             </div>
-            
+
             <div className='mb-1'>
               <Label className='form-label' for='add-listExerciseIdToAdd'>
                 Bài tập
@@ -523,68 +533,65 @@ const AddEventSidebar = props => {
                     {/* Danh sách bài tập đã chọn với input số lượng */}
                     <div className="selected-foods">
                       {selectedFoods.map((food, index) => {
-                        const foodOption = optionFood.find(opt => opt.value === food.foodId)
-                        const foodCalories = foodOption ? foodOption.calories : 0
-                        const totalFoodCalories = foodCalories * food.quantity
-
                         return (
                           <div key={food.foodId} className="d-flex align-items-center gap-2 mb-2">
                             <span className="flex-grow-1">{`${food.exerciseName}`}</span>
-                            {watch('category') === 1 && watch('intensity') === 1 && (
-                              <>
-                                <div className="d-flex flex-column me-2">
-                                  <Label
-                                    className="form-label"
-                                    for={`breakfast-quantity-${food.foodId}`}
-                                  >
-                                    Số phút
-                                  </Label>
-                                  <Input
-                                    id={`breakfast-quantity-${food.foodId}`}
-                                    type="number"
-                                    className="w-100"
-                                    value={food.minutesCadior1}
-                                    min={0}
-                                    onChange={(e) => {
-                                      const newQuantity = parseFloat(e.target.value) || 0
-                                      console.log(newQuantity)
-                                      const foodOption = optionFood.find(opt => opt.value === food.exerciseId)
-                                      console.log(foodOption)
-                                      const newCalories = calculateCalories(newQuantity, foodOption.metValue, foodOption.weight)
-                                      
-                                      const updatedFoods = selectedFoods.map((f, i) => {
-                                        if (i === index) {
-                                          return { 
-                                            ...f, 
-                                            minutesCadior1: newQuantity,
-                                            caloriesCadior1: newCalories
-                                          }
+                            <>
+                              <div className="d-flex flex-column me-2">
+                                <Label
+                                  className="form-label"
+                                  for={`breakfast-quantity-${food.foodId}`}
+                                >
+                                  Số phút
+                                </Label>
+                                <Input
+                                  id={`breakfast-quantity-${food.foodId}`}
+                                  type="number"
+                                  className="w-100"
+                                  value={food.minutesCadior1}
+                                  min={0}
+                                  max={90}
+                                  onChange={(e) => {
+                                    const newQuantity = parseFloat(e.target.value) || 0
+                                    if (!validateMinutes(newQuantity)) {
+                                      return
+                                    }
+                                    const foodOption = optionFood.find(opt => opt.value === food.exerciseId)
+                                    const newCalories = calculateCalories(newQuantity, foodOption.metValue, foodOption.weight)
+
+                                    const updatedFoods = selectedFoods.map((f, i) => {
+                                      if (i === index) {
+                                        return {
+                                          ...f,
+                                          minutesCadior1: newQuantity,
+                                          caloriesCadior1: newCalories
                                         }
-                                        return f
-                                      })
-                                      setSelectedFoods(updatedFoods)
-                                      field.onChange(updatedFoods)
-                                    }}
-                                  />
-                                </div>
-                                <div className="d-flex flex-column">
-                                  <Label
-                                    className="form-label"
-                                    for={`breakfast-calories-${food.foodId}`}
-                                  >
-                                    Calories
-                                  </Label>
-                                  <Input
-                                    id={`breakfast-calories-${food.foodId}`}
-                                    type="number" 
-                                    className="w-100"
-                                    placeholder="Calories"
-                                    value={food.caloriesCadior1 || 0}
-                                    disabled
-                                  />
-                                </div>
-                              </>
-                            )}
+                                      }
+                                      return f
+                                    })
+                                    setSelectedFoods(updatedFoods)
+                                    field.onChange(updatedFoods)
+                                  }}
+                                />
+                              </div>
+                              <div className="d-flex flex-column">
+                                <Label
+                                  className="form-label"
+                                  for={`breakfast-calories-${food.foodId}`}
+                                >
+                                  Calories
+                                </Label>
+                                <Input
+                                  id={`breakfast-calories-${food.foodId}`}
+                                  type="number"
+                                  className="w-100"
+                                  placeholder="Calories"
+                                  value={food.caloriesCadior1 || 0}
+                                  disabled
+                                />
+                              </div>
+                            </>
+
 
                             {watch('category') === 1 && watch('intensity') === 2 && (
                               <>
@@ -601,15 +608,19 @@ const AddEventSidebar = props => {
                                     className="w-100"
                                     value={food.minutesCadior2}
                                     min={0}
+                                    max={90}
                                     onChange={(e) => {
                                       const newQuantity = parseFloat(e.target.value) || 0
+                                      if (!validateMinutes(newQuantity)) {
+                                        return  
+                                      }
                                       const foodOption = optionFood.find(opt => opt.value === food.foodId)
                                       const newCalories = calculateCalories(newQuantity, foodOption.metValue, foodOption.weight)
-                                      
+
                                       const updatedFoods = selectedFoods.map((f, i) => {
                                         if (i === index) {
-                                          return { 
-                                            ...f, 
+                                          return {
+                                            ...f,
                                             minutesCadior2: newQuantity,
                                             caloriesCadior2: newCalories
                                           }
@@ -630,7 +641,7 @@ const AddEventSidebar = props => {
                                   </Label>
                                   <Input
                                     id={`breakfast-calories-${food.foodId}`}
-                                    type="number" 
+                                    type="number"
                                     className="w-100"
                                     placeholder="Calories"
                                     value={food.caloriesCadior2 || 0}
@@ -655,15 +666,19 @@ const AddEventSidebar = props => {
                                     className="w-100"
                                     value={food.minutesCadior3}
                                     min={0}
+                                    max={90}
                                     onChange={(e) => {
                                       const newQuantity = parseFloat(e.target.value) || 0
+                                      if (!validateMinutes(newQuantity)) {
+                                        return
+                                      }
                                       const foodOption = optionFood.find(opt => opt.value === food.foodId)
                                       const newCalories = calculateCalories(newQuantity, foodOption.metValue, foodOption.weight)
-                                      
+
                                       const updatedFoods = selectedFoods.map((f, i) => {
                                         if (i === index) {
-                                          return { 
-                                            ...f, 
+                                          return {
+                                            ...f,
                                             minutesCadior3: newQuantity,
                                             caloriesCadior3: newCalories
                                           }
@@ -684,7 +699,7 @@ const AddEventSidebar = props => {
                                   </Label>
                                   <Input
                                     id={`breakfast-calories-${food.foodId}`}
-                                    type="number" 
+                                    type="number"
                                     className="w-100"
                                     placeholder="Calories"
                                     value={food.caloriesCadior3 || 0}
@@ -694,7 +709,7 @@ const AddEventSidebar = props => {
                               </>
                             )}
 
-                            {watch('category') === 2 && (
+                            {/* {watch('category') === 2 && (
                               <>
                                 <div className="d-flex flex-column me-2">
                                   <Label
@@ -733,7 +748,7 @@ const AddEventSidebar = props => {
                                   </Label>
                                   <Input
                                     id={`breakfast-calories-${food.foodId}`}
-                                    type="number" 
+                                    type="number"
                                     className="w-100"
                                     placeholder="Calories"
                                     value={totalFoodCalories}
@@ -741,7 +756,7 @@ const AddEventSidebar = props => {
                                   />
                                 </div>
                               </>
-                            )}
+                            )} */}
 
                           </div>
                         )

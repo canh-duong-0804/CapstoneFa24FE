@@ -283,6 +283,10 @@ $chat-profile-sidebar-head-height: 200px;
       padding: 0 2rem 1.5rem;
     }
   }
+
+  .chat-app-form {
+    // ... styles
+  }
 }
 
 @include media-breakpoint-down(lg) {
