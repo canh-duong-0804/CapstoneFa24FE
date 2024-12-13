@@ -382,6 +382,44 @@
       }
     }
   }
+
+  // Thêm styles cho logo
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+    margin-right: 2rem;
+
+    img {
+      height: 45px;
+      width: auto;
+    }
+
+    .brand-text {
+      margin-left: 0.5rem;
+      font-weight: 600;
+      color: $primary;
+    }
+  }
+
+  // Styles cho các menu items
+  .navbar-custom {
+    margin: 0 1rem;
+    
+    a {
+      color: $body-color;
+      padding: 0.5rem 1rem;
+      font-weight: 500;
+      transition: color 0.15s ease-in-out;
+
+      &:hover {
+        color: $primary;
+      }
+    }
+
+    &.navbar-custom-first {
+      margin-left: 0;
+    }
+  }
 }
 
 // Navbar shadow on scroll

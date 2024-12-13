@@ -4,8 +4,8 @@ const DashboardTrainer = lazy(() => import('../../views/dashboard/trainer/index'
 const Statistic = lazy(() => import('../../views/pages/statistic/dashboard/index'))
 const Excercise = lazy(() => import('../../views/pages/trainer/manage-exercise/excercise/index'))
 const Food = lazy(() => import('../../views/pages/admin/manage-food/food/index'))
-const Recipe = lazy(() => import('../../views/pages/admin/manage-food/recipe/index'))
 const MealPlan = lazy(() => import('../../views/pages/admin/manage-food/meal-plan/index'))
+const ExercisePlan = lazy(() => import('../../views/pages/admin/manage-excercise/exercise-plan/index'))
 
 const TrainerRoutes = [
   {
@@ -33,14 +33,6 @@ const TrainerRoutes = [
     }
   },
   {
-    path: '/trainer/manage-recipe',
-    element: <Recipe />,
-    meta: {
-      action: 'read',
-      resource: 'All'
-    }
-  },
-  {
     path: '/trainer/manage-excercise',
     element: <Excercise />,
     meta: {
@@ -51,6 +43,14 @@ const TrainerRoutes = [
   {
     path: '/trainer/manage-meal-plan',
     element: <MealPlan />,
+    meta: {
+      action: 'read',
+      resource: 'All'
+    }
+  },
+  {
+    path: '/trainer/manage-exercise-plan',
+    element: <ExercisePlan />,
     meta: {
       action: 'read',
       resource: 'All'

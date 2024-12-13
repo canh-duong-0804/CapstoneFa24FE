@@ -203,7 +203,7 @@ const ModalComponent = () => {
                   name='longDescription'
                   control={control}
                   render={({ field }) => (
-                    <Input autoFocus placeholder='Nhập tên kế hoạch bữa ăn' invalid={errors.longDescription && true} {...field} />
+                    <Input autoFocus placeholder='Nhập mô tả dài' invalid={errors.longDescription && true} {...field} />
                   )}
                 />
                 {errors.longDescription ? <FormFeedback>{errors.longDescription.message}</FormFeedback> : null}

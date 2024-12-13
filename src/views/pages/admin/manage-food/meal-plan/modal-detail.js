@@ -11,7 +11,6 @@ import makeAnimated from 'react-select/animated'
 import ModalHeader from '../../../../../@core/components/modal-header'
 import { notificationError, notificationSuccess } from '../../../../../utility/notification'
 import { Tabs } from 'antd'
-import food from '../../../../../api/food'
 
 const initialItems = [
   {
@@ -27,6 +26,26 @@ const initialItems = [
   {
     label: 'Ngày 3',
     key: '3',
+    closable: false
+  },
+  {
+    label: 'Ngày 4',
+    key: '4',
+    closable: false
+  },
+  {
+    label: 'Ngày 5',
+    key: '5',
+    closable: false
+  },
+  {
+    label: 'Ngày 6',
+    key: '6',
+    closable: false
+  },
+  {
+    label: 'Ngày 7',
+    key: '7',
     closable: false
   }
 ]
@@ -74,7 +93,7 @@ const ModalComponent = () => {
   } = useForm({ defaultValues })
 
   const [activeKey, setActiveKey] = useState(initialItems[0].key)
-  const [items, setItems] = useState(initialItems)
+  const items = initialItems
   const [optionFood, setOptionFood] = useState([])
   const [data, setData] = useState(null)
   const [selectedFoods, setSelectedFoods] = useState([])
@@ -181,46 +200,6 @@ const ModalComponent = () => {
       setSelectedFoodSnack(newSelectedFoods)
     }
   }, [listFoodIdSnacks])
-
-  const add = () => {
-    const newTabNumber = items.length + 1
-    const newActiveKey = `newTab${newTabNumber}`
-    const newPanes = [...items]
-    newPanes.push({
-      label: `Ngày ${newTabNumber}`,
-      key: newActiveKey,
-      closable: false
-
-    })
-    setItems(newPanes)
-    setActiveKey(newActiveKey)
-  }
-  const remove = (targetKey) => {
-    let newActiveKey = activeKey
-    let lastIndex = -1
-    items.forEach((item, i) => {
-      if (item.key === targetKey) {
-        lastIndex = i - 1
-      }
-    })
-    const newPanes = items.filter((item) => item.key !== targetKey)
-    if (newPanes.length && newActiveKey === targetKey) {
-      if (lastIndex >= 0) {
-        newActiveKey = newPanes[lastIndex].key
-      } else {
-        newActiveKey = newPanes[0].key
-      }
-    }
-    setItems(newPanes)
-    setActiveKey(newActiveKey)
-  }
-  const onEdit = (targetKey, action) => {
-    if (action === 'add') {
-      add()
-    } else {
-      remove(targetKey)
-    }
-  }
 
   const renderData = () => {
     api.foodApi.getListBoxFoodApi().then((rs) => {
@@ -335,14 +314,13 @@ const ModalComponent = () => {
 
   const handleModalClosed = () => {
     setDataItem({})
-    setItems(initialItems)
+    setActiveKey('1')
   }
   const handleCancel = () => {
     reset(defaultValues)
     handleModalDetail()
     setActiveKey('1')
     setDataItem({})
-    setItems(initialItems)
     setSelectedFoods([])
   }
 
@@ -354,6 +332,54 @@ const ModalComponent = () => {
       </Fragment>
     )
   }
+
+  console.log('optionFood', optionFood)
+  console.log('luch', selectedFoodLunch)
+
+  // Thêm hàm getMaxQuantityForPortion
+  const getMaxQuantityForPortion = (portion) => {
+    switch (portion.toLowerCase()) {
+      case '1 bát':
+        return 5
+      case '1 tô':
+        return 5  
+      case '1 đĩa':
+        return 5
+      case '1 phần':
+        return 4
+      case '1 khay':
+        return 4
+      case '1 chén':
+        return 5
+      case '1 ly':
+        return 4
+      case '1 cốc':
+        return 3
+      case '1 tách':
+        return 3
+      case '1 chai':
+        return 5
+      case '1 lon':
+        return 4
+      case '1 bình':
+        return 3
+      case '1 quả':
+        return 20
+      case '1 miếng':
+        return 7
+      case '1 múi':
+        return 20
+      case '1 nải':
+        return 2
+      case '1 chùm':
+        return 3
+      case '1 trái':
+        return 20
+      default:
+        return 10
+    }
+  }
+
   return (
     <Fragment>
       <Modal
@@ -367,11 +393,10 @@ const ModalComponent = () => {
           <ModalHeader typeModal={typeModal} handleModal={handleCancel} title='Chi tiết kế hoạch bữa ăn' />
           <ModalBody>
             <Tabs
-              type="editable-card"
               onChange={onChange}
               activeKey={activeKey}
-              onEdit={onEdit}
               items={items}
+              type="card"
             />
             <div className='box form-box__border mb-2' style={{ border: '1px solid #ccc', borderRadius: '4px', padding: '15px' }}>
               <h5 className='form-box__border--title' style={{ marginBottom: '15px', fontWeight: 'bold'}}>
@@ -404,7 +429,7 @@ const ModalComponent = () => {
                               const newFoods = selectedOptions ? selectedOptions.map(option => ({
                                 foodId: option.value,
                                 quantity: 1, // Mặc định số lượng là 1
-                                foodName: `${option.label} - ${option.portion}`,
+                                foodName: `${option.label}`,
                                 portion: option.portion
                               })) : []
                             
@@ -446,15 +471,25 @@ const ModalComponent = () => {
                                       type="number"
                                       className="w-100"
                                       placeholder="Số lượng"
+                                      min="1"
                                       value={food.quantity}
-                                      min={0}
                                       onChange={(e) => {
                                         const newQuantity = parseFloat(e.target.value) || 0
-                                        const updatedFoods = selectedFoods.map((f, i) => (i === index ? { ...f, quantity: newQuantity } : f))
-                                        setSelectedFoods(updatedFoods)
-                                        field.onChange(updatedFoods)
-                                        setValue('caloriesBreakfast', calculateTotalCalories(updatedFoods))
-                                        setIsDataChanged(true)
+                                        const foodOption = optionFood.find(opt => opt.value === food.foodId)
+                                        if (foodOption && foodOption.serving) {
+                                          const maxQuantityForPortion = getMaxQuantityForPortion(foodOption.serving)
+                                          
+                                          if (newQuantity >= 1 && newQuantity <= maxQuantityForPortion) {
+                                            const updatedFoods = selectedFoods.map((f, i) => (i === index ? { ...f, quantity: newQuantity } : f))
+                                            setSelectedFoods(updatedFoods)
+                                            field.onChange(updatedFoods)
+                                            setValue('caloriesBreakfast', calculateTotalCalories(updatedFoods))
+                                          } else {
+                                            notificationError(`Số lượng cho ${food.foodName} phải từ 1 đến ${maxQuantityForPortion}`)
+                                          }
+                                        } else {
+                                          notificationError('Không tìm thấy thông tin phần ăn')
+                                        }
                                       }}
                                     />
                                   </div>
@@ -543,8 +578,8 @@ const ModalComponent = () => {
                               const newFoods = selectedOptions ? selectedOptions.map(option => ({
                                 foodId: option.value,
                                 quantity: 1, // Mặc định số lượng là 1
-                                foodName: `${option.label} - ${option.portion}`,
-                                portion: food.portion
+                                foodName: `${option.label}`,
+                                portion: option.portion
                               })) : []
                             
                               // Tính tổng calories ngay khi chọn
@@ -575,25 +610,35 @@ const ModalComponent = () => {
                                     {selectedFoodLunch.length > 0 && (
                                       <Label
                                         className={`form-label ${food.quantity > 0 ? 'visible' : 'd-none'}`}
-                                        for={`breakfast-quantity-${food.foodId}`}
+                                        for={`lunch-quantity-${food.foodId}`}
                                       >
                                         Số lượng
                                       </Label>
                                     )}
                                     <Input
-                                      id={`breakfast-quantity-${food.foodId}`}
+                                      id={`lunch-quantity-${food.foodId}`}
                                       type="number"
                                       className="w-100"
                                       placeholder="Số lượng"
+                                      min="1"
                                       value={food.quantity}
-                                      min={0}
                                       onChange={(e) => {
                                         const newQuantity = parseFloat(e.target.value) || 0
-                                        const updatedFoods = selectedFoodLunch.map((f, i) => (i === index ? { ...f, quantity: newQuantity } : f))
-                                        setSelectedFoodLunch(updatedFoods)
-                                        field.onChange(updatedFoods)
-                                        setValue('caloriesLunch', calculateTotalCalories(updatedFoods))
-                                        setIsDataChanged(true)
+                                        const foodOption = optionFood.find(opt => opt.value === food.foodId)
+                                        if (foodOption && foodOption.serving) {
+                                          const maxQuantityForPortion = getMaxQuantityForPortion(foodOption.serving)
+                                          
+                                          if (newQuantity >= 1 && newQuantity <= maxQuantityForPortion) {
+                                            const updatedFoods = selectedFoodLunch.map((f, i) => (i === index ? { ...f, quantity: newQuantity } : f))
+                                            setSelectedFoodLunch(updatedFoods)
+                                            field.onChange(updatedFoods)
+                                            setValue('caloriesLunch', calculateTotalCalories(updatedFoods))
+                                          } else {
+                                            notificationError(`Số lượng cho ${food.foodName} phải từ 1 đến ${maxQuantityForPortion}`)
+                                          }
+                                        } else {
+                                          notificationError('Không tìm thấy thông tin phần ăn')
+                                        }
                                       }}
                                     />
                                   </div>
@@ -601,13 +646,13 @@ const ModalComponent = () => {
                                     {selectedFoodLunch.length > 0 && (
                                       <Label
                                         className={`form-label ${food.quantity > 0 ? 'visible' : 'd-none'}`}
-                                        for={`breakfast-calories-${food.foodId}`}
+                                        for={`lunch-calories-${food.foodId}`}
                                       >
                                         Calories
                                       </Label>
                                     )}
                                     <Input
-                                      id={`breakfast-calories-${food.foodId}`}
+                                      id={`lunch-calories-${food.foodId}`}
                                       type="number"
                                       className="w-100"
                                       placeholder="Calories"
@@ -682,7 +727,8 @@ const ModalComponent = () => {
                               const newFoods = selectedOptions ? selectedOptions.map(option => ({
                                 foodId: option.value,
                                 quantity: 1, // Mặc định số lượng là 1
-                                foodName: `${option.label} - ${option.portion}`
+                                foodName: `${option.label}`,
+                                portion: option.portion
                               })) : []
                             
                               // Tính tổng calories ngay khi chọn
@@ -723,15 +769,25 @@ const ModalComponent = () => {
                                       type="number"
                                       className="w-100"
                                       placeholder="Số lượng"
+                                      min="1"
                                       value={food.quantity}
-                                      min={0}
                                       onChange={(e) => {
                                         const newQuantity = parseFloat(e.target.value) || 0
-                                        const updatedFoods = selectedFoodDinner.map((f, i) => (i === index ? { ...f, quantity: newQuantity } : f))
-                                        setSelectedFoodDinner(updatedFoods)
-                                        field.onChange(updatedFoods)
-                                        setValue('caloriesDinner', calculateTotalCalories(updatedFoods))
-                                        setIsDataChanged(true)
+                                        const foodOption = optionFood.find(opt => opt.value === food.foodId)
+                                        if (foodOption && foodOption.serving) {
+                                          const maxQuantityForPortion = getMaxQuantityForPortion(foodOption.serving)
+                                          
+                                          if (newQuantity >= 1 && newQuantity <= maxQuantityForPortion) {
+                                            const updatedFoods = selectedFoodDinner.map((f, i) => (i === index ? { ...f, quantity: newQuantity } : f))
+                                            setSelectedFoodDinner(updatedFoods)
+                                            field.onChange(updatedFoods)
+                                            setValue('caloriesDinner', calculateTotalCalories(updatedFoods))
+                                          } else {
+                                            notificationError(`Số lượng cho ${food.foodName} phải từ 1 đến ${maxQuantityForPortion}`)
+                                          }
+                                        } else {
+                                          notificationError('Không tìm thấy thông tin phần ăn')
+                                        }
                                       }}
                                     />
                                   </div>
@@ -820,7 +876,8 @@ const ModalComponent = () => {
                               const newFoods = selectedOptions ? selectedOptions.map(option => ({
                                 foodId: option.value,
                                 quantity: 1, // Mặc định số lượng là 1
-                                foodName: `${option.label} - ${option.portion}`
+                                foodName: `${option.label}`,
+                                portion: option.portion
                               })) : []
                             
                               // Tính tổng calories ngay khi chọn
@@ -861,15 +918,25 @@ const ModalComponent = () => {
                                       type="number"
                                       className="w-100"
                                       placeholder="Số lượng"
+                                      min="1"
                                       value={food.quantity}
-                                      min={0}
                                       onChange={(e) => {
                                         const newQuantity = parseFloat(e.target.value) || 0
-                                        const updatedFoods = selectedFoodSnack.map((f, i) => (i === index ? { ...f, quantity: newQuantity } : f))
-                                        setSelectedFoodSnack(updatedFoods)
-                                        field.onChange(updatedFoods)
-                                        setValue('caloriesSnack', calculateTotalCalories(updatedFoods))
-                                        setIsDataChanged(true)
+                                        const foodOption = optionFood.find(opt => opt.value === food.foodId)
+                                        if (foodOption && foodOption.serving) {
+                                          const maxQuantityForPortion = getMaxQuantityForPortion(foodOption.serving)
+                                          
+                                          if (newQuantity >= 1 && newQuantity <= maxQuantityForPortion) {
+                                            const updatedFoods = selectedFoodSnack.map((f, i) => (i === index ? { ...f, quantity: newQuantity } : f))
+                                            setSelectedFoodSnack(updatedFoods)
+                                            field.onChange(updatedFoods)
+                                            setValue('caloriesSnack', calculateTotalCalories(updatedFoods))
+                                          } else {
+                                            notificationError(`Số lượng cho ${food.foodName} phải từ 1 đến ${maxQuantityForPortion}`)
+                                          }
+                                        } else {
+                                          notificationError('Không tìm thấy thông tin phần ăn')
+                                        }
                                       }}
                                     />
                                   </div>

@@ -37,6 +37,8 @@ const Landing = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
 
+  console.log(currentSlide)
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
@@ -80,9 +82,13 @@ const Landing = () => {
   const handleTestimonialSlide = (direction) => {
     const testimonialCount = 4 // Số lượng testimonial
     if (direction === 'next') {
-      setCurrentSlide(prev => (prev + 2 >= testimonialCount) ? 0 : prev + 2)
+      setCurrentSlide(prev => {
+        return (prev + 2 >= testimonialCount) ? 0 : prev + 2
+      })
     } else {
-      setCurrentSlide(prev => (prev - 2 < 0) ? testimonialCount - 2 : prev - 2)
+      setCurrentSlide(prev => {
+        return (prev - 2 < 0) ? testimonialCount - 2 : prev - 2
+      })
     }
   }
 

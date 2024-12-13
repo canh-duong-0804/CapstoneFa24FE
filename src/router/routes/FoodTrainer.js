@@ -28,15 +28,8 @@ const FoodTrainerRoutes = [
       action: 'read',
       resource: 'All'
     }
-  },
-  {
-    path: '/food-trainer/manage-recipe',
-    element: <Recipe />,
-    meta: {
-      action: 'read',
-      resource: 'All'
-    }
   }
+  
 ]
 
 export default FoodTrainerRoutes

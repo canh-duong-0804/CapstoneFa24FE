@@ -27,6 +27,26 @@ const initialItems = [
     label: 'Ngày 3',
     key: '3',
     closable: false
+  },
+  {
+    label: 'Ngày 4',
+    key: '4',
+    closable: false
+  },
+  {
+    label: 'Ngày 5',
+    key: '5',
+    closable: false
+  },
+  {
+    label: 'Ngày 6',
+    key: '6',
+    closable: false
+  },
+  {
+    label: 'Ngày 7',
+    key: '7',
+    closable: false
   }
 ]
 
@@ -62,7 +82,7 @@ const ModalComponent = () => {
   } = useForm({ defaultValues })
 
   const [activeKey, setActiveKey] = useState(initialItems[0].key)
-  const [items, setItems] = useState(initialItems)
+  const items = initialItems
   const [optionExercise, setOptionExercise] = useState([])
   const [selectedFoods, setSelectedFoods] = useState([])
   const [isDataChanged, setIsDataChanged] = useState(false)
@@ -110,46 +130,6 @@ const ModalComponent = () => {
         reset(defaultValues)
         setSelectedFoods([])
       })
-  }
-
-  const add = () => {
-    const newTabNumber = items.length + 1
-    const newActiveKey = `newTab${newTabNumber}`
-    const newPanes = [...items]
-    newPanes.push({
-      label: `Ngày ${newTabNumber}`,
-      key: newActiveKey,
-      closable: false
-
-    })
-    setItems(newPanes)
-    setActiveKey(newActiveKey)
-  }
-  const remove = (targetKey) => {
-    let newActiveKey = activeKey
-    let lastIndex = -1
-    items.forEach((item, i) => {
-      if (item.key === targetKey) {
-        lastIndex = i - 1
-      }
-    })
-    const newPanes = items.filter((item) => item.key !== targetKey)
-    if (newPanes.length && newActiveKey === targetKey) {
-      if (lastIndex >= 0) {
-        newActiveKey = newPanes[lastIndex].key
-      } else {
-        newActiveKey = newPanes[0].key
-      }
-    }
-    setItems(newPanes)
-    setActiveKey(newActiveKey)
-  }
-  const onEdit = (targetKey, action) => {
-    if (action === 'add') {
-      add()
-    } else {
-      remove(targetKey)
-    }
   }
 
   const renderData = () => {
@@ -214,6 +194,7 @@ const ModalComponent = () => {
       exercisePlanId: dataItem.exercisePlanId,
       day: JSON.parse(activeKey)
     }
+    
     return api.exercisePlanTrainerApi.createExercisePlanDetailApi(updatedData)
       .then(() => {
         handleLoadTable()
@@ -249,7 +230,7 @@ const ModalComponent = () => {
 
   const handleModalClosed = () => {
     setDataItem({})
-    setItems(initialItems)
+    setActiveKey('1')
     setSelectedFoods([])
   }
   const handleCancel = () => {
@@ -257,7 +238,6 @@ const ModalComponent = () => {
     handleModalDetail()
     setActiveKey('1')
     setDataItem({})
-    setItems(initialItems)
     setSelectedFoods([])
   }
 
@@ -287,10 +267,9 @@ const ModalComponent = () => {
           <ModalHeader typeModal={typeModal} handleModal={handleCancel} title='Chi tiết kế hoạch bài tập' />
           <ModalBody>
             <Tabs
-              type="editable-card"
+              type="card"
               onChange={onChange}
               activeKey={activeKey}
-              onEdit={onEdit}
               items={items}
             />
             <div className='box form-box__border mb-2' style={{ border: '1px solid #ccc', borderRadius: '4px', padding: '15px' }}>
@@ -351,7 +330,7 @@ const ModalComponent = () => {
                               return (
                                 <div key={food.foodId} className="d-flex align-items-center gap-2 mb-2">
                                   <span className="flex-grow-1">{food.foodName}</span>
-                                  <div className="d-flex flex-column me-2">
+                                  <div className="d-flex flex-column me-2" style={{ width: '200px' }}>
                                     {selectedFoods.length > 0 && (
                                       <Label
                                         for={`breakfast-quantity-${food.foodId}`}
@@ -363,11 +342,19 @@ const ModalComponent = () => {
                                       id={`breakfast-quantity-${food.foodId}`}
                                       type="number"
                                       className="w-100"
-                                      placeholder="Số lượng"
+                                      placeholder="Số phút"
                                       value={food.duration}
                                       min={0}
+                                      max={90}
+                                      style={{ minWidth: '230px' }}
                                       onChange={(e) => {
                                         const newQuantity = parseFloat(e.target.value) || 0
+                                        
+                                        if (newQuantity < 0 || newQuantity > 90) {
+                                          notificationError(t('Số phút phải nằm trong khoảng 0-90'))
+                                          return
+                                        }
+
                                         const updatedFoods = selectedFoods.map((f, i) => {
                                           if (i === index) {
                                             return { ...f, duration: newQuantity }
@@ -376,7 +363,6 @@ const ModalComponent = () => {
                                         })
                                         setSelectedFoods(updatedFoods)
                                         
-                                        // Cập nhật giá trị cho form theo định dạng của Select  
                                         const selectValue = updatedFoods.map(food => ({
                                           value: food.foodId,
                                           label: food.foodName
