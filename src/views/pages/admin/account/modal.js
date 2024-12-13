@@ -76,9 +76,7 @@ const ModalComponent = () => {
 
   const optionGender = [
     { value: true, label: 'Nam' },
-    { value: false, label: 'Nữ' },
-    { value: '2', label: 'Khác' }
-
+    { value: false, label: 'Nữ' }
   ]
 
   const optionRole = [
@@ -260,6 +258,7 @@ const ModalComponent = () => {
                       className='react-select'
                       classNamePrefix='select'
                       options={optionGender}
+                      placeholder='Chọn...'
                       isClearable={true}
                       onChange={(option) => {
                         field.onChange(option ? option.value : '')
@@ -303,6 +302,7 @@ const ModalComponent = () => {
                     className='react-select'
                     classNamePrefix='select'
                     options={optionRole}
+                    placeholder='Chọn...'
                     isClearable={true}
                     onChange={(option) => {
                       field.onChange(option ? option.value : '')

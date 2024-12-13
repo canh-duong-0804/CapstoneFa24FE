@@ -18,13 +18,6 @@ export default [
                 resource: 'All'
             },
             {
-                id: '24',
-                title: 'Công thức nấu ăn',
-                icon: <Circle size={12} />,
-                navLink: '/food-trainer/manage-recipe',
-                action: 'read',
-                resource: 'All'
-            }, {
                 id: '25',
                 title: 'Gợi ý kế hoạch',
                 icon: <Circle size={12} />,
