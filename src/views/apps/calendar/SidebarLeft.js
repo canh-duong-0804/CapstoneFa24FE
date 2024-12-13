@@ -1,27 +1,22 @@
-// ** React Imports
 import { Fragment } from 'react'
 
-// ** Custom Components
-import classnames from 'classnames'
 
-// ** Reactstrap Imports
 import { CardBody, Button, Input, Label } from 'reactstrap'
 
-// ** illustration import
 import illustration from '@src/assets/images/pages/calendar-illustration.png'
 
 // ** Filters Checkbox Array
-const filters = [
-  { label: 'Bữa sáng', color: 'danger', className: 'form-check-danger mb-1' },
-  { label: 'Bữa trưa', color: 'warning', className: 'form-check-warning mb-1' },
-  { label: 'Bữa tối', color: 'success', className: 'form-check-success mb-1' },
-  { label: 'Bữa phụ', color: 'info', className: 'form-check-info mb-1' }
+// const filters = [
+//   { label: 'Bữa sáng', color: 'danger', className: 'form-check-danger mb-1' },
+//   { label: 'Bữa trưa', color: 'warning', className: 'form-check-warning mb-1' },
+//   { label: 'Bữa tối', color: 'success', className: 'form-check-success mb-1' },
+//   { label: 'Bữa phụ', color: 'info', className: 'form-check-info mb-1' }
 
-]
+// ]
 
 const SidebarLeft = props => {
   // ** Props
-  const { handleAddEventSidebar, toggleSidebar, updateFilter, updateAllFilters, store, dispatch } = props
+  const { handleAddEventSidebar, toggleSidebar} = props
 
   // ** Function to handle Add Event Click
   const handleAddEventClick = () => {
@@ -37,7 +32,7 @@ const SidebarLeft = props => {
             <span className='align-middle'>Thêm</span>
           </Button>
         </CardBody>
-        <CardBody>
+        {/* <CardBody>
           <h5 className='section-label mb-1'>
             <span className='align-middle'>Lọc</span>
           </h5>
@@ -82,7 +77,7 @@ const SidebarLeft = props => {
                 )
               })}
           </div>
-        </CardBody>
+        </CardBody> */}
       </div>
       <div className='mt-auto'>
         <img className='img-fluid' src={illustration} alt='illustration' />

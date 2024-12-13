@@ -101,7 +101,8 @@ const AddEventSidebar = props => {
       selectDate: adjustedDate,
       listFoodIdToAdd: selectedFoods.map(food => ({
         foodId: food.foodId,
-        quantity: food.quantity
+        quantity: food.quantity,
+        portion: food.portion
       }))
     }
 
@@ -168,10 +169,12 @@ const AddEventSidebar = props => {
                 // Transform foods bằng cách kết hợp data từ API với optionFood
                 const transformedFoods = rs.listFoodIdToAdd.map(food => {
                   const foodOption = foodOptions.find(opt => opt.value === food.foodId)
+                  console.log('foodOption', foodOption)
                   return {
                     foodId: food.foodId,
                     quantity: food.quantity,
-                    foodName: foodOption ? foodOption.label : `Food ${food.foodId}` // Fallback nếu không tìm thấy
+                    foodName: foodOption ? foodOption.label : `Food ${food.foodId}`,
+                    portion: food.portion // Fallback nếu không tìm thấy
                   }
                 })
                 setSelectedFoods(transformedFoods)
@@ -241,6 +244,31 @@ const AddEventSidebar = props => {
       })
   }
 
+  const handleDeleteEvent = () => {
+    const mealType = selectedEvent.extendedProps.calendar
+      const selectedDate = new Date(selectedEvent.start)
+      selectedDate.setMinutes(selectedDate.getMinutes() - selectedDate.getTimezoneOffset())
+      const formattedDate = formatDateToYYYYMMDD(selectedDate)
+      api.foodDairyApi.deleteFoodDairyByIdApi(formattedDate, mealType).then(() => {
+        if (refetchEvents) {
+          refetchEvents()
+        }
+        reset({
+          listFoodIdToAdd: [],
+          caloriesBreakfast: 0
+        })
+        setSelectedFoods([])
+        setCalendarLabel([{ value: 1, label: 'Bữa sáng', color: 'danger' }])
+        setStartPicker(new Date())
+        handleAddEventSidebar()
+        toast.success('Xóa bữa ăn thành công')
+      }).catch(() => {
+        toast.error('Xóa bữa ăn thất bại')
+      })
+      
+    
+  }
+
   // ** Event Action buttons
   const EventActions = () => {
     if (isObjEmpty(selectedEvent) || (!isObjEmpty(selectedEvent) && !selectedEvent.title.length)) {
@@ -260,11 +288,15 @@ const AddEventSidebar = props => {
           <Button className='me-1' color='primary' onClick={handleUpdateEvent}>
             Cập nhật
           </Button>
+          <Button color='danger' onClick={handleDeleteEvent} outline>
+            Xóa
+          </Button>
         </Fragment>
+        
       )
     }
   }
-
+  
   // ** Close BTN
   const CloseBtn = <X className='cursor-pointer' size={15} onClick={handleAddEventSidebar} />
 
@@ -320,37 +352,80 @@ const AddEventSidebar = props => {
                       onChange={(selectedOptions) => {
                         const newFoods = selectedOptions ? selectedOptions.map(option => ({
                           foodId: option.value,
-                          quantity: 0,
-                          foodName: option.label
+                          quantity: 1, // Mặc định số lượng là 1
+                          foodName: `${option.label}}`,
+                          portion: option.portion
                         })) : []
+
+                        // Tính tổng calories ngay khi chọn
+                        const totalCalories = newFoods.reduce((total, food) => {
+                          const foodOption = optionFood.find(opt => opt.value === food.foodId)
+                          return total + (foodOption ? foodOption.calories * food.quantity : 0)
+                        }, 0)
 
                         setSelectedFoods(newFoods)
                         field.onChange(newFoods)
-                        setValue('caloriesBreakfast', 0)
+                        setValue('caloriesBreakfast', totalCalories)
                       }}
                       value={optionFood.filter(option => field.value?.some(val => val.foodId === option.value))}
                     />
                     {/* Danh sách món ăn đã chọn với input số lượng */}
                     <div className="selected-foods">
-                      {selectedFoods.map((food, index) => (
-                        <div key={food.foodId} className="d-flex align-items-center gap-2 mb-2">
-                          <span className="flex-grow-1">{food.foodName}</span>
-                          <Input
-                            type="number"
-                            className="w-25"
-                            placeholder="Số lượng"
-                            value={food.quantity}
-                            min={0}
-                            onChange={(e) => {
-                              const newQuantity = parseFloat(e.target.value) || 0
-                              const updatedFoods = selectedFoods.map((f, i) => (i === index ? { ...f, quantity: newQuantity } : f))
-                              setSelectedFoods(updatedFoods)
-                              field.onChange(updatedFoods)
-                              setValue('caloriesBreakfast', calculateTotalCalories(updatedFoods))
-                            }}
-                          />
-                        </div>
-                      ))}
+                      {selectedFoods.map((food, index) => {
+                        // Tìm thông tin food option để lấy calories
+                        const foodOption = optionFood.find(opt => opt.value === food.foodId)
+                        const foodCalories = foodOption ? foodOption.calories : 0
+                        const totalFoodCalories = foodCalories * food.quantity
+
+                        return (
+                          <div key={food.foodId} className="d-flex align-items-center gap-2 mb-2">
+                            <span className="flex-grow-1">{`${food.foodName} - ${food.portion}`}</span>
+                            <div className="d-flex flex-column me-2">
+                              {selectedFoods.length > 0 && (
+                                <Label
+                                  className={`form-label ${food.quantity > 0 ? 'visible' : 'd-none'}`}
+                                  for={`breakfast-quantity-${food.foodId}`}
+                                >
+                                  Số lượng
+                                </Label>
+                              )}
+                              <Input
+                                id={`breakfast-quantity-${food.foodId}`}
+                                type="number"
+                                className="w-100"
+                                placeholder="Số lượng"
+                                value={food.quantity}
+                                min={0}
+                                onChange={(e) => {
+                                  const newQuantity = parseFloat(e.target.value) || 0
+                                  const updatedFoods = selectedFoods.map((f, i) => (i === index ? { ...f, quantity: newQuantity } : f))
+                                  setSelectedFoods(updatedFoods)
+                                  field.onChange(updatedFoods)
+                                  setValue('caloriesBreakfast', calculateTotalCalories(updatedFoods))
+                                }}
+                              />
+                            </div>
+                            <div className="d-flex flex-column">
+                              {selectedFoods.length > 0 && (
+                                <Label
+                                  className={`form-label ${food.quantity > 0 ? 'visible' : 'd-none'}`}
+                                  for={`breakfast-calories-${food.foodId}`}
+                                >
+                                  Calories
+                                </Label>
+                              )}
+                              <Input
+                                id={`breakfast-calories-${food.foodId}`}
+                                type="number"
+                                className="w-100"
+                                placeholder="Calories"
+                                value={totalFoodCalories}
+                                disabled
+                              />
+                            </div>
+                          </div>
+                        )
+                      })}
                     </div>
                   </div>
                 )}
@@ -361,7 +436,7 @@ const AddEventSidebar = props => {
             </div>
             <div className='mb-1'>
               <Label className='form-label' for='add-calories'>
-                Calories
+                Tổng calories bữa ăn
               </Label>
               <Controller
                 id='caloriesBreakfast'

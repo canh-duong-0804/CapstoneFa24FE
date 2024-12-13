@@ -33,7 +33,7 @@ const initialItems = [
 const defaultValues = {
   day: 1,
   execriseInPlans: []
-  
+
 }
 
 const ModalComponent = () => {
@@ -55,7 +55,7 @@ const ModalComponent = () => {
     // clearErrors,
     handleSubmit,
     setValue,
-    // watch,
+    watch,
     //getValues,
     reset,
     formState: { errors }
@@ -64,6 +64,7 @@ const ModalComponent = () => {
   const [activeKey, setActiveKey] = useState(initialItems[0].key)
   const [items, setItems] = useState(initialItems)
   const [optionExercise, setOptionExercise] = useState([])
+  const [selectedFoods, setSelectedFoods] = useState([])
 
   const onChange = (newActiveKey) => {
     const index = items.findIndex(item => item.key === newActiveKey)
@@ -75,17 +76,28 @@ const ModalComponent = () => {
       .then((rs) => {
         console.log('rs', rs)
         if (rs) {
-          Object.entries(rs).forEach(([name, value]) => {
-            setValue(name, value)
-            if (name === 'listExercise') {
-              calculateCalories(name, 'caloriesBreakfast')
-            }
-          })
+          const transformedExercises = rs.execriseInPlans.map(exercise => ({
+            value: exercise.exerciseId,
+            label: exercise.exerciseName,
+            duration: exercise.duration
+          }))
+
+          // Set form values
+          setValue('day', rs.day)
+          setValue('execriseInPlans', transformedExercises)
+
+          // Update selectedFoods state
+          setSelectedFoods(rs.execriseInPlans.map(exercise => ({
+            foodId: exercise.exerciseId,
+            foodName: exercise.exerciseName,
+            duration: exercise.duration
+          })))
         }
         reset(rs)
       })
       .catch(() => {
         reset(defaultValues)
+        setSelectedFoods([])
       })
   }
 
@@ -131,7 +143,6 @@ const ModalComponent = () => {
 
   const renderData = () => {
     api.exerciseApi.getListboxExerciseApi().then((rs) => {
-      console.log('rs', rs)
       setOptionExercise(rs)
     }).catch(() => {
 
@@ -143,9 +154,24 @@ const ModalComponent = () => {
     api.exercisePlanTrainerApi.getExercisePlanDetailApi(dataItem.exercisePlanId, 1)
       .then((rs) => {
         if (rs) {
-          Object.entries(rs).forEach(([name, value]) => {
-            setValue(name, value)
-          })
+          console.log('rss', rs)
+          // Transform execriseInPlans to match Select component format
+          const transformedExercises = rs.execriseInPlans.map(exercise => ({
+            value: exercise.exerciseId,
+            label: exercise.exerciseName,
+            duration: exercise.duration
+          }))
+
+          // Set form values
+          setValue('day', rs.day)
+          setValue('execriseInPlans', transformedExercises)
+
+          // Update selectedFoods state
+          setSelectedFoods(rs.execriseInPlans.map(exercise => ({
+            foodId: exercise.exerciseId,
+            foodName: exercise.exerciseName,
+            duration: exercise.duration
+          })))
         }
       })
       .catch(() => {
@@ -153,9 +179,14 @@ const ModalComponent = () => {
       })
   }
 
-  const onSubmit = data => {
+  console.log(watch('execriseInPlans'))
+
+  const onSubmit = () => {
     const updatedData = {
-      ...data,
+      execriseInPlans: selectedFoods.map(food => ({
+        exerciseId: food.foodId,
+        duration: food.duration
+      })),
       exercisePlanId: dataItem.exercisePlanId,
       day: JSON.parse(activeKey)
     }
@@ -173,6 +204,7 @@ const ModalComponent = () => {
   const handleModalClosed = () => {
     setDataItem({})
     setItems(initialItems)
+    setSelectedFoods([])
   }
   const handleCancel = () => {
     reset(defaultValues)
@@ -180,7 +212,10 @@ const ModalComponent = () => {
     setActiveKey('1')
     setDataItem({})
     setItems(initialItems)
+    setSelectedFoods([])
   }
+
+  console.log('optionExx', optionExercise)
 
   const renderFooterButtons = () => {
     return (
@@ -213,7 +248,7 @@ const ModalComponent = () => {
             <div className='box form-box__border mb-2' style={{ border: '1px solid #ccc', borderRadius: '4px', padding: '15px' }}>
               <Row className="gy-1">
                 <Col lg={9} md={9} xs={12}>
-                <div className='mb-1'>
+                  <div className='mb-1'>
                     <Label className='form-label' for='add-execriseInPlans'>
                       Bài tập
                     </Label>
@@ -222,29 +257,67 @@ const ModalComponent = () => {
                       name='execriseInPlans'
                       control={control}
                       render={({ field }) => (
-                        <Select
-                          {...field}
-                          theme={selectThemeColors}
-                          closeMenuOnSelect={false}
-                          className='react-select'
-                          classNamePrefix='select'
-                          isMulti
-                          components={animatedComponents}
-                          placeholder='Chọn...'
-                          options={optionExercise}
-                          isClearable={false}
-                          onChange={(selectedOptions) => {
-                            const newExercise = selectedOptions ? selectedOptions.map(option => ({
-                              exerciseId: option.value,
-                              duration: 0
-                            })) : []
-                            field.onChange(newExercise)
-                          }}
-                          value={optionExercise.filter(option => field.value?.some(val => val.exerciseId === option.value))} 
-                        />
+                        <div>
+                          <Select
+                            {...field}
+                            theme={selectThemeColors}
+                            closeMenuOnSelect={false}
+                            className='react-select'
+                            classNamePrefix='select'
+                            isMulti
+                            components={animatedComponents}
+                            placeholder='Chọn...'
+                            options={optionExercise}
+                            isClearable={false}
+                            onChange={(selectedOptions) => {
+                              const newExercise = selectedOptions ? selectedOptions.map(option => ({
+                                exerciseId: option.value,
+                                foodName: option.label,
+                                duration: 0
+                              })) : []
+                              field.onChange(newExercise)
+                            }}
+                            value={optionExercise.filter(option => field.value?.some(val => val.exerciseId === option.value))}
+                          />
+                          {/* Danh sách món ăn đã chọn với input số lượng */}
+                          <div className="selected-foods">
+                            {selectedFoods.map((food, index) => {
+                              return (
+                                <div key={food.foodId} className="d-flex align-items-center gap-2 mb-2">
+                                  <span className="flex-grow-1">{food.foodName}</span>
+                                  <div className="d-flex flex-column me-2">
+                                    {selectedFoods.length > 0 && (
+                                      <Label
+                                        for={`breakfast-quantity-${food.foodId}`}
+                                      >
+                                        Số phút
+                                      </Label>
+                                    )}
+                                    <Input
+                                      id={`breakfast-quantity-${food.foodId}`}
+                                      type="number"
+                                      className="w-100"
+                                      placeholder="Số lượng"
+                                      value={food.duration}
+                                      min={0}
+                                      onChange={(e) => {
+                                        const newQuantity = parseFloat(e.target.value) || 0
+                                        const updatedFoods = selectedFoods.map((f, i) => (i === index ? { ...f, duration: newQuantity } : f))
+                                        setSelectedFoods(updatedFoods)
+                                        field.onChange(updatedFoods)
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </div>
                       )}
                     />
-                    {errors.execriseInPlans ? <FormFeedback>{errors.execriseInPlans.message}</FormFeedback> : null}
+                    {errors.listFoodIdBreakfasts && (
+                      <FormFeedback>{errors.listFoodIdBreakfasts.message}</FormFeedback>
+                    )}
                   </div>
                 </Col>
               </Row>
