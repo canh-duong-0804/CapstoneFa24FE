@@ -132,6 +132,7 @@
     ]
   },
   "resolutions": {
+    "@babel/core": "^7.16.0",
     "react-error-overlay": "6.0.9",
     "react-scripts/postcss-preset-env/postcss-custom-properties": "^10.0.0"
   },
