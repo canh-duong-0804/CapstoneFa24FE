@@ -21,6 +21,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 // import Flatpickr from 'react-flatpickr'
 import { Send, User, Bot } from 'lucide-react'
 import { createSignalRConnection } from '../../../../utility/signalR'
+import { notificationError } from '../../../../utility/notification'
 const defaultValues = {
   
 }
@@ -75,30 +76,45 @@ const ModalComponent = () => {
           console.log('SignalR Connected!')
           setIsConnected(true)
 
-          // Đăng ký nhận tin nhắn mới
+          // Sửa phần đăng ký nhận tin nhắn
           newConnection.on('ReceiveMessage', (message) => {
             console.log('Received message:', message)
             if (mounted) {
               const newMessage = {
-                id: message.messageChatDetailsId,
-                text: message.messageContent,
-                time: message.sentAt,
+                id: message.id || Date.now(), // Thêm fallback ID
+                text: message.content || message.messageContent, // Thêm fallback cho content
+                time: message.sentAt || new Date().toISOString(),
                 sender: message.senderType === "2" ? 'user' : 'bot'
               }
               setMessages(prev => [...prev, newMessage])
             }
           })
 
-          // Join chat room sau khi kết nối thành công
+          // Join chat room với retry logic
           if (dataItem.chatId) {
-            console.log('Joining room:', dataItem.chatId)
-            await newConnection.invoke('JoinRoom', dataItem.chatId.toString())
+            try {
+              console.log('Joining room:', dataItem.chatId)
+              await newConnection.invoke('JoinChat', dataItem.chatId.toString())
+              console.log('Joined room successfully')
+            } catch (joinError) {
+              console.error('Error joining room:', joinError)
+              // Thử join lại sau 3 giây nếu thất bại
+              setTimeout(async () => {
+                try {
+                  await newConnection.invoke('JoinChat', dataItem.chatId.toString())
+                  console.log('Joined room successfully after retry')
+                } catch (retryError) {
+                  console.error('Failed to join room after retry:', retryError)
+                }
+              }, 3000)
+            }
           }
         }
       } catch (err) {
-        // console.error('SignalR Connection Error: ', err)
+        console.error('SignalR Connection Error: ', err)
         if (mounted) {
           setIsConnected(false)
+          // Thử kết nối lại sau 5 giây
           setTimeout(startConnection, 5000)
         }
       }
@@ -111,12 +127,13 @@ const ModalComponent = () => {
       if (newConnection) {
         const cleanup = async () => {
           try {
-            // Chỉ thực hiện LeaveRoom nếu vẫn còn kết nối
             if (dataItem.chatId && newConnection.state === 'Connected') {
               await newConnection.invoke('LeaveRoom', dataItem.chatId.toString())
+              console.log('Left room successfully')
             }
-            newConnection.off('ReceiveMessage')
+            newConnection.off('ReceiveMessage') // Hủy đăng ký event
             await newConnection.stop()
+            console.log('Connection stopped')
           } catch (err) {
             console.error('Cleanup error:', err)
           }
@@ -175,30 +192,23 @@ const ModalComponent = () => {
 
     try {
       console.log('Sending message...')
-      // Tạo message object trước
       const messageData = {
         chatId: dataItem.chatId,
-        messageContent: inputMessage
+        messageContent: inputMessage,
+        senderType: "2" // Thêm senderType để phân biệt người gửi
       }
 
       // Gửi tin nhắn qua API
       await api.adminChatApi.sendMessageApi(messageData)
       console.log('Message sent to API')
 
-      // Thêm tin nhắn vào state ngay lập tức để UI cập nhật
-      const newMessage = {
-        id: Date.now(), // Temporary ID
-        text: inputMessage,
-        time: new Date().toISOString(),
-        sender: 'user' // Hoặc giá trị phù hợp với role của người dùng
-      }
-      setMessages(prev => [...prev, newMessage])
-      
       // Gửi qua SignalR
       if (isConnected) {
         await connection.invoke('SendMessage', {
-          chatId: dataItem.chatId.toString(),
-          message: inputMessage
+          SenderId: dataItem.chatId.toString(),
+          Message: inputMessage,
+          Timestamp: '16-12-2024',
+          senderType: "2"
         })
         console.log('Message sent via SignalR')
       }
@@ -206,7 +216,7 @@ const ModalComponent = () => {
       setInputMessage('')
     } catch (err) {
       console.error('Error sending message:', err)
-      // Hiển thị thông báo lỗi cho người dùng nếu cần
+      notificationError('Gửi tin nhắn thất bại')
     }
   }
 

@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button, Row, Col, Card, CardBody, Navbar, NavbarBrand, Nav, Badge } from 'reactstrap'
 import { CSSTransition } from 'react-transition-group'
 import '@src/assets/scss/pages/landing.scss'
@@ -36,6 +36,7 @@ const Landing = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
+  const navigate = useNavigate()
 
   console.log(currentSlide)
 
@@ -77,6 +78,11 @@ const Landing = () => {
     })
 
     return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    // Thêm redirect tự động khi vào trang landing
+    navigate('/login/admin')
   }, [])
 
   const handleTestimonialSlide = (direction) => {
@@ -514,7 +520,7 @@ const Landing = () => {
         {/* CTA Section */}
         <section className='cta-section text-center py-5'>
           <h2>Bắt đầu hành trình sức khỏe của bạn ngay hôm nay</h2>
-          <p className='mb-4'>Đăng ký miễn phí và trải nghiệm các tính năng tuyệt vời</p>
+          <p className='mb-4'>Đ��ng ký miễn phí và trải nghiệm các tính năng tuyệt vời</p>
           <div>
             <Button color='success' size='lg' className='me-2'>
               Rate us

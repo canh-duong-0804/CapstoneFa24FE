@@ -1,5 +1,5 @@
 // ** React Imports
-import { Fragment, lazy } from 'react'
+import { Fragment, lazy, Navigate } from 'react'
 
 // ** Routes Imports
 import ChartsRoutes from './Charts'
@@ -37,8 +37,8 @@ const getLayout = {
 const TemplateTitle = '%s - Vuexy React Admin Template'
 
 // ** Default Route
-const DefaultRoute = '/dashboard/ecommerce'
-const DefaultAdminRoute = '/dashboard/ecomerce'
+const DefaultRoute = '/login/admin'
+const DefaultAdminRoute = '/login/admin'
 
 // ** Merge Routes
 const Routes = [
@@ -50,6 +50,14 @@ const Routes = [
   ...StaffRoutes,
   ...FoodTrainerRoutes,
   ...ExerciseTrainerRoutes,
+  {
+    path: '/',
+    element: <Navigate to={DefaultRoute} />,
+    meta: {
+      layout: 'blank',
+      publicRoute: true
+    }
+  },
   {
     path: '/features',
     element: <Features />,
