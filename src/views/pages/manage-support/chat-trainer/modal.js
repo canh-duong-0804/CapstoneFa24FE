@@ -20,6 +20,7 @@ import * as yup from "yup"
 import { yupResolver } from '@hookform/resolvers/yup'
 // import Flatpickr from 'react-flatpickr'
 import { Send, User, Bot } from 'lucide-react'
+import { createSignalRConnection } from '../../../../utility/signalR'
 const defaultValues = {
   
 }
@@ -59,6 +60,72 @@ const ModalComponent = () => {
    const [messages, setMessages] = useState([])
    const [inputMessage, setInputMessage] = useState('')
    const messagesEndRef = useRef(null)
+   const [isConnected, setIsConnected] = useState(false)
+   const [connection, setConnection] = useState(null)
+
+   useEffect(() => {
+    let mounted = true
+    const newConnection = createSignalRConnection()
+    setConnection(newConnection)
+
+    const startConnection = async () => {
+      try {
+        await newConnection.start()
+        if (mounted) {
+          console.log('SignalR Connected!')
+          setIsConnected(true)
+
+          // Đăng ký nhận tin nhắn mới
+          newConnection.on('ReceiveMessage', (message) => {
+            console.log('Received message:', message)
+            if (mounted) {
+              const newMessage = {
+                id: message.messageChatDetailsId,
+                text: message.messageContent,
+                time: message.sentAt,
+                sender: message.senderType === "2" ? 'user' : 'bot'
+              }
+              setMessages(prev => [...prev, newMessage])
+            }
+          })
+
+          // Join chat room sau khi kết nối thành công
+          if (dataItem.chatId) {
+            console.log('Joining room:', dataItem.chatId)
+            await newConnection.invoke('JoinRoom', dataItem.chatId.toString())
+          }
+        }
+      } catch (err) {
+        // console.error('SignalR Connection Error: ', err)
+        if (mounted) {
+          setIsConnected(false)
+          setTimeout(startConnection, 5000)
+        }
+      }
+    }
+
+    startConnection()
+
+    return () => {
+      mounted = false
+      if (newConnection) {
+        const cleanup = async () => {
+          try {
+            // Chỉ thực hiện LeaveRoom nếu vẫn còn kết nối
+            if (dataItem.chatId && newConnection.state === 'Connected') {
+              await newConnection.invoke('LeaveRoom', dataItem.chatId.toString())
+            }
+            newConnection.off('ReceiveMessage')
+            await newConnection.stop()
+          } catch (err) {
+            console.error('Cleanup error:', err)
+          }
+        }
+        cleanup()
+      }
+      setIsConnected(false)
+    }
+  }, [dataItem.chatId])
 
   const renderData = () => {
     api.adminChatApi.getAllChatMessageApi(dataItem.chatId).then((rs) => {
@@ -82,9 +149,6 @@ const ModalComponent = () => {
         Object.entries(dataItem).forEach(
           ([name, value]) => {
             setValue(name, value)
-            if (name === 'calories') {
-              setCaloriesValue(value)
-            }
           }
         )
       }
@@ -106,22 +170,44 @@ const ModalComponent = () => {
     scrollToBottom()
   }, [messages])
 
-  const handleSendMessage = () => {
-    if (inputMessage.trim() === '') return
+  const handleSendMessage = async () => {
+    if (inputMessage.trim() === '' || !connection) return
 
-    const payload = {
-      chatId: dataItem.chatId,
-      messageContent: inputMessage
-    }
+    try {
+      console.log('Sending message...')
+      // Tạo message object trước
+      const messageData = {
+        chatId: dataItem.chatId,
+        messageContent: inputMessage
+      }
 
-    api.adminChatApi.sendMessageApi(payload).then(() => {
-      // Sau khi gửi tin nhắn thành công, gọi lại API lấy toàn bộ tin nhắn để cập nhật
-      renderData()
-      // Clear input
+      // Gửi tin nhắn qua API
+      await api.adminChatApi.sendMessageApi(messageData)
+      console.log('Message sent to API')
+
+      // Thêm tin nhắn vào state ngay lập tức để UI cập nhật
+      const newMessage = {
+        id: Date.now(), // Temporary ID
+        text: inputMessage,
+        time: new Date().toISOString(),
+        sender: 'user' // Hoặc giá trị phù hợp với role của người dùng
+      }
+      setMessages(prev => [...prev, newMessage])
+      
+      // Gửi qua SignalR
+      if (isConnected) {
+        await connection.invoke('SendMessage', {
+          chatId: dataItem.chatId.toString(),
+          message: inputMessage
+        })
+        console.log('Message sent via SignalR')
+      }
+
       setInputMessage('')
-    }).catch((err) => {
-      console.error('Lỗi khi gửi tin nhắn:', err)
-    })
+    } catch (err) {
+      console.error('Error sending message:', err)
+      // Hiển thị thông báo lỗi cho người dùng nếu cần
+    }
   }
 
   const handleKeyPress = (e) => {

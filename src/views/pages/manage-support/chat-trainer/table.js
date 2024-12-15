@@ -85,7 +85,6 @@ const Position = () => {
   //const [rowsPerPage, setRowsPerPage] = useState(10)
   const [totalItems, setTotalItems] = useState(0)
   const [currentStatus, setcurrentStatus] = useState()
-  const [loading, setLoading] = useState(false)
   const [tableParams, setTableParams] = useState({
     pagination: {
       current: 1
@@ -107,23 +106,19 @@ const Position = () => {
   }
  
   const fetchData = () => {
-    setLoading(true)
-    api.adminChatApi.getAllRequestTrainerApi()
-      .then((rs) => {
-        console.log('rs', rs)
-        setData(rs)
-        setTotalItems(rs.totalPages)
-        setLoading(false)
-        setTableParams({
-          ...tableParams,
-          pagination: {
-            ...tableParams.pagination,
-            total: rs.data.counta
-          }
+    if (api && api.adminChatApi) {
+      api.adminChatApi.getAllRequestTrainerApi()
+        .then((rs) => {
+          setData(rs)
+          setTotalItems(rs.totalPages)
         })
-      }).catch(() => {
-        setLoading(false)
-      })
+        .catch((error) => {
+          // Handle error
+          console.error("Error fetching data:", error)
+        })
+    } else {
+      console.error("API or adminChatApi is undefined")
+    }
   }
   useEffect(() => {
     fetchData()
@@ -255,7 +250,6 @@ const Position = () => {
             columns={headerColumns}
             pagination={false}
             onChange={handleTableChange}
-            loading={loading}
             scroll={{
               x: 'max-content',
               y: windowSize.innerHeight - 280
