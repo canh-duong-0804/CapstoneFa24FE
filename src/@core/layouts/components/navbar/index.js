@@ -19,7 +19,9 @@ const ThemeNavbar = props => {
           </span>
           <h2 className='brand-text mb-0'>{themeConfig.app.appName}</h2>
         </NavLink>
-        <NavbarBookmarks setMenuVisibility={setMenuVisibility} />
+        {user && user.role !== 0 && !user.role && (
+          <NavbarBookmarks setMenuVisibility={setMenuVisibility} />
+        )}
       </div>
       <NavbarUser skin={skin} setSkin={setSkin} />
     </Fragment>

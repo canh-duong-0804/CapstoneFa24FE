@@ -20,7 +20,6 @@ import themeConfig from '@configs/themeConfig'
 
 import Customizer from '@components/customizer'
 import ScrollToTop from '@components/scrolltop'
-import FooterComponent from './components/footer'
 import NavbarComponent from './components/navbar'
 import SidebarComponent from './components/menu/vertical-menu'
 
