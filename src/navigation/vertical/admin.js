@@ -2,14 +2,6 @@
 import { BarChart, User, Circle, Coffee, Activity, Book} from 'react-feather'
 export default [
   {
-    id: '1',
-    title: 'Statistic',
-    icon: <BarChart size={12} />,
-    action: 'read',
-    resource: 'All',
-    navLink: '/admin/statistic'
-  },
-  {
     id: '2',
     title: 'Quản lý tài khoản',
     icon: <User size={12} />,

@@ -18,7 +18,7 @@ export default [
                 resource: 'All'
             },
             {
-                id: '25',
+                id: '24',
                 title: 'Gợi ý kế hoạch',
                 icon: <Circle size={12} />,
                 navLink: '/food-trainer/manage-meal-plan',
@@ -28,7 +28,7 @@ export default [
         ]
     },
     {
-        id: '26',
+        id: '25',
         title: 'Chat',
         icon: <Coffee size={12} />,
         action: 'read',

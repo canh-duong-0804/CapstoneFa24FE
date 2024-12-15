@@ -1,5 +1,5 @@
 // ** Icons Import
-import { Circle, Activity } from 'react-feather'
+import { Circle, Activity, Coffee } from 'react-feather'
 export default [
     {
         id: '26',
@@ -7,13 +7,13 @@ export default [
         icon: <Activity size={12} />,
         action: 'read',
         resource: 'All',
-        navLink: '/exercise-trainer/manage-excercise/manage-excercise',
+        navLink: '/exercise-trainer/manage-excercise',
         children: [
             {
               id: '27',
               title: 'Bài tập thể dục',
               icon: <Circle size={12} />,
-              navLink: '/exercise-trainer/manage-excercise/manage-excercise',
+              navLink: '/exercise-trainer/manage-excercise',
               action: 'read',
               resource: 'All'
             },         
@@ -21,17 +21,19 @@ export default [
               id: '28',
               title: 'Gợi ý bài tập',
               icon: <Circle size={12} />,
-              navLink: '/exercise-trainer/manage-excercise/suggest-excercise',
-              action: 'read',
-              resource: 'All'
-            }, {
-              id: '29',
-              title: 'Thông tin bài tập',
-              icon: <Circle size={12} />,
-              navLink: '/exercise-trainer/manage-excercise/excercise-information',
+              navLink: '/exercise-trainer/exercise-plan',
               action: 'read',
               resource: 'All'
             }
         ]
-    }
+        
+    },
+    {
+            id: '29',
+            title: 'Chat',
+            icon: <Coffee size={12} />,
+            action: 'read',
+            resource: 'All',
+            navLink: '/exercise-trainer/chat'
+        }
 ]

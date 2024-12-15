@@ -29,7 +29,7 @@ const VerticalLayout = props => {
         setMenuData(navigation.filter(item => item.id >= 26 && item.id <= 29))
         break
       case 4:
-        setMenuData(navigation.filter(item => item.id >= 17 && item.id <= 24))
+        setMenuData(navigation.filter(item => item.id >= 26 && item.id <= 24))
         break
       default:
         // Mặc định, nếu không có vai trò nào khớp
