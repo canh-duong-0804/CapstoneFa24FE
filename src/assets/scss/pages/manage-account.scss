@@ -1,0 +1,75 @@
+// Tăng kích thước bảng
+.manage-account-table {
+  width: 100%;
+  min-width: 800px; // Đảm bảo bảng không bị quá nhỏ
+  margin: 1.5rem 0;
+
+  th, td {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+
+  th {
+    font-weight: 600;
+    background-color: #f8f8f8;
+  }
+}
+
+// Style cho form thêm mới
+.add-account-form {
+  padding: 2rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 24px 0 rgba(34, 41, 47, 0.1);
+
+  // Style cho labels
+  label {
+    font-weight: 700;
+    color: #2c2c2c;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  // Style cho inputs
+  input, select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d8d6de;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+
+    &:focus {
+      border-color: #7367f0;
+      outline: none;
+    }
+  }
+
+  // Style cho buttons
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+
+    button {
+      padding: 0.75rem 2rem;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+  }
+}
+
+// Modal container nếu bạn hiển thị form trong modal
+.account-modal {
+  .modal-content {
+    padding: 1rem;
+  }
+
+  .modal-header {
+    border-bottom: 1px solid #ebe9f1;
+    
+    h5 {
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+  }
+} 
