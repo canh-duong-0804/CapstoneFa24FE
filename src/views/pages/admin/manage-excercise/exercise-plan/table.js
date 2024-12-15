@@ -247,7 +247,7 @@ const Position = () => {
 
   const headerColumns = [
     {
-      title: <div style={{ textAlign: 'left' }}>{'Tên'}</div>,
+      title: <div style={{ textAlign: 'left' }}>{'Tên kế hoạch gợi ý'}</div>,
       dataIndex: 'name',
       key: 'name',
       width: 120,
