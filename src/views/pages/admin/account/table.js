@@ -367,19 +367,22 @@ const Position = () => {
           </Col>
         </Row>
         <div className='react-dataTable mx-2'>
-          <Table
-            dataSource={data}
-            bordered
-            columns={headerColumns}
-            pagination={false}
-            onChange={handleTableChange}
-            loading={loading}
-            scroll={{
-              x: 'max-content',
-              y: windowSize.innerHeight - 280
-            }}
-            rowClassName={getRowClassName}
-          ></Table>
+          <div className="admin-table-container">
+            <Table
+              dataSource={data}
+              bordered
+              columns={headerColumns}
+              pagination={false}
+              onChange={handleTableChange}
+              loading={loading}
+              scroll={{
+                x: 'max-content',
+                y: windowSize.innerHeight - 280
+              }}
+              rowClassName={getRowClassName}
+              className="table-hover-animation"
+            ></Table>
+          </div>
           <CustomPagination />
         </div>
       </Card>
