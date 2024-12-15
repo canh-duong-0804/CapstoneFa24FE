@@ -117,9 +117,9 @@ export const AUTH = {
     ASIGN_STAFF_API: `${BASE_URL}/api/admin/AdminChat/assign-staff`,
     GET_ALL_CHAT_FOR_TRAINER_API: `${BASE_URL}/api/admin/AdminChat/get-all-message-chat-for-trainer-need-assign`,
     GET_ALL_TRAINER_API: `${BASE_URL}/api/admin/AdminChat/get-all-trainer-to-assign`,
-    GET_EXERCISE_CARDIO_DETAIL_API: `${BASE_URL}/api/Exercise/Get-exercise-cardio-detail-for-member`,
-    GET_EXERCISE_RESISTANCE_DETAIL_API: `${BASE_URL}/api/Exercise/Get-exercise-resistance-detail-for-member`,
-    GET_EXERCISE_OTHER_API: `${BASE_URL}/api/Exercise/Get-exercise-other-detail-for-member`
+    GET_ALL_REQUEST_OF_TRAINER_API: `${BASE_URL}/api/admin/AdminChat/overview-all-message-of trainer`,
+    GET_CHAT_MESSAGE_API: `${BASE_URL}/api/admin/AdminChat/get-all-message-for-trainer-to-asign`,
+    SEND_MESSAGE_API: `${BASE_URL}/api/admin/AdminChat/send-message`
   }
 
 
