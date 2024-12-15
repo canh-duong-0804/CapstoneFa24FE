@@ -108,7 +108,7 @@ const Position = () => {
 
   const fetchData = () => {
     setLoading(true)
-    api.exerciseApi.getAllExerciseApi(currentPage)
+    api.exerciseApi.getAllExerciseApi(currentPage, searchTerm)
       .then((rs) => {
         setData(rs.exercisePlans.data)
         setTotalItems(rs.totalPages)

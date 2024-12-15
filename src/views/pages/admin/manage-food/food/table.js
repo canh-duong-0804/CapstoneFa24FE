@@ -123,7 +123,7 @@ const Position = () => {
  
   const fetchData = () => {
     setLoading(true)
-    api.foodApi.getAllFoodForStaffApi(currentPage)
+    api.foodApi.getAllFoodForStaffApi(currentPage, searchTerm)
       .then((rs) => {
         setData(rs.foods)
         setTotalItems(rs.totalPages)

@@ -8,7 +8,7 @@ import { AUTH } from '../constants'
 
 const foodApi = {
   createFoodApi: (params) => requester.post(AUTH.FOOD_API.CREATE_FOOD_API, params),
-  getAllFoodForStaffApi: (page) => requester.get(`${AUTH.FOOD_API.GET_ALL_FOOD_FOR_STAFF_API}?page=${page}`, {}),
+  getAllFoodForStaffApi: (page, search) => requester.get(`${AUTH.FOOD_API.GET_ALL_FOOD_FOR_STAFF_API}?page=${page}&SearchFood=${search}`, {}),
   getAllFoodForMemberApi: () => requester.get(AUTH.FOOD_API.GET_ALL_FOOD_FOR_MEMBER_API),
   getListBoxFoodApi: () => requester.get(AUTH.FOOD_API.GET_LIST_BOX_FOOD_API),
   getFoodForStaffByIdApi: (id) => requester.get(`${AUTH.FOOD_API.GET_FOOD_FOR_STAFF_BY_ID_API}/${id}`),

@@ -25,10 +25,6 @@ const MySwal = withReactContent(Swal)
 // ** Table Header
 const CustomHeader = ({ handleAdd, handleFilter }) => {
   const { t } = useTranslation()
-  //const isDefaultOptions = [
-  //  { value: true, label: t('Active') },
-  //  { value: false, label: t('Inactive') }
-  //]
   const [searchText, setSearchTerm] = useState('')
 
   return (
@@ -42,13 +38,8 @@ const CustomHeader = ({ handleAdd, handleFilter }) => {
             type='search'
             value={searchText}
             onChange={e => {
-              if (e.target.value) {
-                setSearchTerm(e.target.value)
-              } else {
-                handleFilter('')
-                setSearchTerm(e.target.value)
-              }
-
+              setSearchTerm(e.target.value)
+              handleFilter(e.target.value)
             }}
           />
           <span style={{ cursor: 'pointer' }} onClick={() => { handleFilter(searchText) }} className='input-group-text '>
@@ -88,7 +79,6 @@ const Position = () => {
     // handleModalResetPassword,
     setTypeModal,
     windowSize,
-    handleModalDetail,
     handleLoadTable,
     loadTable
   } = useContext(UserContext)
@@ -134,8 +124,12 @@ const Position = () => {
   // }
   const fetchData = () => {
     setLoading(true)
-    api.staffApi.getAllAccountApi(currentPage)
+    // Chỉ gửi searchTerm khi có giá trị
+    const searchValue = searchTerm?.trim() || ''
+    
+    api.staffApi.getAllAccountApi(currentPage, searchValue)
       .then((rs) => {
+        console.log('rs', rs)
         setData(rs.staffs)
         setTotalItems(rs.totalPages)
         setLoading(false)
@@ -146,7 +140,8 @@ const Position = () => {
             total: rs.data.counta
           }
         })
-      }).catch(() => {
+      }).catch((error) => {
+        console.error('Error fetching data:', error)
         setLoading(false)
       })
   }
@@ -181,7 +176,7 @@ const Position = () => {
     clearTimeout(tmi)
     tmi = setTimeout(() => {
       setSearchTerm(val)
-
+      setCurrentPage(1)
     }, 500)
   }
 
@@ -249,11 +244,6 @@ const Position = () => {
     handleModal()
   }
 
-  const handleDetail = (item) => {
-    setDataItem(item)
-    handleModalDetail()
-    setTypeModal('Detail')
-  }
   const headerColumns = [
     {
       title: <div style={{ textAlign: 'left' }}>{'Họ tên'}</div>,
@@ -329,9 +319,6 @@ const Position = () => {
       maxWidth: 200,
       render: (_, record) => (
         < Space size="middle" >
-          <Tooltip title={t(`View`)}>
-            <EyeOutlined onClick={() => { handleDetail(record) }} />
-          </Tooltip>
           <Tooltip title={t(`Edit`)}>
             <EditOutlined onClick={() => { handleEdit(record) }}></EditOutlined>
           </Tooltip>
@@ -367,22 +354,19 @@ const Position = () => {
           </Col>
         </Row>
         <div className='react-dataTable mx-2'>
-          <div className="admin-table-container">
-            <Table
-              dataSource={data}
-              bordered
-              columns={headerColumns}
-              pagination={false}
-              onChange={handleTableChange}
-              loading={loading}
-              scroll={{
-                x: 'max-content',
-                y: windowSize.innerHeight - 280
-              }}
-              rowClassName={getRowClassName}
-              className="table-hover-animation"
-            ></Table>
-          </div>
+          <Table
+            dataSource={data}
+            bordered
+            columns={headerColumns}
+            pagination={false}
+            onChange={handleTableChange}
+            loading={loading}
+            scroll={{
+              x: 'max-content',
+              y: windowSize.innerHeight - 280
+            }}
+            rowClassName={getRowClassName}
+          ></Table>
           <CustomPagination />
         </div>
       </Card>

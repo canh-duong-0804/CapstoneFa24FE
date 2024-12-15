@@ -255,6 +255,15 @@ const Position = () => {
       align: 'left'
     },
     {
+      title: <div style={{ textAlign: 'right' }}>{'Kế hoạch ăn (ngày)'}</div>,
+      dataIndex: 'totalDay',
+      key: 'totalDay',
+      width: 120,
+      minWidth: 100,
+      maxWidth: 130,
+      align: 'right'
+    },
+    {
       title: <div style={{ textAlign: 'center' }}>{'Chế độ ăn'}</div>,
       dataIndex: 'dietName',
       key: 'dietName',

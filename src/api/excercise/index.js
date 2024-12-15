@@ -8,7 +8,7 @@ import { AUTH } from '../constants'
 
 const exerciseApi = {
   createExerciseApi: (params) => requester.post(AUTH.EXERCISE_API.CREATE_EXERCISE_API, params),
-  getAllExerciseApi: (page) => requester.get(`${AUTH.EXERCISE_API.GET_ALL_EXERCISE_API}?page=${page}`, {}),
+  getAllExerciseApi: (page, search) => requester.get(`${AUTH.EXERCISE_API.GET_ALL_EXERCISE_API}?page=${page}&SearchExercise=${search}`, {}),
   getExerciseByIdApi: (id) => requester.get(`${AUTH.EXERCISE_API.GET_EXERCISE_BY_ID_API}/${id}`),
   getListboxExerciseApi: () => requester.get(AUTH.EXERCISE_API.GET_LIST_BOX_EXERCISE_API),
   updateExerciseApi: (params) => requester.put(AUTH.EXERCISE_API.UPDATE_EXERCISE_API, params),

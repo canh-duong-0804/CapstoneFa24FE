@@ -256,6 +256,15 @@ const Position = () => {
       align: 'left'
     },
     {
+      title: <div style={{ textAlign: 'right' }}>{'Kế hoạch tập (ngày)'}</div>,
+      dataIndex: 'totalDay',
+      key: 'totalDay',
+      width: 120,
+      minWidth: 100,
+      maxWidth: 130,
+      align: 'right'
+    },
+    {
       title: <div style={{ textAlign: 'center' }}>{'Calories đốt cháy'}</div>,
       dataIndex: 'totalCaloriesBurned',
       key: 'totalCaloriesBurned',

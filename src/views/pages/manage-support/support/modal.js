@@ -54,8 +54,12 @@ const ModalComponent = () => {
 
   const renderData = () => {
     api.adminChatApi.getAllTrainerApi().then((rs) => {
+      const mappedData = rs.map(item => ({
+        ...item,
+        label: `${item.label} - ${item.role === 2 ? 'HLV món ăn' : 'HLV bài tập'}`
+    }))
       
-      setOptionTrainer(rs)
+      setOptionTrainer(mappedData)
     }).catch(() => {
 
     })
@@ -121,6 +125,7 @@ const ModalComponent = () => {
       </Fragment>
     )
   }
+  console.log('trainer', optionTrainer)
   return (
     <Fragment >
       <Modal
@@ -131,7 +136,7 @@ const ModalComponent = () => {
         backdrop='static'
         className='modal-dialog-centered modal-lg'>
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <ModalHeader typeModal={typeModal} handleModal={handleCancel} title={typeModal === 'Add' ? 'Thêm tài khoản' : 'Sửa vai trò'} />
+          <ModalHeader typeModal={typeModal} handleModal={handleCancel} title={typeModal === 'Add' ? 'Thêm tài khoản' : 'Giao nhiệm vụ'} />
           <ModalBody>
             <div className='mb-1'>
               <Label className='form-label' for='add-role'>

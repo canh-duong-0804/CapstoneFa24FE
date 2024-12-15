@@ -17,38 +17,35 @@ import { useTranslation } from 'react-i18next'
 import api from '../../../../api/index'
 import ModalHeader from '../../../../@core/components/modal-header'
 import InputPasswordToggle from '@components/input-password-toggle'
+import { selectThemeColors } from '@utils'
 import Select from 'react-select'
 import * as yup from "yup"
 import { yupResolver } from '@hookform/resolvers/yup'
+// import { UploadOutlined } from '@ant-design/icons'
+// import { message, Upload, Button as ButtonAntd } from 'antd'
+// import Flatpickr from 'react-flatpickr'
 import { notificationError, notificationSuccess } from '../../../../utility/notification'
-
-const formSchema = yup.object().shape({
-  fullName: yup.string().required('Họ tên là bắt buộc'),
-  email: yup.string().email('Email không đúng định dạng').required('Email là bắt buộc'),
-  password: yup.string().required('Mật khẩu là bắt buộc'),
-  phoneNumber: yup.string()
-    .matches(/^0\d{9,10}$/, 'Số điện thoại không đúng định dạng')
-    .required('Số điện thoại là bắt buộc'),
-  role: yup.string().required('Vai trò là bắt buộc'),
-  gender: yup.string().required('Giới tính là bắt buộc')
-})
-
 const defaultValues = {
   dob: '2024-10-29T14:10:57.583Z',
   staffImage: 'image.png'
 }
 
-const optionGender = [
-  { value: 0, label: 'Nam' },
-  { value: 1, label: 'Nữ' }
-]
-
-const optionRole = [
-  { value: 0, label: 'Admin' },
-  { value: 1, label: 'Huấn luyện viên' },
-  { value: 2, label: 'HLV món ăn' },
-  { value: 3, label: 'HLV bài tập' }
-]
+const formSchema = yup.object().shape({
+  // fullName: yup.string()
+  //   .required('Họ tên là bắt buộc'),
+  // password: yup.string()
+  //   .required('Mật khẩu là bắt buộc'),
+  // email: yup
+  //   .string()
+  //   .email('Email không đúng định dạng')
+  //   .nullable()
+  //   .max(250, 'Email không vượt quá 250 ký tự'),
+  // phoneNumber: yup
+  //   .string()
+  //   .matches(/^0\d{10}$|^0\d{9}$|^$/, 'Số điện thoại không đúng định dạng')
+  //   .nullable()
+  //   .max(11, 'Số điện thoại không quá 11 ký tự')
+})
 
 const ModalComponent = () => {
   const {
@@ -72,34 +69,18 @@ const ModalComponent = () => {
     formState: { errors }
   } = useForm({ defaultValues, resolver: yupResolver(formSchema) })
 
-  // const [fileList, setFileList] = useState([])
-  // const [uploading, setUploading] = useState(false)
+  const optionGender = [
+    { value: true, label: 'Nam' },
+    { value: false, label: 'Nữ' }
 
-  // const [startPicker, setStartPicker] = useState(new Date())
+  ]
 
-  // const handleUpload = () => {
-  //   const formData = new FormData()
-  //   fileList.forEach((file) => {
-  //     formData.append('files[]', file)
-  //   })
-  //   setUploading(true)
-  //   // You can use any AJAX library you like
-  //   fetch('https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload', {
-  //     method: 'POST',
-  //     body: formData
-  //   })
-  //     .then((res) => res.json())
-  //     .then(() => {
-  //       setFileList([])
-  //       message.success('upload successfully.')
-  //     })
-  //     .catch(() => {
-  //       message.error('upload failed.')
-  //     })
-  //     .finally(() => {
-  //       setUploading(false)
-  //     })
-  // }
+  const optionRole = [
+    { value: 1, label: 'Huấn luyện viên' },
+    { value: 2, label: 'Huấn luyện viên món ăn' },
+    { value: 3, label: 'Huấn luyện viên bài tập' }
+
+  ]
 
 
   const handleFormOpened = () => {
@@ -180,136 +161,173 @@ const ModalComponent = () => {
         onOpened={handleFormOpened}
         backdrop='static'
         className='modal-dialog-centered modal-lg'>
-        <ModalHeader className='bg-transparent' toggle={handleModal}>
-          <h2 className='modal-title fw-bolder'>
-            {typeModal === 'Add' ? 'Thêm tài khoản mới' : 'Cập nhật tài khoản'}
-          </h2>
-        </ModalHeader>
-        <ModalBody>
-          <Form onSubmit={handleSubmit(onSubmit)}>
-            <Row>
-              <Col md={6}>
-                <div className='mb-3'>
-                  <Label className='form-label fw-bolder' for='fullName'>
-                    Họ và tên <span className='text-danger'>*</span>
-                  </Label>
-                  <Controller
-                    name='fullName'
-                    control={control}
-                    render={({ field }) => (
-                      <Input {...field} placeholder='Nhập họ tên' className='form-control-lg' />
-                    )}
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          <ModalHeader typeModal={typeModal} handleModal={handleCancel} title={typeModal === 'Add' ? 'Thêm tài khoản' : 'Sửa vai trò'} />
+          <ModalBody>
+            {typeModal !== 'Edit' && (
+              <div className='mb-1'>
+                <Label className='form-label' for='add-fullName'>
+                  Họ tên
+                </Label>
+                <Controller
+                  id='fullName'
+                  name='fullName'
+                  control={control}
+                  render={({ field }) => (
+                    <Input autoFocus placeholder='Nhập họ tên' invalid={errors.fullName && true} {...field} />
+                  )}
+                />
+                {errors.fullName ? <FormFeedback>{errors.fullName.message}</FormFeedback> : null}
+              </div>
+            )}
+
+            {typeModal !== 'Edit' && (
+              <div className='mb-1'>
+                <Label className='form-label' for='add-email'>
+                  Email
+                </Label>
+                <Controller
+                  id='email'
+                  name='email'
+                  control={control}
+                  render={({ field }) => (
+                    <Input type='email' placeholder='Nhập email' invalid={errors.email && true} {...field} />
+                  )}
+                />
+                {errors.email ? <FormFeedback>{errors.email.message}</FormFeedback> : null}
+              </div>
+            )}
+            {typeModal !== 'Edit' && (
+              <div className='mb-1'>
+                <Label className='form-label' for='add-password'>
+                  Mật khẩu
+                </Label>
+                <Controller
+                  id='password'
+                  name='password'
+                  control={control}
+                  render={({ field }) => (
+                    <InputPasswordToggle className='input-group-merge' invalid={errors.password && true} {...field} />
+                  )}
+                />
+              </div>
+            )}
+
+            {typeModal !== 'Edit' && (
+              <div className='mb-1'>
+                <Label className='form-label' for='add-gender'>
+                  Giới tính
+                </Label>
+                <Controller
+                  id='gender'
+                  name='gender'
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      theme={selectThemeColors}
+                      className='react-select'
+                      classNamePrefix='select'
+                      options={optionGender}
+                      placeholder='Chọn...'
+                      isClearable={true}
+                      onChange={(option) => {
+                        field.onChange(option ? option.value : '')
+                      }}
+                      value={optionGender.find(option => option.value === field.value)}
+                    />
+                  )}
+                />
+                {errors.gender ? <FormFeedback>{errors.gender.message}</FormFeedback> : null}
+              </div>
+            )}
+            {typeModal !== 'Edit' && (
+              <div className='mb-1'>
+                <Label className='form-label' for='add-phone'>
+                  Số điện thoại
+                </Label>
+                <Controller
+                  id='phoneNumber'
+                  name='phoneNumber'
+                  control={control}
+                  render={({ field }) => (
+                    <Input type='phone' placeholder='Nhập số điện thoại' invalid={errors.phoneNumber && true} {...field} />
+                  )}
+                />
+                {errors.phoneNumber ? <FormFeedback>{errors.phoneNumber.message}</FormFeedback> : null}
+              </div>
+            )}
+
+            <div className='mb-1'>
+              <Label className='form-label' for='add-role'>
+                Vai trò
+              </Label>
+              <Controller
+                id='role'
+                name='role'
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    theme={selectThemeColors}
+                    className='react-select'
+                    classNamePrefix='select'
+                    options={optionRole}
+                    placeholder='Chọn...'
+                    isClearable={true}
+                    onChange={(option) => {
+                      field.onChange(option ? option.value : '')
+                    }}
+                    value={optionRole.find(option => option.value === field.value)}
                   />
-                  {errors.fullName && <FormFeedback className='d-block'>{errors.fullName.message}</FormFeedback>}
-                </div>
-              </Col>
-              <Col md={6}>
-                <div className='mb-3'>
-                  <Label className='form-label fw-bolder' for='email'>
-                    Email <span className='text-danger'>*</span>
-                  </Label>
-                  <Controller
-                    id='email'
-                    name='email'
-                    control={control}
-                    render={({ field }) => (
-                      <Input type='email' placeholder='Nhập email' className='form-control-lg' invalid={errors.email && true} {...field} />
-                    )}
-                  />
-                  {errors.email && <FormFeedback className='d-block'>{errors.email.message}</FormFeedback>}
-                </div>
-              </Col>
-              <Col md={6}>
-                <div className='mb-3'>
-                  <Label className='form-label fw-bolder' for='password'>
-                    Mật khẩu <span className='text-danger'>*</span>
-                  </Label>
-                  <Controller
-                    id='password'
-                    name='password' 
-                    control={control}
-                    render={({ field }) => (
-                      <InputPasswordToggle className='input-group-merge form-control-lg' invalid={errors.password && true} {...field} />
-                    )}
-                  />
-                  {errors.password && <FormFeedback className='d-block'>{errors.password.message}</FormFeedback>}
-                </div>
-              </Col>
-              <Col md={6}>
-                <div className='mb-3'>
-                  <Label className='form-label fw-bolder' for='gender'>
-                    Giới tính <span className='text-danger'>*</span>
-                  </Label>
-                  <Controller
-                    id='gender'
-                    name='gender'
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        {...field}
-                        className='react-select'
-                        classNamePrefix='select'
-                        options={optionGender}
-                        placeholder='Chọn giới tính'
-                        isClearable={true}
-                        onChange={(option) => field.onChange(option ? option.value : '')}
-                        value={optionGender.find(option => option.value === field.value)}
-                      />
-                    )}
-                  />
-                  {errors.gender && <FormFeedback className='d-block'>{errors.gender.message}</FormFeedback>}
-                </div>
-              </Col>
-              <Col md={6}>
-                <div className='mb-3'>
-                  <Label className='form-label fw-bolder' for='phoneNumber'>
-                    Số điện thoại <span className='text-danger'>*</span>
-                  </Label>
-                  <Controller
-                    id='phoneNumber'
-                    name='phoneNumber'
-                    control={control}
-                    render={({ field }) => (
-                      <Input type='tel' placeholder='Nhập số điện thoại' className='form-control-lg' invalid={errors.phoneNumber && true} {...field} />
-                    )}
-                  />
-                  {errors.phoneNumber && <FormFeedback className='d-block'>{errors.phoneNumber.message}</FormFeedback>}
-                </div>
-              </Col>
-              <Col md={6}>
-                <div className='mb-3'>
-                  <Label className='form-label fw-bolder' for='role'>
-                    Vai trò <span className='text-danger'>*</span>
-                  </Label>
-                  <Controller
-                    id='role'
-                    name='role'
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        {...field}
-                        className='react-select'
-                        classNamePrefix='select'
-                        options={optionRole}
-                        placeholder='Chọn vai trò'
-                        isClearable={true}
-                        onChange={(option) => field.onChange(option ? option.value : '')}
-                        value={optionRole.find(option => option.value === field.value)}
-                      />
-                    )}
-                  />
-                  {errors.role && <FormFeedback className='d-block'>{errors.role.message}</FormFeedback>}
-                </div>
-              </Col>
-            </Row>
-          </Form>
-        </ModalBody>
-        <div
-          className='d-flex justify-content-end p-1'
-          style={{ boxShadow: '0 4px 24px 0 rgb(34 41 47 / 10%)' }}
-        >
-          {renderFooterButtons()}
-        </div>
+                )}
+              />
+              {errors.role ? <FormFeedback>{errors.role.message}</FormFeedback> : null}
+            </div>
+            {typeModal !== 'Edit' && (
+              <div className='mb-1'>
+                <Label className='form-label' for='add-description'>
+                  Mô tả
+                </Label>
+                <Controller
+                  id='description'
+                  name='description'
+                  control={control}
+                  render={({ field }) => (
+                    <Input type='description' placeholder='Nhập mô tả' invalid={errors.description && true} {...field} />
+                  )}
+                />
+                {errors.description ? <FormFeedback>{errors.description.message}</FormFeedback> : null}
+              </div>
+            )}
+            {/* {typeModal !== 'Edit' && (
+              <div className='mb-1'>
+              <Upload {...props}>
+                <ButtonAntd icon={<UploadOutlined />}>Chọn Ảnh</ButtonAntd>
+              </Upload>
+              <ButtonAntd
+                type="primary"
+                onClick={handleUpload}
+                disabled={fileList.length === 0}
+                loading={uploading}
+                style={{
+                  marginTop: 16
+                }}
+              >
+                {uploading ? 'Uploading' : 'Start Upload'}
+              </ButtonAntd>
+            </div>
+            )} */}
+
+
+          </ModalBody>
+          <div
+            className='d-flex justify-content-end p-1'
+            style={{ boxShadow: '0 4px 24px 0 rgb(34 41 47 / 10%)' }}
+          >
+            {renderFooterButtons()}
+          </div>
+        </Form>
       </Modal>
     </Fragment>
 

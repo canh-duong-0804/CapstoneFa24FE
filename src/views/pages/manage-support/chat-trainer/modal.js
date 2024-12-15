@@ -23,17 +23,17 @@ import { Send, User, Bot } from 'lucide-react'
 import { createSignalRConnection } from '../../../../utility/signalR'
 import { notificationError } from '../../../../utility/notification'
 const defaultValues = {
-  
+
 }
 
 const formSchema = yup.object().shape({
-  
+
 })
 
 const formatTime = (dateString) => {
   const date = new Date(dateString)
-  return date.toLocaleTimeString('vi-VN', { 
-    hour: '2-digit', 
+  return date.toLocaleTimeString('vi-VN', {
+    hour: '2-digit',
     minute: '2-digit'
   })
 }
@@ -55,16 +55,17 @@ const ModalComponent = () => {
     // handleSubmit,
     setValue,
     reset,
-    formState: {  }
+    formState: { }
   } = useForm({ defaultValues, resolver: yupResolver(formSchema) })
 
-   const [messages, setMessages] = useState([])
-   const [inputMessage, setInputMessage] = useState('')
-   const messagesEndRef = useRef(null)
-   const [isConnected, setIsConnected] = useState(false)
-   const [connection, setConnection] = useState(null)
-
-   useEffect(() => {
+  const [messages, setMessages] = useState([])
+  const [inputMessage, setInputMessage] = useState('')
+  const messagesEndRef = useRef(null)
+  const [isConnected, setIsConnected] = useState(false)
+  const [connection, setConnection] = useState(null)
+  console.log(isConnected)
+  console.log('item', dataItem)
+  useEffect(() => {
     let mounted = true
     const newConnection = createSignalRConnection()
     setConnection(newConnection)
@@ -76,21 +77,27 @@ const ModalComponent = () => {
           console.log('SignalR Connected!')
           setIsConnected(true)
 
-          // Sửa phần đăng ký nhận tin nhắn
-          newConnection.on('ReceiveMessage', (message) => {
-            console.log('Received message:', message)
+          // Update the event listener to match backend method
+          newConnection.on('ReceiveMessage', (messageData) => {
+            console.log('Received message:', messageData)
             if (mounted) {
               const newMessage = {
-                id: message.id || Date.now(), // Thêm fallback ID
-                text: message.content || message.messageContent, // Thêm fallback cho content
-                time: message.sentAt || new Date().toISOString(),
-                sender: message.senderType === "2" ? 'user' : 'bot'
+                id: messageData.messageChatDetailsId || Date.now(), // Use existing ID if available
+                text: messageData.message,
+                time: messageData.timestamp || new Date().toISOString(),
+                sender: messageData.senderId === dataItem.memberId ? 'bot' : 'user'
               }
-              setMessages(prev => [...prev, newMessage])
+
+              // Prevent duplicate messages
+              setMessages(prev => {
+                const isDuplicate = prev.some(msg => msg.text === newMessage.text && msg.time === newMessage.time)
+                // Only add the message if it's not a duplicate
+                return isDuplicate ? prev : [...prev, newMessage]
+              })
             }
           })
 
-          // Join chat room với retry logic
+          // Join chat room with retry logic
           if (dataItem.chatId) {
             try {
               console.log('Joining room:', dataItem.chatId)
@@ -98,7 +105,6 @@ const ModalComponent = () => {
               console.log('Joined room successfully')
             } catch (joinError) {
               console.error('Error joining room:', joinError)
-              // Thử join lại sau 3 giây nếu thất bại
               setTimeout(async () => {
                 try {
                   await newConnection.invoke('JoinChat', dataItem.chatId.toString())
@@ -114,7 +120,6 @@ const ModalComponent = () => {
         console.error('SignalR Connection Error: ', err)
         if (mounted) {
           setIsConnected(false)
-          // Thử kết nối lại sau 5 giây
           setTimeout(startConnection, 5000)
         }
       }
@@ -128,10 +133,10 @@ const ModalComponent = () => {
         const cleanup = async () => {
           try {
             if (dataItem.chatId && newConnection.state === 'Connected') {
-              await newConnection.invoke('LeaveRoom', dataItem.chatId.toString())
+              await newConnection.invoke('LeaveChat', dataItem.chatId.toString())
               console.log('Left room successfully')
             }
-            newConnection.off('ReceiveMessage') // Hủy đăng ký event
+            newConnection.off('ReceiveMessage')
             await newConnection.stop()
             console.log('Connection stopped')
           } catch (err) {
@@ -195,23 +200,22 @@ const ModalComponent = () => {
       const messageData = {
         chatId: dataItem.chatId,
         messageContent: inputMessage,
-        senderType: "2" // Thêm senderType để phân biệt người gửi
+        senderType: "2"
       }
 
-      // Gửi tin nhắn qua API
+      // Send message via API
       await api.adminChatApi.sendMessageApi(messageData)
       console.log('Message sent to API')
 
-      // Gửi qua SignalR
-      if (isConnected) {
-        await connection.invoke('SendMessage', {
-          SenderId: dataItem.chatId.toString(),
-          Message: inputMessage,
-          Timestamp: '16-12-2024',
-          senderType: "2"
-        })
-        console.log('Message sent via SignalR')
-      }
+      // Send via SignalR
+      // if (isConnected) {
+      //   await connection.invoke('SendMessage',
+      //     dataItem.chatId.toString(),
+      //     dataItem.chatId.toString(), // Use chatId as senderId
+      //     inputMessage
+      //   )
+      //   console.log('Message sent via SignalR')
+      // }
 
       setInputMessage('')
     } catch (err) {
@@ -241,13 +245,13 @@ const ModalComponent = () => {
         <div className="flex flex-col h-[600px] bg-white rounded-xl">
           <div className="flex-grow overflow-y-auto p-4 space-y-3">
             {messages.map((msg) => (
-              <div 
-                key={msg.id} 
+              <div
+                key={msg.id}
                 className={`flex items-start space-x-2 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 {msg.sender === 'bot' && <Bot className="w-6 h-6 text-primary" />}
                 <div className="flex flex-col">
-                  <div 
+                  <div
                     className={`px-3 py-2 rounded-lg max-w-[70%] ${msg.sender === 'user' ? 'bg-primary text-white' : 'bg-light text-dark'}`}
                   >
                     {msg.text}
@@ -262,22 +266,26 @@ const ModalComponent = () => {
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="p-4 border-t flex items-center">
-            <Input 
-              type="text" 
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder={t('Nhập tin nhắn...')}
-              className="flex-grow mr-2"
-            />
-            <Button 
-              color="primary"
-              onClick={handleSendMessage}
-              className="rounded-full p-2"
-            >
-              <Send size={20} />
-            </Button>
+          <div className="p-4 border-t">
+            <div className="flex items-center gap-2">
+              <div className="flex-1">
+                <Input
+                  type="text"
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder={t('Nhập tin nhắn...')}
+                  className="w-full"
+                />
+              </div>
+              <Button
+                color="primary"
+                onClick={handleSendMessage}
+                className="rounded-full p-2 flex-shrink-0 min-w-10 h-10"
+              >
+                <Send size={20} />
+              </Button>
+            </div>
           </div>
         </div>
       </ModalBody>
