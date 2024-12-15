@@ -110,7 +110,7 @@ const Position = () => {
     setLoading(true)
     api.exerciseApi.getAllExerciseApi(currentPage, searchTerm)
       .then((rs) => {
-        setData(rs.exercisePlans.data)
+        setData(rs.data)
         setTotalItems(rs.totalPages)
         setLoading(false)
         setTableParams({

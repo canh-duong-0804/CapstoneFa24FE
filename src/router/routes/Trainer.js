@@ -2,7 +2,7 @@ import { lazy } from 'react'
 
 const DashboardTrainer = lazy(() => import('../../views/dashboard/trainer/index'))
 const Statistic = lazy(() => import('../../views/pages/statistic/dashboard/index'))
-const Excercise = lazy(() => import('../../views/pages/trainer/manage-exercise/excercise/index'))
+const Excercise = lazy(() => import('../../views/pages/admin/manage-excercise/excercise/index'))
 const Food = lazy(() => import('../../views/pages/admin/manage-food/food/index'))
 const MealPlan = lazy(() => import('../../views/pages/admin/manage-food/meal-plan/index'))
 const Support = lazy(() => import('../../views/pages/manage-support/support/index'))
