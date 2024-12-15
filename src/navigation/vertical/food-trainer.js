@@ -26,5 +26,13 @@ export default [
                 resource: 'All'
             }
         ]
+    },
+    {
+        id: '26',
+        title: 'Chat',
+        icon: <Coffee size={12} />,
+        action: 'read',
+        resource: 'All',
+        navLink: '/food-trainer/chat'
     }
 ]

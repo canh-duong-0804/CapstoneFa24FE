@@ -67,7 +67,7 @@ const AddEventSidebar = props => {
 
   useEffect(() => {
     if (open) {
-      api.exerciseMemberApi.getAllExerciseFilterByCategoryApi(1).then((rs) => {
+      api.exerciseApi.getListboxExerciseApi().then((rs) => {
         const formattedOptions = rs.map(exercise => ({
           ...exercise,
           value: exercise.exerciseId,
@@ -80,22 +80,6 @@ const AddEventSidebar = props => {
       })
     }
   }, [open])
-
-  useEffect(() => {
-    if (open) {
-      api.exerciseMemberApi.getAllExerciseFilterByCategoryApi(watch('category')).then((rs) => {
-        const formattedOptions = rs.map(exercise => ({
-          ...exercise,
-          value: exercise.exerciseId,
-          label: exercise.exerciseName,
-          image: exercise.exerciseImage
-        }))
-        setOptionFood(formattedOptions)
-      }).catch(() => {
-        toast.error('Không thể tải dữ liệu bài tập')
-      })
-    }
-  }, [watch('category'), open])
 
   const formatDateToYYYYMMDD = (date) => {
     const year = date.getFullYear()
@@ -201,7 +185,7 @@ const AddEventSidebar = props => {
       // Kiểm tra xem có phải là sự kiện mới không
       if (!selectedEvent.title) {
         // Load danh sách bài tập cho category mặc định
-        api.exerciseMemberApi.getAllExerciseFilterByCategoryApi(1)
+        api.exerciseApi.getAllExerciseApi()
           .then((exercises) => {
             const formattedOptions = exercises.map(exercise => ({
               ...exercise,
@@ -222,7 +206,7 @@ const AddEventSidebar = props => {
         .then((diaryDetail) => {
           if (diaryDetail && diaryDetail.listExerciseIdToAdd) {
             // Lấy danh sách bài tập theo category hiện tại
-            api.exerciseMemberApi.getAllExerciseFilterByCategoryApi(watch('category'))
+            api.exerciseApi.getListboxExerciseApi()
               .then((exercises) => {
                 const formattedOptions = exercises.map(exercise => ({
                   ...exercise,

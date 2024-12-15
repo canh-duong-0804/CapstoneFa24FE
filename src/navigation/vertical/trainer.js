@@ -1,5 +1,5 @@
 // ** Icons Import
-import { Circle, Activity, Coffee } from 'react-feather'
+import { Circle, Activity, Coffee, HelpCircle } from 'react-feather'
 export default [
     {
         id: '14',
@@ -51,6 +51,14 @@ export default [
                 resource: 'All'
             }
         ]
+    },
+    {
+        id: '21',
+        title: 'Hỗ trợ người dùng',
+        icon: <HelpCircle size={12} />,
+        action: 'read',
+        resource: 'All',
+        navLink: '/trainer/support'
     }
 
 ]
