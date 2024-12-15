@@ -28,15 +28,6 @@ const data = {
       status: 'offline'
     },
     {
-      id: 2,
-      fullName: 'Adalberto Granzin',
-      role: 'UI/UX Designer',
-      about:
-        'Toffee caramels jelly-o tart gummi bears cake I love ice cream lollipop. Sweet liquorice croissant candy danish dessert icing. Cake macaroon gingerbread toffee sweet.',
-      avatar: require('@src/assets/images/portrait/small/avatar-s-1.jpg').default,
-      status: 'busy'
-    },
-    {
       id: 3,
       fullName: 'Joaquina Weisenborn',
       role: 'Town planner',

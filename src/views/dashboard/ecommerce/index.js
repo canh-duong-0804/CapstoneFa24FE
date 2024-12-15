@@ -11,7 +11,6 @@ import RevenueReport from '@src/views/ui-elements/cards/analytics/RevenueReport'
 import OrdersBarChart from '@src/views/ui-elements/cards/statistics/OrdersBarChart'
 import CardTransactions from '@src/views/ui-elements/cards/advance/CardTransactions'
 import ProfitLineChart from '@src/views/ui-elements/cards/statistics/ProfitLineChart'
-import CardBrowserStates from '@src/views/ui-elements/cards/advance/CardBrowserState'
 
 import '@styles/react/libs/charts/apex-charts.scss'
 import '@styles/base/pages/dashboard-ecommerce.scss'
@@ -55,9 +54,6 @@ const EcommerceDashboard = () => {
         </Col>
         <Col lg='4' md='6' xs='12'>
           <CardMeetup />
-        </Col>
-        <Col lg='4' md='6' xs='12'>
-          <CardBrowserStates colors={colors} trackBgColor={trackBgColor} />
         </Col>
         <Col lg='4' md='6' xs='12'>
           <GoalOverview success={colors.success.main} />
